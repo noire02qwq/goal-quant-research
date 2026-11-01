@@ -27,16 +27,18 @@ goal-quant-research/
 │   ├── literature/               # 每周文献笔记（W1–W10，模板见 templates/）
 │   ├── decisions/                # 决策记录（ADR，研究 demo 结论沉淀于此）
 │   ├── essay-study/              # 论文/文章精读笔记（非每周检索式的深读材料）
+│   ├── papers/                   # 研究涉及论文的 PDF 归档（arXiv-<ID>.pdf）
 │   └── templates/                # 文献笔记 / 决策记录 / spike 报告模板
-└── independent-demo-apps/        # 独立可运行 demo 索引区
-    └── vn-demo/                  # vnpy 回测集成 demo —— 独立 git 仓库，本仓忽略
+├── research-demos/               # brief-plan 定稿之后的研究 demo 本体（入库）
+└── independent-demo-apps/        # 需独立仓库承载的 demo 索引区
+    └── vn-demo/                  # vnpy 回测集成 demo（brief-plan 前的例外）—— 独立仓库，本仓忽略
 ```
 
 ## 重要约定（详见 [docs/CONVENTIONS.md](docs/CONVENTIONS.md)）
 
-- **研究 demo 本体不入库**：demo 是临时产物，放本地 scratch 目录（如 `~/Desktop/goal-agent-research/<主题>/`）；结论以**决策记录**（`docs/decisions/`）+ 定点测试沉淀，并回写 `brief-plan.md` 对应章节。
+- **demo 入库以 brief-plan 定稿为界**：之后的研究 demo 本体入库 `research-demos/`（自带 README + 指向决策记录）；唯一例外是 `independent-demo-apps/vn-demo/`——写于 brief-plan 之前，保持独立仓库（[noire02qwq/vnpy-demo](https://github.com/noire02qwq/vnpy-demo)）+ 本仓索引，已被 gitignore。
+- **引用必须带链接**：报告/笔记中引用来源论文或官方文档，必须附可点击链接；无链接视为未溯源，不得作为设计依据。论文 PDF 下载后归档 `docs/papers/`。
 - **每周研究必须有文献笔记**：`docs/literature/W<周>-<主题>.md`，含检索式、入选论文、方向结论、对设计文档的修订。仅读摘要的论文标注"仅摘要级"，不得当作已验证结论。
-- **`independent-demo-apps/vn-demo/` 已被 gitignore**：它自带独立仓库（[noire02qwq/vnpy-demo](https://github.com/noire02qwq/vnpy-demo)），更新需进入该目录单独提交推送，本仓库不跟踪其内容。
 - **凭证与真实账户信息禁止入库**（API key、token、券商账号等），本地用 `.env`（已 ignore）。
 
 ## 协作

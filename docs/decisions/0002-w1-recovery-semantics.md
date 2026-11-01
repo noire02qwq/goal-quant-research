@@ -1,6 +1,6 @@
 # 0002：W1 恢复语义定稿——原子认领 + fencing token + 步骤级幂等回执 + 显式 outcome_unknown
 
-> 状态：提议 ｜ 日期：2026-11-01 ｜ 作者：@dev ｜ 关联：[w1-recovery-demo](../../research-demos/w1-recovery-demo/README.md)、brief-plan §5.2/§5.3/§12.2 W1、W1 文献笔记（待 @research 合入）
+> 状态：已采纳 ｜ 日期：2026-11-01 ｜ 作者：@dev ｜ 文献合入：@research 2026-11-01 ｜ 关联：[w1-recovery-demo](../../research-demos/w1-recovery-demo/README.md)、[literature/W1 文献笔记](../literature/W1-durable-scheduling-recovery.md)、brief-plan §5.2/§5.3/§12.2 W1
 
 ## 背景
 
@@ -12,7 +12,7 @@ W1 研究项要求用独立 demo 建立「持久化调度与恢复」的设计�
 2. **调度原语照搬平台能力、不重造**：原子认领（单语句 UPDATE + RETURNING）、lease 心跳续期、fencing token 递增、恢复扫描四件套。demo 以最小实现复刻该语义并全部验证通过（demo 代码为独立原创实现，不含平台代码）。
 3. **回执两级粒度**：期次级 `occurrence_key` 回执（跨期去重，防整期重跑）+ 步骤级 `step_key` 回执（期内防重跑）。实测：崩溃恢复后已完成步骤零重跑、中断步骤重跑恰好一次——**步骤级回执是"已完成期次不重跑"（§4.3）在期次内部的自然延伸，必须纳入 schema**。
 4. **fencing 写保护**：回执/终态写入必须携带当前 fencing token，租约易主后旧持有者的写入被拒绝（测试 `test_stale_token_write_rejected`）。这是"重启后的旧 worker 不污染新执行"的构造性保证。
-5. **群组消息独立于 goal_run 持久化**（回答 §12.2 W1 问题）：双 agent 会话消息用独立表（`group_message`，session+seq 主键、幂等追加），恢复时从持久化消息重建上下文续传；事件流 `goal_event` 增加 `actor_agent_id` 归因。**理由**：会话消息生命周期跨多个 goal_run（一个会话可能横跨多次期次执行），挂靠 goal_run 会在恢复时丢失跨 Run 的对话连续性；demo 场景 C 实证独立持久化下中断恢复无重复、无丢失。
+5. **群组消息独立于 goal_run 持久化**（回答 §12.2 W1 问题）：双 agent 会话消息用独立表（`group_message`，session+seq 主键、幂等追加），恢复时从持久化消息重建上下文续传；事件流 `goal_event` 增加 `actor_agent_id` 归因。**理由**：会话消息生命周期跨多个 goal_run（一个会话可能横跨多次期次执行），挂靠 goal_run 会在恢复时丢失跨 Run 的对话连续性；demo 场景 C 实证独立持久化下中断恢复无重复、无丢失。**文献支撑**（[W1 文献笔记](../literature/W1-durable-scheduling-recovery.md)，2026-11-01 精读合入）：[Resume Means Resume](https://arxiv.org/abs/2608.03836) 实测跨进程 resume 同一 parked interrupt 时 consume-once 大面积失效（36/40 实验格饱和、两后端 10/10），证明"独立锚点+统一语义"缺一不可——锚点独立解决跨 Run 连续性，而 consume-once/幂等追加/fencing 统一语义防止多恢复者并发重放；[DeepSeek Super-agent](../essay-study/deepseek-super-agent-2026.md) 的 Source/Thread 抽象同构（Source 持读取位置、Thread 横跨 Worker 生命周期、重启不重放）。
 
 ## 实测数据
 
@@ -29,7 +29,7 @@ W1 研究项要求用独立 demo 建立「持久化调度与恢复」的设计�
 
 - 「结果不确定不隐藏重试」是 mission 对任务失败恢复的硬要求；demo 证明 `outcome_unknown` + 显式扫描能在不隐藏崩溃的前提下自动收敛（无需人工介入即可重排，同时事件流完整留痕供人工追溯）。
 - 步骤级回执直接决定恢复成本：日频量化期次内含拉数/回测/报告多步，整期重跑浪费算力且可能重复写产物；实测幂等续跑把重跑范围收敛到"中断那一步"。
-- 群组独立持久化与 MetaGPT/AutoGen 的「结构化消息 + 独立会话编排」方向一致（仅摘要级，待 W1 文献精读确认后补充引用）。
+- 群组独立持久化与 MetaGPT/AutoGen 的「结构化消息 + 独立会话编排」方向一致（仅摘要级）；W1 精读后补充：与 Resume Means Resume 的 consume-once 实测证据及 DeepSeek Source/Thread 抽象互证（见决策 5 文献支撑）。
 
 ## 备选方案（不采纳的）
 
@@ -46,8 +46,20 @@ W1 研究项要求用独立 demo 建立「持久化调度与恢复」的设计�
 - brief-plan §4.4 `goal_run`：补充 `fencing_token`、`lease_expires_at`、`claim_owner` 字段；`goal_receipt` 从 `receipt_json` 字段升格为独立幂等回执表（是否已更新：否，同上）
 - brief-plan §12.2 W1 落点：确认 `goal_event.actor_agent_id` 采纳，且群组消息需独立持久化表（是否已更新：否，同上）
 
+## 文献复核结论（@research，2026-11-01）
+
+对五条决策逐条对照 [literature/W1](../literature/W1-durable-scheduling-recovery.md) 精读结果：
+
+1. `outcome_unknown` 显式化 —— **文献强化**。Same Winners（[2609.34215](https://arxiv.org/abs/2609.34215)）证明不显式区分"从未执行/结果未知"会使恢复评估指标失真；对应其诊断四量（agreement / all-zero fraction / held-out success / pooled success），W5 演练口径采纳。
+2. 调度四件套不重造 —— **无冲突**。Resume Means Resume（[2608.03836](https://arxiv.org/abs/2608.03836)）对 DBOS 基线的测量同样显示：成熟持久层的 gate-answer 延迟 2.9–5.0×，佐证"不重造、薄封装"方向。
+3. 两级回执 —— **文献强化**。同文 CO-c 子句实测：无计数式 consume-once 时跨进程恢复 gated effect 打 k 次；步骤级 `step_key` 回执即 CO-c 的实现。
+4. fencing 写保护 —— **文献强化**。同文 REMIT 修复只能绑在 durable-state read path（write path 无效），fencing 拒旧 token 写入正是把守卫放在写路径的做法。
+5. 群组消息独立持久化 —— **文献确认，措辞校准为"语义统一、锚点独立"**（见决策 5 文献支撑段）。
+
+补充采纳项（不在本记录五条内，随 brief-plan 修订进入设计）：①自建外部 effect ledger 作恢复正确性第二 oracle（框架内部状态不可信——5 框架实测全部部分违约）；②恢复正确性验收清单＝六性质+FI+liveness（翻译为状态×事件转换表的可失败测试）；③CUA-Recovery（[2610.27645](https://arxiv.org/abs/2610.27645)）takeover-depth 梯度注入用于 W5 故障演练设计，且检测(EAR)与修复(Pass@3)弱相关——韧性循环须拆"检测""修复"两个指标。
+
 ## 后续动作
 
-- [ ] W1 文献精读（durable execution 方向 4 篇 + DeepSeek super-agent）结论合入本记录，转「已采纳」（@research）
+- [x] W1 文献精读（durable execution 方向 4 篇 + DeepSeek super-agent）结论合入本记录，转「已采纳」（@research，2026-11-01）
 - [ ] 转已采纳后走 PR 修订 brief-plan §4.4/§5.2/§12.2 并留痕（@dev）
 - [ ] 平台仓库落地时按本记录定义 goal_* schema 与恢复扫描实现（harness-hub 开发，待 @user 回公司内网后启动）

@@ -13,6 +13,7 @@
 | [docs/mission.md](docs/mission.md) | 任务说明：两阶段目标与汇报要求（需求原文） |
 | [docs/brief-plan.md](docs/brief-plan.md) | 总体设计：调研借鉴、领域模型、执行协议、测评闭环、里程碑与文献主题 |
 | [docs/CONVENTIONS.md](docs/CONVENTIONS.md) | 仓库规范：目录用途、文档/提交/命名规则、demo 与敏感信息约定 |
+| [docs/PROGRESS.md](docs/PROGRESS.md) | 进度记录：阶段状态、每日进展日志、阻塞与待办 |
 
 ## 目录结构
 
@@ -24,6 +25,7 @@ goal-quant-research/
 │   ├── mission.md                # 任务说明（需求原文）
 │   ├── brief-plan.md             # 总体设计方案
 │   ├── CONVENTIONS.md            # 仓库与文档规范
+│   ├── PROGRESS.md               # 进度记录（阶段状态、进展日志、阻塞）
 │   ├── literature/               # 每周文献笔记（W1–W10，模板见 templates/）
 │   ├── decisions/                # 决策记录（ADR，研究 demo 结论沉淀于此）
 │   ├── essay-study/              # 论文/文章精读笔记（非每周检索式的深读材料）

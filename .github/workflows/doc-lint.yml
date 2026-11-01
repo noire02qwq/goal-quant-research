@@ -1,0 +1,50 @@
+name: doc-lint
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 提交信息需符合 Conventional Commits（仅 PR 校验）
+      - name: Check conventional commit (PR only)
+        if: github.event_name == 'pull_request'
+        run: |
+          SUBJECT="${{ github.event.pull_request.title }}"
+          echo "PR title: $SUBJECT"
+          if echo "$SUBJECT" | grep -Eq '^(feat|docs|research|demo|chore|fix|refactor|test|ci)(\(.+\))?: .+'; then
+            echo "OK: 符合 Conventional Commits"
+          else
+            echo "::error::PR 标题需符合 Conventional Commits（如 docs(brief-plan): 修订 §12.0），当前为: $SUBJECT"
+            exit 1
+          fi
+
+      # 敏感文件与 .DS_Store 入库守卫
+      - name: Guard sensitive / junk files
+        run: |
+          BAD=$(git ls-files | grep -E '(^|/)\.DS_Store$|(^|/)\.env$|\.env\..*$|\.key$|\.pem$|(^|/)(credentials|secrets)' || true)
+          if [ -n "$BAD" ]; then
+            echo "::error::检测到禁止入库的文件："
+            echo "$BAD"
+            exit 1
+          fi
+          echo "OK: 无敏感文件/.DS_Store 误入库"
+
+      # Markdown 标题层级与行尾空白的基础检查
+      - name: Markdown basic lint
+        run: |
+          FILES=$(git ls-files '*.md')
+          FAIL=0
+          for f in $FILES; do
+            # 检查行尾多余空白（忽略合法的两个空格换行）
+            if grep -nE ' +$' "$f" | grep -vE '  +$' >/dev/null; then
+              echo "::warning::$f 存在行尾多余空白"
+            fi
+          done
+          echo "OK: markdown 基础检查完成（$FILES）"

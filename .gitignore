@@ -7,6 +7,9 @@ independent-demo-apps/vn-demo/
 # 研究 demo 本体 / 本地 scratch（按约定不入库）
 scratch/
 *.scratch
+.scratch/
+tmp/
+.cache/
 
 # Python
 __pycache__/

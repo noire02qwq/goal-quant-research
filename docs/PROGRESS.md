@@ -57,9 +57,13 @@ Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环；harness-hub �
 - **[dev] brief-plan §12.2 新增「多智能体群组配合交互」W1–W5 增量研究线**（决策记录 [decisions/0001](decisions/0001-multi-agent-group-research-increment.md)，走 PR）：每周挂靠一个群组子主题（W1 持久化基座 / W2 群组记忆模型 / W3 角色分工×DAG / W4 群组治理 / W5 群组故障注入），不动既有各周交付；候选论文均为仅摘要级且带 arXiv 链接；明确 W8 反方评审复用 W4 授权矩阵合流、不采纳 MARL 动态拓扑。
 - **[dev] 仓库基建（`0cf5d1d`）**：PR 模板（设计修订 PR 强制填依据与留痕）、doc-lint workflow（PR 标题 Conventional Commits / 敏感文件守卫 / markdown 基础检查）、gitignore 收紧。
 
+### 2026-11-01（暂停令）
+
+- **[user] 指令：今天先不做 W3**。@research 手头无在途 W3 工作（W3 检索式尚未启动，无草稿产出），确认即停；W2 闭环（`867526d` → `42164cb` → `3426729`）为当前停点。恢复时间等 @user 下令。
+
 ## 阻塞 / 待办
 
 - harness-hub 平台侧开发（插件脚手架、goal_* schema 落地、状态机全转换表实现侧）待 @user 回公司内网后启动。
 - @dev：走 PR 修订 brief-plan §5.1/§5.4/§12.2（依据 0003 已采纳；含 coverage 阈值实例化参数说明 + safety gate 平台侧待补）。0002 的 §4.4/§5.2/§12.2 W1 修订已随 PR #4 完成。
 - AWM workflow 归纳迁移性 spike：等真实 T1 回测轨迹数据（W3+，依赖回测链路）。
-- @research：W3 文献检索式启动（角色分工×DAG 方向 + 群组记忆注入策略）。
+- @research：W3 文献检索式启动（角色分工×DAG 方向 + 群组记忆注入策略）。**已按 @user 指令暂停（2026-11-01）：当日不做 W3，未产生任何 W3 产物（检索式/笔记/草稿均未启动），W2 三件套闭环为当前停点。**

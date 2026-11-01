@@ -13,4 +13,4 @@
 
 | Demo | 验证目标 | 决策记录 |
 |---|---|---|
-| （待第一个 demo 落地） | | |
+| [w1-recovery-demo](w1-recovery-demo/README.md) | 双 worker 抢占、进程崩溃恢复扫描、群组会话中断恢复（brief-plan §5.2 规则 1/2/4/5 + §12.2 W1） | [0002](../docs/decisions/0002-w1-recovery-semantics.md)（提议） |

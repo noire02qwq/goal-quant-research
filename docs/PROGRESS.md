@@ -4,9 +4,15 @@
 
 ## 当前阶段
 
-Phase 0（准备）→ 即将进入 Phase 1 W1。**等待 @user 下令后才开始按计划实际研究和开发**；在此之前只做准备工作（仓库/规范/计划文档/CI）。
+Phase 1 W1 进行中（@user 2026-11-01 下令启动 W1–W2 研究/demo 循环；harness-hub 平台侧开发待回公司内网）。当前：recovery demo 已跑通、决策记录 0002 提议态；文献精读线由 @research 并行推进。
 
 ## 进度日志（倒序）
+
+### 2026-11-01（W1 启动）
+
+- **[dev] W1 recovery demo 跑通**（`research-demos/w1-recovery-demo/`，PR 中）：三场景两连跑全 PASS——双 worker 抢占 12 任务 0 重复 0 丢失；第 2 步硬崩溃（exit 137）后 `running`+lease 过期 → 恢复扫描显式 `outcome_unknown` → 重排 → 幂等续跑（已完成步骤零重跑、中断步骤重跑一次）；双 agent 群组会话第 4 步崩溃后从持久化消息恢复，seq 1–6 完整无重复。9 个定点 unittest 全绿（fencing 拒旧 token、回执幂等、actor 归因等）。
+- **[dev] 决策记录 [0002](decisions/0002-w1-recovery-semantics.md)（提议态）**：恢复语义五条定稿——`outcome_unknown` 显式化、调度四件套不重造、期次+步骤两级回执、fencing 写保护、群组消息独立于 goal_run 持久化（回答 §12.2 W1 问题）。待 @research W1 文献精读结论合入后转「已采纳」，再走 PR 修订 brief-plan §4.4/§5.2/§12.2。
+- 约束确认：公开仓库不入公司 harness 源码（CONVENTIONS §6 已写入），demo 为独立原创最小实现；harness-hub 平台侧开发待 @user 回公司内网后启动。
 
 ### 2026-11-01
 

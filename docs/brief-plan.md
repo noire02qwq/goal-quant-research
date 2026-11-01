@@ -165,7 +165,7 @@ draft → planning → awaiting_approval → running ⇄ paused
 | `goal_effect_ledger` | effect_key、关联 occurrence/step、count、observed_at | 外部 effect 台账：恢复正确性**第二 oracle**，独立于执行路径对账实际 effect 次数（[2608.03836](https://arxiv.org/abs/2608.03836)，0002 补充采纳①） |
 | `goal_code_version` | kind(strategy/data)、S3 artifact 指针、parent_version、test_status | 智能体自写代码版本链；回测报告绑定具体版本 |
 | `goal_event` | 事件流（状态流转/审批/异常/恢复/决策）、**actor_agent_id** | 工作台时间线 + 全程可追溯审计底座；actor_agent_id 记录事件触发成员（§12.2 W1 采纳） |
-| `goal_memory_digest` | run_id、摘要文本、教训、嵌入/关键词 | 记忆蒸馏产物（另写一份进 memory facts 供召回） |
+| `goal_memory_digest` | run_id、摘要文本（HaMo 三元组格式）、教训、嵌入/关键词、**lifecycle**、**valid_until**、**superseded_by**、**scope**(shared/private)、**author_agent_id** | 记忆蒸馏产物（另写一份进 memory facts 供召回）；生命周期/有效期/替代指针按 §5.4 CALM 语义（0003 决策 3/4/5），scope/author_agent_id 支持 §12.2 群组分层（0003 决策 6） |
 | `goal_experiment`（P2） | hypothesis_json、code_version、eval_before/after、verdict、reviewer_opinion、decision | RDLoop 全程记录 |
 | `goal_strategy_version`（P2） | parent、代码+配置指针、status(candidate/active/rolled_back)、eval_snapshot | 策略版本链 |
 | `goal_evaluation`（P2） | strategy_version、period、eval_kind、metrics_json、verdict_per_metric、evidence[]、**trial_count、effective_trials、psr、dsr** | 不可变测评快照；去膨胀字段由试验账本计算（待 W6 定稿） |
@@ -174,6 +174,8 @@ draft → planning → awaiting_approval → running ⇄ paused
 MySQL 规范遵循：无外键/CHECK/触发器，关系字段显式索引，迁移经 `EXPLAIN` 门禁；插件迁移归插件 `migrations/` 自管。
 
 > 修订留痕（2026-11-01，@dev）：`goal_run` 状态与字段、新增 `goal_receipt`/`goal_group_message`/`goal_effect_ledger`、`goal_event.actor_agent_id`——依据 [decisions/0002](decisions/0002-w1-recovery-semantics.md)（已采纳）+ [literature/W1](literature/W1-durable-scheduling-recovery.md)。
+>
+> 修订留痕（2026-11-01，@dev）：`goal_memory_digest` 增 lifecycle/valid_until/superseded_by/scope/author_agent_id 字段与 HaMo 三元组格式——依据 [decisions/0003](decisions/0003-w2-memory-distillation.md)（已采纳）+ [literature/W2](literature/W2-context-memory-distillation.md)。
 
 ---
 
@@ -214,6 +216,8 @@ MySQL 规范遵循：无外键/CHECK/触发器，关系字段显式索引，迁�
 | `quant_run_backtest` | 结构化回测：指定代码版本+窗口 → 沙箱跑 vnpy → 标准化统计回传（quant-research 提供） |
 | `quant_get_calendar` / `quant_fetch_history` | 交易日查询 / 复权行情拉取（缓存到任务文件存储） |
 
+**turn_context 记忆组装顺序**（有界摘要协议，16KB 上限不因群组放宽）：记忆注入部分固定四步——① 硬过滤（只放行 ACTIVE/STABLE 记忆，CANDIDATE 未过晋升 gate 不注入）→ ② 准入打分 → ③ 按分贪心装入 token 预算 → ④ **挤出者留持久层可再检索（挤出≠拒绝）**。未过 gate 的记忆分数再高也不注入（**gate 先于 packing**）；细节仍靠 `goal_read_context` 按需细读。
+
 ### 5.2 关键执行规则（借鉴采纳的落点）
 
 1. **上下文每轮重建、总量有界**：turn_context 由服务端组装；细节靠工具按需读——会话膨胀不影响长程运行（RD-Agent 每轮重建 loop 上下文同款思路）
@@ -234,10 +238,16 @@ MySQL 规范遵循：无外键/CHECK/触发器，关系字段显式索引，迁�
 - **任务依赖**：DAG 拓扑就绪检查（上游回执齐全才入队）；`depends_on` 支持跨期（"每周五调仓依赖本周每日数据任务"）
 - **异常处理**：失败退避（巡检/修复类指数退避）、告警去重（同类未处理事件不重复推送）
 
-### 5.4 记忆与经验技能（hermes 采纳，已确认形态）
+### 5.4 记忆与经验技能（主候选：SEPM+CALM 双主线，2026-11-01 修订）
 
-- **Run 收尾记忆蒸馏**：每期结束由模型生成"本期执行摘要+关键教训"，写 `work_summary` facts（memory 插件 MySQL ngram 全文索引，中文友好）+ `goal_memory_digest` 表；下期 turn_context 注入 top-k 相关召回
-- **经验技能隐式沉淀**：同类任务重复稳定后蒸馏为可复用技能，**存 goal 插件自有存储（目标私有），运行时装载进该目标的 Run material，版本+哈希随 Run 冻结**——不走 SkillHub 送审、不进技能库、不进通用选择目录，形态同 agent-management / application-management 的内部技能
+- **Run 收尾记忆蒸馏**：每期结束由模型生成"本期执行摘要+关键教训"，写 `work_summary` facts（memory 插件 MySQL ngram 全文索引，中文友好）+ `goal_memory_digest` 表——**产物格式采 HaMo 经验卡三元组**（goal / 初始条件 / 策略级大纲），策略级大纲适配 16KB 注入，且"存一套用一套"：沉淀格式与注入格式统一
+- **记忆生命周期（CALM 裁剪，确定性状态机）**：`CANDIDATE → ACTIVE → STABLE → SUPERSEDED / STALE → ARCHIVED`，迁移走白名单、非法迁移拒绝、不靠 LLM 重写全文；**supersede 不物理删除**（置 SUPERSEDED + `superseded_by` 指针，历史回放需旧记忆重构当时决策）；**TTL 第二触发通道**（金融域改造采纳）：显式 `valid_until` 到期 → STALE——行情/持仓类事实不适用"时间流逝不致 stale"，须显式有效期
+- **晋升必须可计算判据**（不靠 LLM 拍板）：前置 HaMo retrieval-coverage + 主 gate SEPM reproduction（≥1 次复现 trial、trial 平均效用≥0、因果一致性≥0.65）；任一不过即拦截，拦截原因逐项落 `goal_event` 审计。**参数出处注明**：coverage 阈值（demo 实例化为 ≥0.30）是本项目自设参数、实现可调——HaMo 原文机制为互补边际覆盖贪心选择 + knee point 定预算，并无固定阈值。**简化项**：SEPM 原文同批的 safety/state-verification 两道 gate 未纳入——金融域 state 验证由回测/数据校验工具承担，safety gate 留平台侧设计时补
+- **16KB 组装顺序**：见 §5.1 有界摘要协议四步（gate 先于 packing、挤出≠拒绝）；实证见 [w2-memory-distillation-demo](../research-demos/w2-memory-distillation-demo/README.md)（12 定点测试 + 交互剧本）
+- **经验技能隐式沉淀**：同类任务重复稳定后蒸馏为可复用技能，**存 goal 插件自有存储（目标私有），运行时装载进该目标的 Run material，版本+哈希随 Run 冻结**——不走 SkillHub 送审、不进技能库、不进通用选择目录，形态同 agent-management / application-management 的内部技能；晋升须过本节可计算 gate，不因"模型觉得有用"直接沉淀
+- 风险项不变：SEPM/CALM 均在文本环境（ALFWorld/WebArena/LongMemEval）验证，金融代码任务迁移性以 demo 实测为准，不以论文结论代替；AWM workflow 归纳迁移性 spike 拆 W3+（需真实 T1 轨迹），见 [W2 文献笔记 §5](literature/W2-context-memory-distillation.md)
+
+> 修订留痕（2026-11-01，@dev）：主候选由 AWM/ExpeL 升级为 SEPM+CALM 双主线 + HaMo 格式——依据 [decisions/0003](decisions/0003-w2-memory-distillation.md)（已采纳，含 @research 文献复核与 coverage 阈值实例化校准、safety/state gate 简化项备查两条）+ [literature/W2](literature/W2-context-memory-distillation.md)。
 
 ### 5.5 治理：权限、预算、审批、控制
 
@@ -490,7 +500,7 @@ GoalEvaluation {
 | 周 | 挂靠主题 | 群组子主题 | 候选论文（仅摘要级，含链接） | 落点（增量，不改既有交付） |
 |---|---|---|---|---|
 | W1 | 持久化调度与恢复 | 群组状态的持久化基座：多 agent 会话/消息是否需要独立于 goal_run 的持久化 | [Multi-Agent Collaboration Mechanisms: A Survey of LLMs](https://arxiv.org/abs/2501.06322)（协作机制可扩展框架）；[Beyond Self-Talk: Communication-Centric Survey of LLM-MAS](https://arxiv.org/abs/2502.14321)（通信视角：架构/协议/消息对象分层） | **已定稿（[decisions/0002](decisions/0002-w1-recovery-semantics.md) 决策 5，w1-recovery-demo 场景 C 实证）**：**语义统一、锚点独立**——群组消息用独立持久化表 `goal_group_message`（session+seq 主键，不挂 goal_run，会话横跨多次期次 Run），但恢复语义与 goal_run 完全一致（consume-once/幂等追加/fencing，不允许第二套恢复语义）；`goal_event.actor_agent_id` 采纳（§4.4 已落） |
-| W2 | 长程上下文、记忆蒸馏 | 群组记忆模型：共享记忆 vs 成员私有记忆；成员间消息摘要如何蒸馏 | [AutoGen](https://arxiv.org/abs/2308.08155)（GroupChatManager 选 speaker+广播；对话即编排）；[MetaGPT](https://arxiv.org/abs/2308.00352)（**结构化消息**优于自由对话：publish-subscribe + schema 化产出，降低信息丢失与幻觉级联） | ① `goal_memory_digest` 增加 `scope`（goal 共享 / 成员私有）与 `author_agent_id` 字段；② 群组 turn_context 组装规则：共享摘要全量注入 + 成员私有摘要按角色选择性注入（复用 §5.1 有界摘要协议，上限不放宽） |
+| W2 | 长程上下文、记忆蒸馏 | 群组记忆模型：共享记忆 vs 成员私有记忆；成员间消息摘要如何蒸馏 | [AutoGen](https://arxiv.org/abs/2308.08155)（GroupChatManager 选 speaker+广播；对话即编排）；[MetaGPT](https://arxiv.org/abs/2308.00352)（**结构化消息**优于自由对话：publish-subscribe + schema 化产出，降低信息丢失与幻觉级联） | **已定稿（[decisions/0003](decisions/0003-w2-memory-distillation.md) 决策 6，scope/author_agent_id 字段已在 w2 demo 实证）**：① `goal_memory_digest` 增加 `scope`（goal 共享 / 成员私有）与 `author_agent_id` 字段；② scope 语义取 SEPM 程序元数据三元组（applicability / context conditions / exclusions）作 eligible 判据 + CALM 准入 gate；③ 群组 turn_context 组装规则：共享摘要全量注入 + 成员私有摘要按角色选择性注入（复用 §5.1 有界摘要协议与 §5.4 gate/生命周期语义，上限不放宽）；共享 blackboard 只存 verified state、成员私有推理留本地（SEPM：私有推理不减收益） |
 | W3 | 回测代码可靠性、DAG | 群组任务分解：角色分工如何映射到 goal_plan_task DAG | [MetaGPT](https://arxiv.org/abs/2308.00352)（SOP 流水线：PM→架构→工程师→QA，角色间以标准化产物交接）；[ChatDev](https://arxiv.org/abs/2307.07924)（phase-based 群组聊天流水线） | `goal_plan_task` 增加可选 `assigned_role`（如 researcher/coder/reviewer）；**默认单角色路径零改动**——不填 assigned_role 即现有单受管 Run 行为，群组是 opt-in |
 | W4 | 审批/授权边界 | 群组治理：多成员下的审批归因、预算分摊、权限矩阵 | [MultiAgentBench](https://arxiv.org/abs/2503.01935)（协调/竞争评测，含 Coordination 语义指标）；[Communication-Centric Survey §5.5](https://arxiv.org/abs/2502.14321)（通信攻击面：成员被注入后经消息污染群组的风险） | ① 审批门记录 `requested_by`（成员归因），群组成员不得绕过审批门互相授权；② 预算按 goal 整体计（不按成员分摊，避免成员间博弈），成员级 token 用量只做观测字段；③ 授权矩阵按"角色×工具"定义，为 W8 反方评审角色（A3）预留 reviewer 角色位 |
 | W5 | 故障演练与汇报 | 群组故障注入与最小演示 | 沿用 W1–W4 入选文献，无新增检索（本周主线负载已满）；群组评测方法如需深挖推迟到 W8 与辩论主题合并精读 | 故障演练清单**追加一条**：成员 Run 崩溃/消息丢失时群组不重复执行已完成步骤（幂等回执复用）；汇报演示可选加 30 秒"双角色协作出策略改动提案"片段（不进必演剧本） |

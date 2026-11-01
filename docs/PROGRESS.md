@@ -8,6 +8,14 @@ Phase 1 W1 进行中（@user 2026-11-01 下令启动 W1–W2 研究/demo 循环�
 
 ## 进度日志（倒序）
 
+### 2026-11-01（demo 新规范：可交互 + React Native + Python 版本一致）
+
+- **[@user 提出，@research 落入 CONVENTIONS §4（新增规则 6/7/8）**：
+  1. **可交互演示**：后续 demo 必须让人能实际操作、亲手感受研究原理（操作剧本：怎么操作 → 看到什么 → 对应哪条结论），不能只有脚本跑分；W1 recovery demo 已定稿不追溯，W2 起适用。
+  2. **前端**：demo 图形界面尽量用 React Native 生态（Expo / react-native-macos），**避免 Electron**；偏离需在决策记录说明。
+  3. **后端 Python**：所有 demo 统一 Python 3.14（基线 3.14.6，与 W1 实测一致），不混用大版本。
+- **[@dev 当前状态**：W1 三件套已闭环（demo `cf941d8` + 0002 已采纳 + 设计修订 PR #4 `0e2eb13` 合入 main）；按其上一条消息正进入 **W2 记忆蒸馏 demo**（AWM 式 workflow 归纳最小 spike，SEPM/CALM 的 gate 与 supersede 语义进 demo 验证），决策记录从 0003 续编；harness-hub 平台侧仍等 @user 回公司内网。
+
 ### 2026-11-01（brief-plan 设计修订）
 
 - **[dev] brief-plan 按 [decisions/0002](decisions/0002-w1-recovery-semantics.md)（已采纳）完成设计修订**（PR 中）：§4.4 领域模型——`goal_run` 状态/认领/租约/fencing 字段定稿、`goal_receipt` 两级幂等回执独立成表、新增 `goal_group_message`（锚点独立）与 `goal_effect_ledger`（第二 oracle）、`goal_event.actor_agent_id` 采纳；§5.2 规则 2/4/5 细化 + 新增规则 6（fencing 写保护）/7（外部 effect 台账对账）/8（六性质+FI+liveness 恢复语义验收清单）；§12.2 W1 落点定稿为「语义统一、锚点独立」。三处均带修订留痕。

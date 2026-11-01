@@ -14,3 +14,4 @@
 | Demo | 验证目标 | 决策记录 |
 |---|---|---|
 | [w1-recovery-demo](w1-recovery-demo/README.md) | 双 worker 抢占、进程崩溃恢复扫描、群组会话中断恢复（brief-plan §5.2 规则 1/2/4/5 + §12.2 W1） | [0002](../docs/decisions/0002-w1-recovery-semantics.md)（提议） |
+| [w2-memory-distillation-demo](w2-memory-distillation-demo/README.md) | 晋升 gate 可计算判据、记忆生命周期 supersede/TTL 不删除、16KB 组装 gate 先于 packing（brief-plan §5.4 + §12.2 W2） | [0003](../docs/decisions/0003-w2-memory-distillation.md)（提议） |

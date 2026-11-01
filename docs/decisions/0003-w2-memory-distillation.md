@@ -1,6 +1,6 @@
 # 0003：W2 记忆蒸馏语义——可计算晋升 gate + 生命周期 supersede 不删除 + gate 先于 packing
 
-> 状态：提议 ｜ 日期：2026-11-01 ｜ 作者：@dev ｜ 关联：[W2 文献笔记](../literature/W2-context-memory-distillation.md)、[w2-memory-distillation-demo](../../research-demos/w2-memory-distillation-demo/README.md)、brief-plan §5.4 / §12.1 W2 行 / §12.2 W2 群组记忆子题
+> 状态：已采纳 ｜ 日期：2026-11-01 ｜ 作者：@dev ｜ 关联：[W2 文献笔记](../literature/W2-context-memory-distillation.md)、[w2-memory-distillation-demo](../../research-demos/w2-memory-distillation-demo/README.md)、brief-plan §5.4 / §12.1 W2 行 / §12.2 W2 群组记忆子题
 
 ## 背景
 
@@ -56,9 +56,27 @@ W2 文献精读（2026-10 四篇新工作）把记忆蒸馏的两个未决问题
 - brief-plan.md §12.2 W2 群组记忆：scope 三元组 + 准入 gate 语义，随 §5.4 一起修订（是否已更新：**否**）
 - brief-plan.md §5.1 有界摘要协议：补"gate 先于 packing、挤出≠拒绝"（是否已更新：**否**）
 
+## 文献复核结论（@research，2026-11-01）
+
+对七条决策逐条对照 [literature/W2](../literature/W2-context-memory-distillation.md) 精读结果，并回抽原始 PDF 核验引用数值：
+
+1. **可计算晋升判据 —— 文献支撑确认，一处参数出处校准**。SEPM 原文（[2610.14515](https://arxiv.org/abs/2610.14515)，App. B）确证：causal-confidence 阈值默认 0.65、最小复现次数 1、trial 平均效用 ≥0，三项判据与本记录一致。**校准**：coverage 前置的 `≥0.30` 是 demo 自设阈值——HaMo 原文（[2610.34724](https://arxiv.org/abs/2610.34724)）的机制是互补边际覆盖贪心选择直到边际增益为零 + knee point 定预算，并无 0.30 这一固定阈值；机制方向（retrieval-coverage 作"值得沉淀"判据）忠实，数值属本项目实例化参数，实现可调。
+2. **gate 先于 packing —— 文献支撑确认**。CALM 512-token 预算下 39.2 vs 29.6 已回原文核对无误；demo 把顺序固化为可失败断言（`test_gate_before_packing_order`），与笔记 §3 采纳项一致。
+3. **生命周期白名单 —— 与 CALM 状态机一致**（CANDIDATE→ACTIVE→STABLE→SUPERSEDED/STALE→ARCHIVED），非法迁移拒绝属确定性规则维护，符合"不靠 LLM 重写全文"的采纳理由。
+4. **supersede 不删 —— 文献支撑确认**。回原文核对污染鲁棒性：0→50% 注入 CALM 仅掉 7.0pp（对照 11.6/16.8pp）；笔记 §5 已记录的"正文 vs 表 13 数值不一致"风险保留，本记录引用取正文口径。
+5. **TTL 第二触发通道 —— 金融域改造采纳项**，笔记 §3 已载，非论文原文结论，标注正确。
+6. **scope 字段级落库 —— 与 §12.2 W2 落点一致**，注入策略完整版留 W3，与笔记"共享全量+私有按角色注入"的落点不冲突。
+7. **AWM 降级与 spike 拆分 —— 与笔记 §3/§5 一致**：迁移性风险（需真实 T1 轨迹）原样保留，未被 demo 结论掩盖；CALM learned gate 不采纳亦与笔记 §5 泛化未证的判断一致。
+
+**简化项备查**（demo 层面，不阻塞采纳）：demo 的 reproduction gate 只实现三判据，未含 SEPM 原文同批的 safety/state-verification 两道 gate——金融域可由回测/数据校验承担 state 验证，safety gate 留平台侧设计时补，届时在 brief-plan §5.4 修订中注明。
+
+独立复核（本机实跑，非转述 @dev 结果）：`python3 -m unittest test_w2` 12/12 通过；gate 三态冒烟（全开拦截污染卡且逐项可审计 / 全关放行 / 好卡通过）与 README 操作剧本第 1–8 步结论一致；前端 package.json 无 electron 依赖；后端 `python3 --version` = 3.14.6 与 §4 规则 8 基线一致。
+
+**结论：七条决策与 W2 文献精读无实质冲突，转「已采纳」**；唯一校准项（coverage 0.30 为实例化参数）不改决策本身，随 brief-plan 修订时注明即可。
+
 ## 后续动作
 
-- [ ] @research 复核 W2 文献精读与本记录的一致性，合入后转「已采纳」（W2 周内）
-- [ ] @dev 转已采纳后走 PR 修订 brief-plan §5.1/§5.4/§12.2（带留痕）
+- [x] @research 复核 W2 文献精读与本记录的一致性，合入后转「已采纳」（@research，2026-11-01）
+- [ ] @dev 走 PR 修订 brief-plan §5.1/§5.4/§12.2（带留痕；注意补 coverage 阈值为实例化参数的说明）
 - [ ] AWM workflow 归纳迁移性 spike：等 T1 回测轨迹数据（W3+，依赖回测链路）
 - [ ] W3 群组记忆 demo：共享/私有注入策略交互版（scope 字段本 demo 已备）

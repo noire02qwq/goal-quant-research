@@ -4,9 +4,14 @@
 
 ## 当前阶段
 
-Phase 1 W1 进行中（@user 2026-11-01 下令启动 W1–W2 研究/demo 循环；harness-hub 平台侧开发待回公司内网）。当前：W1 三件套闭环（recovery demo `cf941d8`、0002 已采纳、设计修订 PR #4 合入）；W1/W2 文献线达标（8 篇 2026H2 论文归档、7 篇精读 + DeepSeek Super-agent 精读）；**W2 记忆蒸馏 demo 已跑通**（PR 中，决策记录 [0003](decisions/0003-w2-memory-distillation.md) 提议态）。下一步：@research 复核 0003 → 转已采纳 → @dev 走 PR 修订 brief-plan §5.1/§5.4/§12.2。
+Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环；harness-hub 平台侧开发待回公司内网）。当前：W1/W2 文献线达标（8 篇 2026H2 论文归档、7 篇精读 + DeepSeek Super-agent 精读）；W1、W2 demo 均合入 main，决策记录 [0002](decisions/0002-w1-recovery-semantics.md)、[0003](decisions/0003-w2-memory-distillation.md) 均已采纳（W1 设计修订 PR #4 已合入）。下一步：@dev 走 PR 修订 brief-plan §5.1/§5.4/§12.2（依据 0003），随后进入 W3（角色分工×DAG + 群组记忆注入策略）。
 
 ## 进度日志（倒序）
+
+### 2026-11-01（0003 转已采纳）
+
+- **[@research] 决策记录 [0003](decisions/0003-w2-memory-distillation.md) 文献复核后转「已采纳」**：七条决策逐条对照 [literature/W2](literature/W2-context-memory-distillation.md) 精读并回抽 PDF 核验数值——SEPM 晋升判据三数值（因果 0.65 / 复现≥1 / 效用≥0）与 CALM 关键数据（512-token 39.2 vs 29.6、污染 50% 注入仅掉 7.0pp）均确证。**一处校准**：coverage ≥0.30 是 demo 实例化参数，HaMo 原文为边际覆盖贪心 + knee point、无此固定阈值（机制方向忠实，不改决策，随 brief-plan 修订注明）。**简化项备查**：demo 未含 SEPM 原文同批的 safety/state gate，state 验证可由回测/数据校验承担，safety gate 留平台侧补。本机独立复跑：12/12 unittest + gate 三态冒烟（拦截/消融放行/好卡通过）与 README 操作剧本一致。
+- literature/W2 §4「W2 demo 决策记录」项勾销（AWM 迁移性 spike 拆 W3+，风险项不动）。
 
 ### 2026-11-01（W2 记忆蒸馏 demo 跑通）
 
@@ -51,5 +56,6 @@ Phase 1 W1 进行中（@user 2026-11-01 下令启动 W1–W2 研究/demo 循环�
 ## 阻塞 / 待办
 
 - harness-hub 平台侧开发（插件脚手架、goal_* schema 落地、状态机全转换表实现侧）待 @user 回公司内网后启动。
-- @dev：走 PR 修订 brief-plan §4.4/§5.2/§12.2（依据 0002 已采纳 + W1 文献笔记）。
-- W2：记忆蒸馏 demo（T1 轨迹实测 AWM 迁移性 + 经验卡晋升判据），决策记录从 0003 续编。
+- @dev：走 PR 修订 brief-plan §5.1/§5.4/§12.2（依据 0003 已采纳；含 coverage 阈值实例化参数说明 + safety gate 平台侧待补）。0002 的 §4.4/§5.2/§12.2 W1 修订已随 PR #4 完成。
+- AWM workflow 归纳迁移性 spike：等真实 T1 回测轨迹数据（W3+，依赖回测链路）。
+- @research：W3 文献检索式启动（角色分工×DAG 方向 + 群组记忆注入策略）。

@@ -35,7 +35,7 @@
 - [x] brief-plan.md §12.1 W2 行：候选论文增补 4 篇 2026-10 新工作（已同步更新）。
 - [ ] §5.4 记忆蒸馏：主候选升级为 SEPM+CALM 双主线（待 W2 记忆蒸馏 demo 后走 PR 修订）。
 - [ ] §12.2 W2 群组记忆 scope 字段语义定稿（三元组+准入 gate），随 §5.4 一起修订。
-- [ ] W2 demo（@dev 执行）决策记录：用 T1 轨迹实测 AWM 式 workflow 归纳迁移性 + 经验卡晋升判据，结论落 decisions/0003 起。
+- [x] W2 demo 决策记录：晋升判据 + 生命周期 + gate 先于 packing 已落 [decisions/0003](../decisions/0003-w2-memory-distillation.md)（@research 复核后转已采纳，2026-11-01）；**AWM workflow 归纳迁移性未入本 demo**（需真实 T1 轨迹，拆为 W3+ 独立 spike，风险项见 §5）。
 
 ## 5. 风险与待验证项
 

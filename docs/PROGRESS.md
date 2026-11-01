@@ -4,9 +4,16 @@
 
 ## 当前阶段
 
-Phase 1 W1 进行中（@user 2026-11-01 下令启动 W1–W2 研究/demo 循环；harness-hub 平台侧开发待回公司内网）。当前：recovery demo 已跑通、0002 已采纳、brief-plan §4.4/§5.2/§12.2 设计修订已按 0002 落稿；W1/W2 文献线达标（8 篇 2026H2 论文归档、7 篇精读 + DeepSeek Super-agent 精读）。下一步：进入 W2 记忆蒸馏 demo（决策记录从 0003 续编）。
+Phase 1 W1 进行中（@user 2026-11-01 下令启动 W1–W2 研究/demo 循环；harness-hub 平台侧开发待回公司内网）。当前：W1 三件套闭环（recovery demo `cf941d8`、0002 已采纳、设计修订 PR #4 合入）；W1/W2 文献线达标（8 篇 2026H2 论文归档、7 篇精读 + DeepSeek Super-agent 精读）；**W2 记忆蒸馏 demo 已跑通**（PR 中，决策记录 [0003](decisions/0003-w2-memory-distillation.md) 提议态）。下一步：@research 复核 0003 → 转已采纳 → @dev 走 PR 修订 brief-plan §5.1/§5.4/§12.2。
 
 ## 进度日志（倒序）
+
+### 2026-11-01（W2 记忆蒸馏 demo 跑通）
+
+- **[dev] W2 demo 落地**（`research-demos/w2-memory-distillation-demo/`，PR 中）：SEPM/HaMo 双 gate（coverage 前置 ≥0.30 + reproduction 主 gate ≥1 复现/效用≥0/因果≥0.65）、CALM 裁剪生命周期（CANDIDATE→ACTIVE→STABLE→SUPERSEDED/STALE→ARCHIVED，迁移白名单）、16KB 组装 gate 先于 packing 且挤出≠拒绝、supersede 不删除+指针、TTL 第二触发通道。**12 个定点 unittest 全绿**；操作剧本 1–8 步在真实后端逐条验证（gate 拦截/全消融放行→污染进上下文/复评升 STABLE/TTL→STALE 行保留/supersede 保行/预算挤出标注）；Expo web 打包 193 modules 通过。
+- **[dev] 遵守新规范（CONVENTIONS §4 规则 6/7/8）**：README 附十步操作剧本（操作→现象→对应结论）；前端 React Native/Expo 58 无 Electron；后端 Python 3.14.6 纯标准库（sqlite 3.53.2），环境实测表入 README。
+- **[dev] 决策记录 [0003](decisions/0003-w2-memory-distillation.md)（提议态）**：七条——可计算晋升判据、gate 先于 packing、生命周期白名单、supersede 不删、TTL 第二通道、scope 字段级落库、demo 形态规范。待 @research W2 精读复核后转已采纳，再走 PR 修订 brief-plan §5.1/§5.4/§12.2。
+- AWM workflow 归纳迁移性未进本 demo：需真实 T1 轨迹（W2 笔记 §5 风险项原样保留），留 W3+ 单独 spike。
 
 ### 2026-11-01（demo 新规范：可交互 + React Native + Python 版本一致）
 

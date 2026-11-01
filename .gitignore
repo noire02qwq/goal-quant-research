@@ -32,6 +32,8 @@ build/
 data/
 *.log
 logs/
+*.db
+*.sqlite3
 
 # 凭证与本地配置（禁止入库）
 .env

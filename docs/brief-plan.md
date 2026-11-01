@@ -159,9 +159,12 @@ draft → planning → awaiting_approval → running ⇄ paused
 | `goal_strategy` | 策略逻辑、约束（风险偏好/禁止操作）、**评价指标定义**（名称/方向/阈值/权重） | 从用户输入解析生成，人工可编辑；Phase 2 的评判依据 |
 | `goal_plan` | version、任务 DAG(JSON)、generated_by(run_id)、approval_status | 计划有版本，重规划产生 v2/v3 |
 | `goal_plan_task` | type(code/schedule/eval/report/approval/patrol)、schedule_spec、depends_on、status、last_run_id | DAG 节点；schedule 型带 cron 或 `trading_day` 规则 |
-| `goal_run` | task_id、run_source(scheduled/manual/recovery)、agent_run_id、receipt_json、status(含 outcome_unknown) | 每次受管 Run 执行记录，关联平台 AgentRun |
+| `goal_run` | task_id、run_source(scheduled/manual/recovery)、agent_run_id、status(queued/running/succeeded/failed/**outcome_unknown**)、claim_owner、lease_expires_at、fencing_token、attempts | 每次受管 Run 执行记录，关联平台 AgentRun；认领/租约/fencing 字段支撑恢复语义（[decisions/0002](decisions/0002-w1-recovery-semantics.md)） |
+| `goal_receipt` | idempotency_key（期次 occurrence_key / 步骤 step_key **两级**）、payload_json、fencing_token、written_at | 独立幂等回执表（原 goal_run.receipt_json 升格）；INSERT OR IGNORE 首写胜出、重复写不覆盖；恢复路径先查回执（0002 决策 3/4） |
+| `goal_group_message` | session_id+seq（主键）、sender_agent_id、content、created_at | 群组会话消息独立持久化：**锚点不挂 goal_run**（会话横跨多次期次 Run），恢复语义与 goal_run 统一（consume-once/幂等追加/fencing）（0002 决策 5） |
+| `goal_effect_ledger` | effect_key、关联 occurrence/step、count、observed_at | 外部 effect 台账：恢复正确性**第二 oracle**，独立于执行路径对账实际 effect 次数（[2608.03836](https://arxiv.org/abs/2608.03836)，0002 补充采纳①） |
 | `goal_code_version` | kind(strategy/data)、S3 artifact 指针、parent_version、test_status | 智能体自写代码版本链；回测报告绑定具体版本 |
-| `goal_event` | 事件流（状态流转/审批/异常/恢复/决策） | 工作台时间线 + 全程可追溯审计底座 |
+| `goal_event` | 事件流（状态流转/审批/异常/恢复/决策）、**actor_agent_id** | 工作台时间线 + 全程可追溯审计底座；actor_agent_id 记录事件触发成员（§12.2 W1 采纳） |
 | `goal_memory_digest` | run_id、摘要文本、教训、嵌入/关键词 | 记忆蒸馏产物（另写一份进 memory facts 供召回） |
 | `goal_experiment`（P2） | hypothesis_json、code_version、eval_before/after、verdict、reviewer_opinion、decision | RDLoop 全程记录 |
 | `goal_strategy_version`（P2） | parent、代码+配置指针、status(candidate/active/rolled_back)、eval_snapshot | 策略版本链 |
@@ -169,6 +172,8 @@ draft → planning → awaiting_approval → running ⇄ paused
 | `goal_trial_ledger`（P2，新增） | goal_id、experiment_id、code_version、window、returns 指针(S3)、is_design_window | **每一次**候选回测都入账（含被否决者），DSR/有效试验数/PBO 只从账本计算；不可删改 |
 
 MySQL 规范遵循：无外键/CHECK/触发器，关系字段显式索引，迁移经 `EXPLAIN` 门禁；插件迁移归插件 `migrations/` 自管。
+
+> 修订留痕（2026-11-01，@dev）：`goal_run` 状态与字段、新增 `goal_receipt`/`goal_group_message`/`goal_effect_ledger`、`goal_event.actor_agent_id`——依据 [decisions/0002](decisions/0002-w1-recovery-semantics.md)（已采纳）+ [literature/W1](literature/W1-durable-scheduling-recovery.md)。
 
 ---
 
@@ -212,10 +217,15 @@ MySQL 规范遵循：无外键/CHECK/触发器，关系字段显式索引，迁�
 ### 5.2 关键执行规则（借鉴采纳的落点）
 
 1. **上下文每轮重建、总量有界**：turn_context 由服务端组装；细节靠工具按需读——会话膨胀不影响长程运行（RD-Agent 每轮重建 loop 上下文同款思路）
-2. **回执先查再执行**：重试/恢复路径先查回执，已成功则跳过（openmuse receipts）
+2. **回执先查再执行（两级幂等）**：期次级 `occurrence_key` 回执防整期重跑 + 步骤级 `step_key` 回执防期内重复（独立 `goal_receipt` 表，INSERT OR IGNORE 首写胜出）；重试/恢复路径一律先查回执，已成功则跳过（[decisions/0002](decisions/0002-w1-recovery-semantics.md) 决策 3，w1-recovery-demo 场景 B 实测：崩溃恢复后已完成步骤零重跑）
 3. **失败不终止**：任务失败 → 状态机生成修复任务重进循环；连续 N 次修复失败升级人工介入事件（RD-Agent 韧性）——即 mission 要求的"任务失败修复"演示能力
-4. **结果不确定不隐藏重试**：Run 超时/连接中断 → `outcome_unknown` → 恢复扫描决定重跑或人工确认（openmuse + 平台 Runtime 语义同构）
-5. **恢复扫描**：服务启动时扫描 lease 过期的"孤儿 Run"，标记或重新入队（hermes watchdog + openmuse SQL lease + 平台 recovery 同构）
+4. **结果不确定不隐藏重试**：Run 超时/连接中断 → 显式落 `outcome_unknown`（**不伪装终态、不静默重试**），恢复扫描决定重跑或人工确认（0002 决策 1；审计视角必须能区分"从未执行"与"执行结果未知"）
+5. **恢复扫描**：服务启动 + 周期扫描 lease 过期的"孤儿 Run"：先标 `outcome_unknown` 再决策——有期次回执补判 succeeded、无回执重排（requeue）；中断中的步骤证据标 `interrupted` 不得伪装 completed；扫描本身幂等（0002 决策 1/3，w1-recovery-demo 场景 B + `test_expired_*` 定点测试）
+6. **fencing 写保护**：回执/终态写入携带当前 fencing token 并在**同一事务内校验**，租约易主后旧持有者的写入被拒绝——"重启后的旧 worker 不污染新执行"的构造性保证（0002 决策 4，`test_stale_token_write_rejected`）
+7. **恢复正确性第二 oracle**：恢复对账不信任执行路径自身状态，自建外部 effect 台账（`goal_effect_ledger`）核对"声明完成"与"实际 effect 次数"（[Resume Means Resume](https://arxiv.org/abs/2608.03836) 实测 5 框架内部状态全部部分违约：CrewAI 显示 correct=11 而外部 ledger 实际 effect=2）
+8. **恢复语义验收清单**：状态机全转换表（状态×事件→动作，含异常路径）逐条翻译为可失败测试，对拍 [2608.03836](https://arxiv.org/abs/2608.03836) 六性质 + fork-intent + liveness（恢复决策=DB durable state 纯函数、审批门 CAS 式消费一次、写入 schema loud reject、resume 带 retry/fork 判别位、"永不恢复"也算违约）；框架/实现升级不得使清单退化
+
+> 修订留痕（2026-11-01，@dev）：规则 2/4/5 细化 + 新增规则 6/7/8——依据 [decisions/0002](decisions/0002-w1-recovery-semantics.md)（已采纳，含 @research 文献复核结论与三项补充采纳）+ [literature/W1](literature/W1-durable-scheduling-recovery.md) 方向结论。
 
 ### 5.3 调度层（扩展而非重造）
 
@@ -479,7 +489,7 @@ GoalEvaluation {
 
 | 周 | 挂靠主题 | 群组子主题 | 候选论文（仅摘要级，含链接） | 落点（增量，不改既有交付） |
 |---|---|---|---|---|
-| W1 | 持久化调度与恢复 | 群组状态的持久化基座：多 agent 会话/消息是否需要独立于 goal_run 的持久化 | [Multi-Agent Collaboration Mechanisms: A Survey of LLMs](https://arxiv.org/abs/2501.06322)（协作机制可扩展框架）；[Beyond Self-Talk: Communication-Centric Survey of LLM-MAS](https://arxiv.org/abs/2502.14321)（通信视角：架构/协议/消息对象分层） | demo 在 W1 既有 recovery demo 上**加一个群组维度**：双 agent 会话中断后从持久化消息恢复，验证恢复语义对群组同样成立；表结构预留 `goal_event.actor_agent_id`（谁触发的事件） |
+| W1 | 持久化调度与恢复 | 群组状态的持久化基座：多 agent 会话/消息是否需要独立于 goal_run 的持久化 | [Multi-Agent Collaboration Mechanisms: A Survey of LLMs](https://arxiv.org/abs/2501.06322)（协作机制可扩展框架）；[Beyond Self-Talk: Communication-Centric Survey of LLM-MAS](https://arxiv.org/abs/2502.14321)（通信视角：架构/协议/消息对象分层） | **已定稿（[decisions/0002](decisions/0002-w1-recovery-semantics.md) 决策 5，w1-recovery-demo 场景 C 实证）**：**语义统一、锚点独立**——群组消息用独立持久化表 `goal_group_message`（session+seq 主键，不挂 goal_run，会话横跨多次期次 Run），但恢复语义与 goal_run 完全一致（consume-once/幂等追加/fencing，不允许第二套恢复语义）；`goal_event.actor_agent_id` 采纳（§4.4 已落） |
 | W2 | 长程上下文、记忆蒸馏 | 群组记忆模型：共享记忆 vs 成员私有记忆；成员间消息摘要如何蒸馏 | [AutoGen](https://arxiv.org/abs/2308.08155)（GroupChatManager 选 speaker+广播；对话即编排）；[MetaGPT](https://arxiv.org/abs/2308.00352)（**结构化消息**优于自由对话：publish-subscribe + schema 化产出，降低信息丢失与幻觉级联） | ① `goal_memory_digest` 增加 `scope`（goal 共享 / 成员私有）与 `author_agent_id` 字段；② 群组 turn_context 组装规则：共享摘要全量注入 + 成员私有摘要按角色选择性注入（复用 §5.1 有界摘要协议，上限不放宽） |
 | W3 | 回测代码可靠性、DAG | 群组任务分解：角色分工如何映射到 goal_plan_task DAG | [MetaGPT](https://arxiv.org/abs/2308.00352)（SOP 流水线：PM→架构→工程师→QA，角色间以标准化产物交接）；[ChatDev](https://arxiv.org/abs/2307.07924)（phase-based 群组聊天流水线） | `goal_plan_task` 增加可选 `assigned_role`（如 researcher/coder/reviewer）；**默认单角色路径零改动**——不填 assigned_role 即现有单受管 Run 行为，群组是 opt-in |
 | W4 | 审批/授权边界 | 群组治理：多成员下的审批归因、预算分摊、权限矩阵 | [MultiAgentBench](https://arxiv.org/abs/2503.01935)（协调/竞争评测，含 Coordination 语义指标）；[Communication-Centric Survey §5.5](https://arxiv.org/abs/2502.14321)（通信攻击面：成员被注入后经消息污染群组的风险） | ① 审批门记录 `requested_by`（成员归因），群组成员不得绕过审批门互相授权；② 预算按 goal 整体计（不按成员分摊，避免成员间博弈），成员级 token 用量只做观测字段；③ 授权矩阵按"角色×工具"定义，为 W8 反方评审角色（A3）预留 reviewer 角色位 |

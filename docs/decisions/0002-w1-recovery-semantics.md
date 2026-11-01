@@ -42,9 +42,9 @@ W1 研究项要求用独立 demo 建立「持久化调度与恢复」的设计�
 
 ## 对设计文档的修订
 
-- brief-plan §5.2 规则 2：回执粒度明确为「期次级 + 步骤级」两级（是否已更新：**否，待本记录转"已采纳"后由 @dev 走 PR 修订**）
-- brief-plan §4.4 `goal_run`：补充 `fencing_token`、`lease_expires_at`、`claim_owner` 字段；`goal_receipt` 从 `receipt_json` 字段升格为独立幂等回执表（是否已更新：否，同上）
-- brief-plan §12.2 W1 落点：确认 `goal_event.actor_agent_id` 采纳，且群组消息需独立持久化表（是否已更新：否，同上）
+- brief-plan §5.2 规则 2：回执粒度明确为「期次级 + 步骤级」两级；规则 4/5 细化 `outcome_unknown` 与恢复扫描语义，新增规则 6（fencing 写保护）/7（外部 effect 台账第二 oracle）/8（六性质+FI+liveness 验收清单）（是否已更新：**是**，@dev 2026-11-01 PR）
+- brief-plan §4.4 `goal_run`：补充 `fencing_token`、`lease_expires_at`、`claim_owner`、`attempts` 字段与显式状态枚举；`goal_receipt` 从 `receipt_json` 字段升格为独立幂等回执表；新增 `goal_group_message`、`goal_effect_ledger`；`goal_event` 增 `actor_agent_id`（是否已更新：**是**，同 PR）
+- brief-plan §12.2 W1 落点：确认 `goal_event.actor_agent_id` 采纳、群组消息独立持久化表，定稿措辞「语义统一、锚点独立」（是否已更新：**是**，同 PR）
 
 ## 文献复核结论（@research，2026-11-01）
 
@@ -61,5 +61,5 @@ W1 研究项要求用独立 demo 建立「持久化调度与恢复」的设计�
 ## 后续动作
 
 - [x] W1 文献精读（durable execution 方向 4 篇 + DeepSeek super-agent）结论合入本记录，转「已采纳」（@research，2026-11-01）
-- [ ] 转已采纳后走 PR 修订 brief-plan §4.4/§5.2/§12.2 并留痕（@dev）
+- [x] 转已采纳后走 PR 修订 brief-plan §4.4/§5.2/§12.2 并留痕（@dev，2026-11-01）
 - [ ] 平台仓库落地时按本记录定义 goal_* schema 与恢复扫描实现（harness-hub 开发，待 @user 回公司内网后启动）

@@ -4,9 +4,13 @@
 
 ## 当前阶段
 
-Phase 1 W1 进行中（@user 2026-11-01 下令启动 W1–W2 研究/demo 循环；harness-hub 平台侧开发待回公司内网）。当前：recovery demo 已跑通、0002 已采纳（文献合入完成）；W1/W2 文献线达标（8 篇 2026H2 论文归档、7 篇精读 + DeepSeek Super-agent 精读）。下一步：@dev 走 PR 修订 brief-plan §4.4/§5.2/§12.2，随后进入 W2 记忆蒸馏 demo。
+Phase 1 W1 进行中（@user 2026-11-01 下令启动 W1–W2 研究/demo 循环；harness-hub 平台侧开发待回公司内网）。当前：recovery demo 已跑通、0002 已采纳、brief-plan §4.4/§5.2/§12.2 设计修订已按 0002 落稿；W1/W2 文献线达标（8 篇 2026H2 论文归档、7 篇精读 + DeepSeek Super-agent 精读）。下一步：进入 W2 记忆蒸馏 demo（决策记录从 0003 续编）。
 
 ## 进度日志（倒序）
+
+### 2026-11-01（brief-plan 设计修订）
+
+- **[dev] brief-plan 按 [decisions/0002](decisions/0002-w1-recovery-semantics.md)（已采纳）完成设计修订**（PR 中）：§4.4 领域模型——`goal_run` 状态/认领/租约/fencing 字段定稿、`goal_receipt` 两级幂等回执独立成表、新增 `goal_group_message`（锚点独立）与 `goal_effect_ledger`（第二 oracle）、`goal_event.actor_agent_id` 采纳；§5.2 规则 2/4/5 细化 + 新增规则 6（fencing 写保护）/7（外部 effect 台账对账）/8（六性质+FI+liveness 恢复语义验收清单）；§12.2 W1 落点定稿为「语义统一、锚点独立」。三处均带修订留痕。
 
 ### 2026-11-01（W1 文献线完成）
 

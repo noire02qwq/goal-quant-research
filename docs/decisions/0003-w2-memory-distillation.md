@@ -52,9 +52,10 @@ W2 文献精读（2026-10 四篇新工作）把记忆蒸馏的两个未决问题
 
 ## 对设计文档的修订
 
-- brief-plan.md §5.4 记忆蒸馏：主候选升级为 SEPM+CALM 双主线 + HaMo 格式，落三 gate/生命周期/16KB 顺序语义（是否已更新：**否，待本记录转已采纳后走 PR**）
-- brief-plan.md §12.2 W2 群组记忆：scope 三元组 + 准入 gate 语义，随 §5.4 一起修订（是否已更新：**否**）
-- brief-plan.md §5.1 有界摘要协议：补"gate 先于 packing、挤出≠拒绝"（是否已更新：**否**）
+- brief-plan.md §5.4 记忆蒸馏：主候选升级为 SEPM+CALM 双主线 + HaMo 格式，落三 gate/生命周期/16KB 顺序语义（是否已更新：**是，2026-11-01 PR**）
+- brief-plan.md §12.2 W2 群组记忆：scope 三元组 + 准入 gate 语义，随 §5.4 一起修订（是否已更新：**是，同上 PR**）
+- brief-plan.md §5.1 有界摘要协议：补"gate 先于 packing、挤出≠拒绝"（是否已更新：**是，同上 PR**）
+- brief-plan.md §4.4 `goal_memory_digest` 字段：增 lifecycle/valid_until/superseded_by/scope/author_agent_id（是否已更新：**是，同上 PR**）
 
 ## 文献复核结论（@research，2026-11-01）
 
@@ -77,6 +78,6 @@ W2 文献精读（2026-10 四篇新工作）把记忆蒸馏的两个未决问题
 ## 后续动作
 
 - [x] @research 复核 W2 文献精读与本记录的一致性，合入后转「已采纳」（@research，2026-11-01）
-- [ ] @dev 走 PR 修订 brief-plan §5.1/§5.4/§12.2（带留痕；注意补 coverage 阈值为实例化参数的说明）
+- [x] @dev 走 PR 修订 brief-plan §5.1/§5.4/§12.2（带留痕；注意补 coverage 阈值为实例化参数的说明）（2026-11-01，连带 §4.4 字段与 safety/state gate 简化项注明）
 - [ ] AWM workflow 归纳迁移性 spike：等 T1 回测轨迹数据（W3+，依赖回测链路）
 - [ ] W3 群组记忆 demo：共享/私有注入策略交互版（scope 字段本 demo 已备）

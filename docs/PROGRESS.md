@@ -4,9 +4,13 @@
 
 ## 当前阶段
 
-Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环；harness-hub 平台侧开发待回公司内网）。当前：W1/W2 文献线达标（8 篇 2026H2 论文归档、7 篇精读 + DeepSeek Super-agent 精读）；W1、W2 demo 均合入 main，决策记录 [0002](decisions/0002-w1-recovery-semantics.md)、[0003](decisions/0003-w2-memory-distillation.md) 均已采纳（W1 设计修订 PR #4 已合入）。下一步：@dev 走 PR 修订 brief-plan §5.1/§5.4/§12.2（依据 0003），随后进入 W3（角色分工×DAG + 群组记忆注入策略）。
+Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环；harness-hub 平台侧开发待回公司内网）。当前：W1/W2 文献线达标（8 篇 2026H2 论文归档、7 篇精读 + DeepSeek Super-agent 精读）；W1、W2 demo 均合入 main，决策记录 [0002](decisions/0002-w1-recovery-semantics.md)、[0003](decisions/0003-w2-memory-distillation.md) 均已采纳（W1 设计修订 PR #4 已合入）；W2 设计修订 PR 走完后三件套闭环。下一步：进入 W3（角色分工×DAG + 群组记忆注入策略）。
 
 ## 进度日志（倒序）
+
+### 2026-11-01（brief-plan 按 0003 设计修订）
+
+- **[dev] brief-plan 按 [decisions/0003](decisions/0003-w2-memory-distillation.md)（已采纳）完成设计修订**（PR 中）：§4.4 `goal_memory_digest` 增 lifecycle/valid_until/superseded_by/scope/author_agent_id 字段 + HaMo 三元组格式；§5.1 补 turn_context 记忆组装四步顺序（gate 先于 packing、挤出≠拒绝）；§5.4 主候选升级 SEPM+CALM 双主线（生命周期状态机、可计算晋升判据、TTL 第二通道、组装顺序、隐式沉淀须过 gate），含 @research 两条校准——coverage ≥0.30 为本项目实例化参数（HaMo 原文无固定阈值，机制为互补边际覆盖贪心+knee point）、SEPM safety/state-verification 两道 gate 未纳入（state 由回测/数据校验承担，safety 留平台侧）；§12.2 W2 群组记忆落点转「已定稿」（scope 三元组 + 准入 gate + 共享/私有注入规则）。四处均带修订留痕。
 
 ### 2026-11-01（0003 转已采纳）
 

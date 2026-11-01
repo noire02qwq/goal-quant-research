@@ -1,0 +1,517 @@
+# 金融领域长期目标自主智能体 —— 设计方案
+
+> 日期：2026-10-26 ｜ 项目：AgentStudio（harness-hub）｜ 周期：两阶段约 10 周（第 5 周、第 10 周各一次成果汇报）
+>
+> 本文档覆盖：思路溯源（调研借鉴）→ 总体设计 → 执行协议与治理 → Phase 2 测评优化闭环 → 创新功能 → 示例策略模板 → 数据模型与落地路线。
+
+---
+
+## 1. 需求原文与解读
+
+**第一阶段（W1–5）：长期目标管理与自主执行**
+
+建设从用户提出目标、制定策略到代码生成、定时执行和结果交付的完整能力：
+
+- 解析用户目标、策略与约束 → 形成评价指标、任务拆解和执行计划
+- 智能体自主编写、测试、执行和调试金融数据处理、指标分析及回测代码
+- 周期任务、交易日调度、任务依赖、异常处理机制
+- 持久保存目标、策略、代码版本和执行进度；跨会话跟进、中断恢复、多目标独立运行
+- 权限、资源预算、人工审批、暂停/恢复/终止控制
+- 目标工作台：执行计划、任务状态、运行结果、历史记录
+
+汇报场景：完整金融场景演示"提交目标与策略→生成代码→验证运行→创建定时任务→持续交付结果"，外加任务失败修复、服务重启恢复、用户调整目标后的执行。
+
+**第二阶段（W6–10）：效果测评与策略自主优化**
+
+- 金融策略测评体系：历史回测、模拟跟踪、基准对比、样本外验证
+- 按周期评价收益、回撤、波动、交易成本、信号有效性；分析目标偏差并生成报告
+- 智能体根据测评结果提出改进假设，自主调整参数、策略或代码
+- 新旧策略实验验证，按评价标准和授权范围决定是否应用
+- 策略版本追踪、效果对比、变更审批、回退
+- 动态调整执行计划；识别目标达成、持续无改善、预算耗尽、风险约束触发等状态
+- 工作台展示策略演进、实验结果、决策依据
+
+汇报场景：同一金融目标多轮"执行—测评—分析—优化—验证"运行记录、新旧策略对比、可复现验证、优化无效时保留原策略/回退/请求人工介入。
+
+### 1.1 核心设计判断
+
+| 判断 | 结论 |
+|---|---|
+| 本质 | 一个**状态机驱动 + 调度触发 + 测评闭环**的长程 Agent 系统，不是更强的聊天机器人 |
+| 长程关键 | 上下文每轮重建且有界，权威状态在数据库，不依赖会话历史存活 |
+| 平台合规 | 必须走 Cordis 插件边界，复用平台调度/Runtime/审批/产物协议，不造第二套执行内核 |
+| 领域无关性 | 引擎不感知"交易日""夏普比率"；金融语义全部在领域层 profile，保证可扩展 |
+
+---
+
+## 2. 平台现状盘点（可直接复用的地基）
+
+| 能力 | 现状 | 在本设计中的角色 |
+|---|---|---|
+| Cordis 插件架构 | 强制插件化；`agent.tools / agent.skills / agent.instructions / agent.turn_context / conversation.view / site.navigation / http.router` 等贡献点 | 新功能落地形态的全部接口 |
+| 调度 | `workspace-automation` 插件：DB 原子认领 + lease 心跳 + fencing token + occurrence 幂等，`interval/cron/event` 三型，多节点安全，含 recovery | 定时执行地基；扩展 `trading_day` 日历类型 |
+| 执行引擎 | DSH Runtime 会话 + 沙箱（local/AIO/THS 远程）+ S3 checkpoint + Artifact 协议 + `outcome_unknown` 语义 | 智能体写代码/跑回测的执行底座；天然支持中断恢复 |
+| 金融数据 | `market-research` 插件（行情/K线/指标/回测审计/前视偏差 lint/双均线验证，公开导出 `MarketDataProvider` 协议与图表组件）；`/api/financial/*`（资产注册表、行情数据点、不可变口径 calibers） | quant-research 消费其公开契约；测评证据链复用资产注册表 |
+| 治理编排 | WorkProject/WorkTask 全家桶：Attempt、PlanItem、审批 Inbox、投递 outbox、风险结果 | 审批/预算/风险控制的模式参照 |
+| 评测 | Agent Eval：用例/批次/对比/趋势分类 | Phase 2 测评体系的模式参照 |
+| 记忆 | memory 插件：`goal`、`work_summary` fact 类型 + Prior Work Recall；MySQL ngram 全文索引（支持中文） | 执行记忆蒸馏的存储与召回 |
+| 渠道 | channel 插件（飞书/Slack/Telegram…） | 周期报告推送 |
+| 金融工作台验收 | `seed_financial_workbench_acceptance.py` 已存在 fixture | 平台正朝金融场景演进，本功能与其同向 |
+
+**平台没有的（即本功能新建）**：Goal 领域模型与状态机、计划 DAG、策略代码版本链、交易日历调度、目标进度持久化与恢复、测评驱动优化闭环、目标工作台。
+
+---
+
+## 3. 调研借鉴（四个参考项目的机制映射）
+
+> 调研对象：Microsoft RD-Agent、vnpy(VeighNa)、NousResearch hermes-agent、CopilotKit openmuse（用户所指 openmuse 为 GitHub 量化定位候选缺失后最接近的长程 agent 项目；hermes 同理取 hermes-agent）。
+
+| 来源 | 借鉴机制 | 落到本设计的位置 |
+|---|---|---|
+| **RD-Agent** | RDLoop（propose→coding→running→feedback）研究循环 | **Phase 2 策略迭代循环的直接原型**（§8.2） |
+| | 失败跳 feedback 不终止循环（`skip_loop_error`） | 执行协议的韧性规则：回测报错生成修复任务重进循环 |
+| | 按 loop/step 持久化会话、任意步恢复 | GoalRun/GoalEvent/代码版本链 = 等价物；中断恢复从最近一致状态继续 |
+| | workspace checkpoint 沉淀代码版本，历史实验进入下轮上下文 | GoalCodeVersion 链 + S3 artifact；top-k 历史实验摘要注入 propose 上下文 |
+| | 多臂老虎机自适应选研究方向 | B 组扩展：实验预算分配（§9） |
+| | 因子-模型交替优化、多臂调度（RD-Agent(Q)，ARR 约为经典因子库 2 倍） | A8 因子库 + B 组组合优化扩展的依据 |
+| **vnpy** | 策略模板（CtaTemplate：parameters/variables 白名单 + on_bar 回调 + 引擎注入） | **回测框架基座**：`GoalStrategyBase` 薄封装控制模型 API 面 |
+| | 回测/实盘双引擎复用同一策略类（`get_engine_type` 分支） | 回测→模拟盘→（远期）实盘零改码切换的结构保证 |
+| | 状态快照 JSON + 启动"回放历史→还原状态→再订阅"恢复 | 目标任务状态恢复协议的参照 |
+| | Datafeed/Datastore 适配器抽象 | quant-research 数据服务适配器协议 |
+| | vnpy.alpha 多因子模块（4.0，受 Qlib 启发） | 因子库的进阶参照 |
+| **hermes** | agent 自管记忆 + 周期蒸馏（nudge）；经验→技能沉淀 | **Run 收尾记忆蒸馏**：每期生成执行摘要+教训写入 memory facts；稳定经验**隐式沉淀为目标私有技能**（本地装载，不走 SkillHub 送审，形态同 agent-management/application-management 内部技能） |
+| | cron + 持久化状态模块 + startup watchdog 组合 | 无人值守调度的工程样板；恢复扫描（孤儿 Run 清理） |
+| **openmuse** | SQL lease 协调多 worker 并恢复被中断任务 | 与平台 `workspace-automation` 的 claim/lease/fencing 幂等同构——直接复用，文档互为佐证 |
+| | durable plan 的 approvals/receipts 门控 | 任务回执（result_json+产物指针）；重试先查回执防重复执行 |
+| | **结果不确定时不做隐藏重试** | 金融级执行安全：超时/中断标记 `outcome_unknown` → 显式恢复任务，绝不静默重跑（重复下单=真金白银） |
+| | 周期 Goal 巡检 + 告警去重 + 失败退避 | 巡检任务类型（数据源可用性/模拟盘持仓偏离/目标偏差） |
+
+---
+
+## 4. 总体设计
+
+### 4.1 定位与插件分解（已确认）
+
+**通用"长期目标自主智能体"引擎 + 金融领域层**，两个新插件，通过公开契约通信：
+
+```
+plugins/
+├── goal-agent/          # 通用长期目标引擎（市场无关）
+│   ├── src/server/       # Goal/Plan/Task/Run 领域模型与状态机、调度触发、
+│   │                     # 受管 Run 协议、turn_context 组装、控制 API、恢复扫描
+│   ├── src/client/       # 目标工作台（导航入口 + 列表 + 详情四区）
+│   ├── src/runtime/      # （如需）runtime 侧贡献
+│   ├── migrations/       # 插件自有迁移（goal_* 表）
+│   └── tests/
+└── quant-research/      # 金融领域层插件（首个领域 profile）
+    ├── 交易日历（A股 profile：节假日/周末顺延）
+    ├── 金融数据服务（复权日线、基准指数；DataFeed 适配器协议）
+    ├── 策略运行规范（GoalStrategyBase、vnpy 回测封装、指标计算库）
+    ├── 策略测评协议实现（指标口径 → goal-agent 评价维度）
+    ├── 示例策略模板（T1–T4 内置资产）与策略演进面板
+    └── migrations/（quant_* 表：日历缓存、因子库等）
+```
+
+**边界理由**：goal-agent 不知道什么是"交易日"和"夏普比率"；quant-research 不知道调度和状态机。market-research 保持不动，quant-research 只消费其公开导出（`MarketDataProvider` 协议、`@agentstudio/market-research/chart`），不引用其内部源码——符合 pluginization 协议"插件之间只能通过公开契约通信"。
+
+**领域 Profile 契约**（goal-agent 定义的公开贡献点，quant-research 是首个实现者）：
+
+```json
+{
+  "type": "goal.domain_profile",
+  "id": "finance.a-share",
+  "calendar": "trading_calendar_factory",     // 下一个执行时点查询
+  "task_types": ["backtest", "paper_track", "evaluation", "report"],
+  "eval_dimensions": [{"name": "max_drawdown", "direction": "lower", "default_bound": 0.15}],
+  "risk_rules": [{"type": "drawdown_limit", "action": "pause+approval"}],
+  "report_template": "periodic_report_factory",
+  "terminal_predicates": {"stalled": "consecutive_no_improvement>=3"}
+}
+```
+
+换市场（美股 profile）或换领域（基本面研究 profile）= 新 profile 插件，引擎零改动。
+
+### 4.2 执行形态（已确认：方案 B）
+
+**目标状态机 + 调度触发的受管 Run**。目标/计划/任务/代码版本/进度全部落插件数据库（权威源）；调度器到点创建一次性的短受管 Run；每轮通过 `agent.turn_context` 注入有界状态摘要（≤16KB：目标、计划进度、上期回执、记忆召回、预算余量、审批门状态），Run 结束通过工具把回执写回数据库。交互会话与目标**关联但不等同**。
+
+排除项：方案 A（目标即长期会话——数周级上下文膨胀、clarification 挂起使无人值守不可控）；方案 C（独立编排 Worker——绕开平台 trace/审批/沙箱/租户隔离，违反统一 DSH Runtime 边界）。
+
+### 4.3 目标状态机
+
+```
+draft → planning → awaiting_approval → running ⇄ paused
+                                          │
+        ┌───────────┬─────────────┬──────┴────────┬──────────────┐
+    achieved     stalled   budget_exhausted  risk_triggered  cancelled
+```
+
+- `planning`：智能体解析目标 → 产出策略声明+评价指标+计划 v1 → `awaiting_approval`（**计划审批必经**，对应 mission"人工审批"）
+- `running` 中可转 `paused`（用户手动或风险约束触发）；恢复从**下一个未完成任务**继续，已完成的期次不重跑（幂等由调度层 occurrence 键保证）
+- 终态四分支 = mission Phase 2 要求：目标达成 / 持续无改善 / 预算耗尽 / 风险约束触发
+- `stalled` / `risk_triggered` 判据由领域 profile 提供（引擎只提供钩子）
+
+### 4.4 领域模型（goal-agent 插件自有表，全部带租户边界）
+
+| 实体 | 关键字段 | 说明 |
+|---|---|---|
+| `goal` | status、kind(profile id)、budget_json、description、bound_agent_id | 一个目标一行；多目标=多行独立运行 |
+| `goal_strategy` | 策略逻辑、约束（风险偏好/禁止操作）、**评价指标定义**（名称/方向/阈值/权重） | 从用户输入解析生成，人工可编辑；Phase 2 的评判依据 |
+| `goal_plan` | version、任务 DAG(JSON)、generated_by(run_id)、approval_status | 计划有版本，重规划产生 v2/v3 |
+| `goal_plan_task` | type(code/schedule/eval/report/approval/patrol)、schedule_spec、depends_on、status、last_run_id | DAG 节点；schedule 型带 cron 或 `trading_day` 规则 |
+| `goal_run` | task_id、run_source(scheduled/manual/recovery)、agent_run_id、receipt_json、status(含 outcome_unknown) | 每次受管 Run 执行记录，关联平台 AgentRun |
+| `goal_code_version` | kind(strategy/data)、S3 artifact 指针、parent_version、test_status | 智能体自写代码版本链；回测报告绑定具体版本 |
+| `goal_event` | 事件流（状态流转/审批/异常/恢复/决策） | 工作台时间线 + 全程可追溯审计底座 |
+| `goal_memory_digest` | run_id、摘要文本、教训、嵌入/关键词 | 记忆蒸馏产物（另写一份进 memory facts 供召回） |
+| `goal_experiment`（P2） | hypothesis_json、code_version、eval_before/after、verdict、reviewer_opinion、decision | RDLoop 全程记录 |
+| `goal_strategy_version`（P2） | parent、代码+配置指针、status(candidate/active/rolled_back)、eval_snapshot | 策略版本链 |
+| `goal_evaluation`（P2） | strategy_version、period、eval_kind、metrics_json、verdict_per_metric、evidence[]、**trial_count、effective_trials、psr、dsr** | 不可变测评快照；去膨胀字段由试验账本计算（待 W6 定稿） |
+| `goal_trial_ledger`（P2，新增） | goal_id、experiment_id、code_version、window、returns 指针(S3)、is_design_window | **每一次**候选回测都入账（含被否决者），DSR/有效试验数/PBO 只从账本计算；不可删改 |
+
+MySQL 规范遵循：无外键/CHECK/触发器，关系字段显式索引，迁移经 `EXPLAIN` 门禁；插件迁移归插件 `migrations/` 自管。
+
+---
+
+## 5. 执行协议、调度与治理（Phase 1 核心）
+
+### 5.1 一次"期次执行"的完整协议
+
+```
+调度器(交易日 08:30)                     Runtime(DSH)                      goal-agent 服务端
+    │ 创建 GoalRun(claim/lease/fencing)      │                                  │
+    ├─ 受管 Run 提交 ───────────────────────→│ turn_context 注入:               │
+    │                                       │  目标+策略+计划进度               │
+    │                                       │  上期结果摘要 + top-k 记忆召回     │ ← hermes 蒸馏记忆
+    │                                       │  当前代码版本 + 本期任务           │
+    │                                       │  预算余量 + 审批门状态            │
+    │                                       │ agent 执行:                      │
+    │                                       │  goal_read_context 工具(按需细读)  │
+    │                                       │  bash 沙箱: vnpy 回测/数据处理     │
+    │                                       │  quant_run_backtest 结构化工具 ──→│ 标准化统计采集
+    │                                       │  goal_write_receipt 幂等回执 ────→│ result_json+产物指针
+    │                                       │  goal_report_progress ──────────→│ 状态机流转+事件流
+    │                                       │  goal_request_approval(可选) ───→│ 挂起→审批→同一 Run 继续
+    │ ← 终态回执 ───────────────────────────│                                  │
+    ├─ 记忆蒸馏子步骤 → memory facts + goal_memory_digest                       │
+    ├─ 巡检任务(数据源/持仓偏离/目标偏差)                                        │
+    └─ 计划下一期 occurrence(幂等键)                                            │
+```
+
+**执行工具组**（`agent.tools` 贡献，group `goal`，仅 goal 绑定任务装配）：
+
+| 工具 | 作用 |
+|---|---|
+| `goal_read_context` | 按需读取完整目标状态/计划/历史回执（turn_context 只放摘要，细节按需） |
+| `goal_write_receipt` | 幂等写回执（task_id+occurrence 键去重） |
+| `goal_report_progress` | 上报任务状态变化（含失败原因），驱动状态机 |
+| `goal_request_approval` | 挂起 Run 请求人工审批（复用平台 user-question continuation 语义） |
+| `goal_update_plan` | 提交计划修订（产生计划 v2，进审批流） |
+| `quant_run_backtest` | 结构化回测：指定代码版本+窗口 → 沙箱跑 vnpy → 标准化统计回传（quant-research 提供） |
+| `quant_get_calendar` / `quant_fetch_history` | 交易日查询 / 复权行情拉取（缓存到任务文件存储） |
+
+### 5.2 关键执行规则（借鉴采纳的落点）
+
+1. **上下文每轮重建、总量有界**：turn_context 由服务端组装；细节靠工具按需读——会话膨胀不影响长程运行（RD-Agent 每轮重建 loop 上下文同款思路）
+2. **回执先查再执行**：重试/恢复路径先查回执，已成功则跳过（openmuse receipts）
+3. **失败不终止**：任务失败 → 状态机生成修复任务重进循环；连续 N 次修复失败升级人工介入事件（RD-Agent 韧性）——即 mission 要求的"任务失败修复"演示能力
+4. **结果不确定不隐藏重试**：Run 超时/连接中断 → `outcome_unknown` → 恢复扫描决定重跑或人工确认（openmuse + 平台 Runtime 语义同构）
+5. **恢复扫描**：服务启动时扫描 lease 过期的"孤儿 Run"，标记或重新入队（hermes watchdog + openmuse SQL lease + 平台 recovery 同构）
+
+### 5.3 调度层（扩展而非重造）
+
+- 复用 `workspace-automation` 的 DB 原子认领 + lease 心跳 + fencing + occurrence 幂等（多节点安全）
+- **交易日历**：`schedule_spec` 新增 `trading_day` 类型——quant-research 的 A股 profile 提供日历查询（节假日闭市自动顺延到下一交易日）；引擎只调 profile 的"下一个执行时点"，不内嵌市场知识
+- **任务依赖**：DAG 拓扑就绪检查（上游回执齐全才入队）；`depends_on` 支持跨期（"每周五调仓依赖本周每日数据任务"）
+- **异常处理**：失败退避（巡检/修复类指数退避）、告警去重（同类未处理事件不重复推送）
+
+### 5.4 记忆与经验技能（hermes 采纳，已确认形态）
+
+- **Run 收尾记忆蒸馏**：每期结束由模型生成"本期执行摘要+关键教训"，写 `work_summary` facts（memory 插件 MySQL ngram 全文索引，中文友好）+ `goal_memory_digest` 表；下期 turn_context 注入 top-k 相关召回
+- **经验技能隐式沉淀**：同类任务重复稳定后蒸馏为可复用技能，**存 goal 插件自有存储（目标私有），运行时装载进该目标的 Run material，版本+哈希随 Run 冻结**——不走 SkillHub 送审、不进技能库、不进通用选择目录，形态同 agent-management / application-management 的内部技能
+
+### 5.5 治理：权限、预算、审批、控制
+
+| 能力 | 设计 |
+|---|---|
+| 权限 | Goal 归属 owner+租户（+团队，对齐 ACL user/team grantee）；受管 Run actor claims 走平台 managed_run 契约；所有工具读写经服务端校验 goal 所有权 |
+| 预算 | `budget_json`：token 上限/单期与总预算/最长运行天数；每期 Run 前查余量，耗尽→`budget_exhausted`（走完当前期，不硬切断） |
+| 审批门 | 三类：**计划审批**（planning→running 必经）、**应用审批**（P2 新策略上线）、**敏感操作审批**（工具级 `goal_request_approval`，挂起 Run、审批后同一 Run 继续）；未决审批自动挂起对应任务 |
+| 控制 | pause（当前期完成后暂停）/ resume（从下一未完成任务继续）/ terminate（终止排队任务+终态）——全部是状态机显式转换，写 GoalEvent 审计 |
+
+### 5.6 vnpy 集成（quant-research）
+
+- 沙箱内 `pip install vnpy`（核心包轻量，不含 UI/gateway；生产镜像已有内网 pypi 代理链路）
+- `GoalStrategyBase` **薄封装**：`parameters`/`variables` 白名单 + `on_bar` 回调 + `buy/sell/short/cover` 模拟下单——控制模型面对的 API 面，不让模型重新发明模板
+- 数据链路：行情适配器（akshare/tushare/内部行情）→ Datafeed 适配器 → vnpy BarData → 回测引擎；日线缓存落任务文件存储（S3 权威）
+- A股 profile 封装复权/涨跌停/T+1 约束进回测配置；市场无关架构留美股 profile 位
+- 测评统计：vnpy 回测 statistics（收益/回撤/夏普/盈亏比/成本）直接采集 + 平台侧统一口径补充（成本拖累、信号有效性）
+- 回测与模拟盘复用同一策略类（vnpy `get_engine_type` 分支）——模拟→实盘零改码的结构保证
+
+---
+
+## 6. Phase 2：测评体系与策略自主优化闭环
+
+### 6.1 测评快照（GoalEvaluation）
+
+每周期（周度/月度，trading_day 调度）产出**不可变快照**：
+
+```
+GoalEvaluation {
+  strategy_version, period, eval_kind: backtest | paper | benchmark | oos,
+  metrics: {
+    returns, max_drawdown, volatility, sharpe, win_rate,
+    turnover, cost_drag,           # 交易成本拖累（平台统一口径）
+    signal_hit_rate, signal_lead,  # 信号有效性（命中率/提前量）
+    benchmark_relative             # 相对基准超额
+  },
+  verdict_per_metric: {met / below / above},   # 对照 goal_strategy 评价指标定义
+  deviation_analysis,                # 模型生成的偏差归因
+  evidence: [回测报告 artifact, 净值曲线 artifact, 交易明细]   # 复用资产注册表 evidence citations
+}
+```
+
+四种 `eval_kind` 对应 mission 四项：**历史回测**（vnpy 滚动窗口）、**模拟跟踪**（paper：当日信号次日开盘价模拟成交、实盘数据回流）、**基准对比**（同窗口持有基准/等权组合）、**样本外验证**（holdout 窗口，oos 权重高于 backtest——防过拟合是测评可信度关键）。
+
+### 6.2 策略迭代循环（RD-Agent RDLoop 落地）
+
+```
+                ┌────────────────────────────────────────────┐
+                ↓                                            │
+  ①propose: 测评快照+偏差分析+历史实验摘要 → 改进假设        │
+     (每条: 动机/预期改善指标/改动范围/风险)                  │
+                ↓                                            │
+  ①b 反方评审（A3）: 挑刺智能体出具反对意见存档              │ 失败→生成修复任务
+                ↓                                            │ 重进循环，不终止
+  ②coding: StrategyVersion v(n+1)                          │
+     (parent=v(n)，代码+S3 artifact+变更说明)                │
+                ↓                                            │
+  ③running: vnpy 回测 + 样本外验证 + 影子并行（A1，若启用）   │
+                ↓                                            │
+  ④feedback: 新旧快照对比（A2 过拟合防御 gate 在此强制）      │
+     (改善=加权分提升；劣化/持平=否决并归档)                  │
+                ↓                                            │
+  ⑤decide: 授权范围内? ──是→ 自动应用(激活新版本)            │
+            └─否→ 审批门: 人工批准/拒绝/要求更多验证 ──────────┘
+```
+
+- `goal_experiment` 记录全程（假设→版本→结果→反方意见→结论→决策），工作台完整展示决策依据
+- **失败跳 feedback**：回测报错生成修复任务重进循环，连续失败升级人工
+- **版本链与回退**：`candidate → (auto|approved) → active → rolled_back`；激活/回退都是 GoalEvent 审计事件；模拟跟踪劣化可一键回退上任 active 版本
+- **终态判定**（引擎钩子 + profile 判据）：`achieved`（指标连续达标+完成声明）/ `stalled`（连续 N 期无改善，默认 3）/ `budget_exhausted` / `risk_triggered`（回撤超约束、单期亏损超限等）——stalled/风险触发自动 `paused` 并请求人工介入
+
+---
+
+## 7. 目标工作台 UI
+
+两个贡献面（`site.navigation` 资源中心入口 + `conversation.view` sidepanel）：
+
+**工作台页面**：目标列表（健康分/状态/预算/下一执行时点）→ 目标详情四区：
+
+| 区 | 内容 |
+|---|---|
+| 执行计划 | DAG 时间线（甘特/依赖图），任务状态着色，下期调度预览 |
+| 运行结果 | GoalRun 列表 → 回执详情（产物预览、指标快照卡、`outcome_unknown` 醒目标记） |
+| 策略演进（P2） | 策略进化树（A5：节点染色，悬停看假设+证据+反方意见）、新旧对比雷达/折线、实验记录 |
+| 历史与事件 | GoalEvent 时间线（恢复/审批/异常全审计，支持回放"当时看到什么数据、依据什么标准"） |
+
+**对话面板**：交互会话侧栏显示关联目标的实时状态卡片，点击跳工作台；对话里改目标，面板即时反映。对话问询（"最近为什么表现差？"）由智能体调取测评快照归因作答。
+
+---
+
+## 8. 创新功能（已确认 A 组全部纳入；A6/A8 可做简化版）
+
+| # | 创新 | 说明 | 阶段 |
+|---|---|---|---|
+| A1 | **影子策略并行模拟（shadow mode）** | 新版本与现任版本在同一模拟盘并行 2–4 周，工作台并排净值曲线，分歧收敛后审批切换 | P2 |
+| A2 | **过拟合防御强制门** | 样本外/走查验证、参数数÷样本量比、参数邻域扰动（±20% 网格找性能悬崖）、**试验账本 + Deflated Sharpe（按有效试验数去膨胀）+ PBO/CSCV**（文献依据见 §12.1 W6），做成**引擎强制 gate**而非提示词建议 | P2 |
+| A3 | **反方评审智能体** | 循环中"挑刺"角色：专查过拟合嫌疑、数据窥探、幸存者偏差，反对意见随实验存档 | P2 |
+| A4 | **市场状态（regime）分桶测评** | 按趋势/震荡/高波动分桶统计——"趋势市赚、震荡市亏"归因直接驱动假设生成 | P2 |
+| A5 | **策略进化树** | 版本树可视化，改善绿/劣化红/否决灰，悬停看假设+证据 | P2 |
+| A6 | **目标健康分** | 预算消耗+指标达成+迭代效率+风险余量合成单一分数与趋势 | P2（简化版） |
+| A7 | **周期报告自动生成 + IM 推送** | 周报/月报经 channel 插件推飞书 | P1 即可做推送骨架 |
+| A8 | **因子/信号沉淀库** | 有效信号进入目标私有因子库（附 IC/IR 证据），后续策略引用；租户级共享需审批 | P2（简化版） |
+| — | **记忆蒸馏+经验技能隐式沉淀** | 越用越懂自己的目标；技能目标私有、不污染技能库 | P1 |
+| — | **不确定结果不隐藏重试** | 金融级执行安全（openmuse + 平台 Runtime 语义同构） | P1 |
+| — | **失败即修复的韧性循环** | 服务重启/任务失败/代码报错都不中断长期目标 | P1 |
+| — | **市场无关引擎+领域 profile** | 换市场/换领域只需新 profile 插件 | P1 架构位 |
+
+**B 组远期路线图**（写入文档，不占 10 周）：多臂老虎机实验预算分配；增量回测；信号漂移检测（PSI）；风险瓶塞（连续回撤自动降仓、恢复后渐进放大）；多策略组合目标（相关性矩阵+权重再平衡）；实盘 Gateway 适配器（vnpy 双引擎同构预留）。
+
+---
+
+## 9. 示例策略模板（用户 30 分钟看懂产品）
+
+每个模板 = 预置 Goal 模板（目标描述+初始策略代码 v1+评价指标+调度规则），是 quant-research 插件内置资产，**一键创建目标跑通全流程**。
+
+### T1 双均线择时（最短路径入门）
+
+| 项 | 内容 |
+|---|---|
+| 逻辑 | MA5/20 金叉买入、死叉卖出，单标的（沪深300ETF 510300），日线 |
+| 演示 | 目标→生成代码→vnpy 回测→日报定时任务→模拟盘，全流程最短路径 |
+| 内置迭代空间 | v1 故意在震荡市频繁假信号 → 优化假设：加 MA60 趋势过滤 / ATR 止损 |
+
+### T2 ETF 动量轮动（Phase 1 主演示模板）
+
+| 项 | 内容 |
+|---|---|
+| 逻辑 | 每周五收盘按 20 日动量持有最强 3/5 只 ETF（股票/国债/黄金/原油类） |
+| 演示 | **多标的+周度 trading_day 调度+组合权重**；周期任务与依赖的样板 |
+| 内置迭代空间 | 动量窗口 20→10、加回撤止损、持仓数调整；预期真实改善 |
+
+### T3 网格交易（regime 互补对照）
+
+| 项 | 内容 |
+|---|---|
+| 逻辑 | ETF 跌 2% 买一格、涨 2% 卖一格，区间网格 |
+| 演示 | 与 T2 形成 **regime 对照**（震荡市 T3 优、趋势市 T2 优，A4 的天然素材） |
+| 内置迭代空间 | 演示"优化无效→保留原策略"和"回撤超限→风险触发暂停" |
+
+### T4 经典海龟策略（完整交易系统，新增）
+
+| 项 | 内容 |
+|---|---|
+| 逻辑 | 唐奇安通道 20 日突破入场（系统一）；**ATR 头寸管理**：Unit=1% 账户风险/(ATR×乘数)，2N 止损，每上涨 0.5N 加一单位（上限 4 单位），10 日反向突破离场；demo 简化为 4–8 只流动性 ETF 日线 |
+| 演示 | **策略≠信号**：资金管理（头寸规模/止损/金字塔加仓）进策略——vnpy 官方有海龟示例先例，评委认知成本低 |
+| 内置迭代空间 | 入场通道 20→55、N 周期、加仓单位数、趋势过滤；**参数多 → 天然演示 A2 参数敏感性与过拟合防御**；高波动回撤 → 天然演示风险触发与自动降仓/回退 |
+
+### 演示剧本
+
+**第一次汇报（Phase 1，W5）**：提交 T2 目标（一句话+约束）→ 审批计划 v1 → 智能体写代码、vnpy 回测出报告 → 建每周五调仓定时任务 → 模拟盘持续交付 3 期 → **故障注入三连**：改坏代码（失败修复）、重启服务（状态恢复）、"把回撤容忍从 15% 改到 10%"（重规划 v2 并审批）。
+
+**第二次汇报（Phase 2，W10）**：同一目标继续——周测评报告 → 假设"动量窗口缩短" → 反方评审 → 影子并行 2 周 → 进化树+对比雷达 → 审批应用 → 后续回测触发风险约束 → 自动降仓+一键回退 → GoalEvent 时间线全程回放。T3/T4 备用：优化无效保留原策略（T3）、过拟合 gate 拦截脆弱参数（T4）。
+
+---
+
+## 10. 数据模型、迁移与部署
+
+- 全部新表归两个插件 `migrations/` 自管（Cordis 插件自管迁移），前缀 `goal_` / `quant_`，带租户边界列
+- MySQL 8：无外键/CHECK/触发器；关系字段显式索引；关键查询过 `EXPLAIN` 门禁；迁移前核对实库结构
+- 大对象（代码版本、回测报告、净值曲线）走平台 Artifact/S3（权威源）；本地文件仅缓存
+- 镜像同步检查：核对 `docker/Dockerfile*` 受影响角色；插件及其 `package.json`/lib 产物进镜像；容器内验证插件注册与服务启动；记录核对依据
+- 无新增部署必填环境变量/密钥/人工步骤（复用现有 Secret Store 与调度基建）——遵循"禁止随意增加部署复杂度"
+
+**前端**：两仓（frontend + frontend-react）都要适配贡献点；插件必须走 `src` 别名导入（既有迁移缺口教训）；lib 产物与源码同提交。
+
+---
+
+## 11. 与平台边界的合规对照
+
+| pluginization 要求 | 满足方式 |
+|---|---|
+| 一个插件一项能力 | goal-agent=通用目标引擎；quant-research=金融领域层 |
+| 不引用其他插件内部源码 | 只消费 market-research 公开导出（MarketDataProvider 协议、chart 组件）与平台公开贡献点 |
+| 禁用即停 | 调度任务/工具/页面/API 均随 Cordis 注册生命周期，禁用后停止注册与执行 |
+| 卸载保留业务数据 | goal_* 表数据默认保留 |
+| UI 融入主体 | 使用平台设计 Token、Slot 挂载，不造第二套导航 |
+| 状态权威源 | 目标/计划/回执/版本全部 DB 权威；产物 S3 权威；无 local-first fallback |
+| 不新增第二套执行内核 | 执行全部走 DSH 受管 Run；RDLoop 是状态机+执行协议，不是新引擎 |
+| 权限复用 | owner/租户/团队 + managed_run actor claims + 现有审批语义 |
+
+---
+
+## 12. 里程碑映射（研究-设计-开发交替循环，两阶段 10 周）
+
+### 12.0 工作方式说明
+
+10 周不是纯线性开发：每个模块按 **研究（Spike）→ 细化设计 → 开发实现** 交替推进。约定：
+
+- **研究以独立 demo 为主体**：对一个模块或主题写最小可运行 demo 来建立理解（如"沙箱里 vnpy 能不能装、跑多快""双 worker 抢占调度怎么表现"），demo 跑通即获得该模块的设计依据。
+- **demo 位置**：研究 demo 是临时产物，放本地 scratch 目录（如 `~/Desktop/goal-agent-research/<主题>/`），**不进生产插件包**；结论沉淀为一页决策记录（写入本文档附录或 `docs/` 专项目录）+ 必要的定点测试。
+- **细化设计的触发**：研究 demo 揭示接口形状/约束后，回到本文档修订对应章节（领域模型、协议 schema、UI 交互），再进入开发；研究结论推翻本文档假设时**显式更新文档**而不是默默绕过。
+- **每周研究 = demo + 文献**：每个研究主题除写 demo 外，必须**按主题检索最新论文**（arXiv/ACM/KDD/NeurIPS/ICML/WWW 等，优先近 12–18 个月），产出一页《文献笔记》：①检索式与日期 ②3–5 篇入选论文（一句话贡献+与本项目的关系）③**方向结论**（采纳/改造/不采纳及理由）④对本文档哪一节的修订。文献笔记与 demo 决策记录同目录归档，未读原文的论文只能标注"仅摘要级"，不得当作已验证结论引用。具体各周主题、检索式与候选方向见 §12.1。
+- **每个里程碑周完成时自查**：本周研究项是否都有 demo 证据或决策记录？**是否有文献笔记与方向结论？**本周开发是否有可失败测试先行？
+
+**Phase 1（W1–5）**
+
+| 周 | 开发交付 | 研究 / Spike（独立 demo） | 细化设计产出 |
+|---|---|---|---|
+| W1 | 插件脚手架×2；goal 领域模型+状态机+迁移；基础 CRUD API | 精读 `workspace-automation` 调度层源码；demo：模拟双 worker 抢占 + 进程崩溃后 recovery 扫描恢复 | goal_* 表结构定稿；**状态机全转换表**（状态×事件→动作，含异常路径）；profile 契约字段定稿 |
+| W2 | 执行协议：turn_context 组装、goal 工具组、幂等回执、记忆蒸馏；对接调度 | demo①：最小插件贡献 `agent.turn_context`，验证 16KB 上限与轨迹 CONTEXT 呈现；demo②：手动触发最小受管 Run 走通 managed_run 契约与 actor claims 冻结 | turn_context 摘要组装协议（放什么/优先级/截断规则）；工具清单与授权矩阵；回执 schema |
+| W3 | 交易日历+`trading_day` 调度；DAG 依赖；异常处理+恢复扫描；vnpy 集成 | **（最高风险研究）**demo①：目标环境/沙箱内行情数据源可达性（akshare/tushare/内部行情），拉取指定 ETF 日线落缓存；demo②：干净容器 pip install vnpy + 最小回测跑通，测量依赖体积与耗时；demo③：GoalStrategyBase 最小子集封装，双均线策略出标准统计 | Datafeed 适配器协议定稿；日历数据来源与刷新策略；回测超时与拆批策略（依 demo② 实测）；GoalStrategyBase 接口文档 |
+| W4 | 治理（审批门/预算/pause/resume/terminate）；T1/T2 模板；工作台（列表/详情/计划/运行结果） | 验证受管 Run 场景下审批挂起-恢复语义（平台既有规则是"unattended clarification 显式失败"，需确认 `goal_request_approval` 的挂起路径）；小 demo：双前端仓贡献点适配（沿用 skill-lab 先例） | 工作台四区信息架构（线框级）；审批门交互流程；预算字段口径定义；T1/T2 模板内容定稿 |
+| W5 | T3/T4 模板；周期报告推送骨架（A7）；故障演练集成验收；**第一次汇报** | 故障注入演练脚本设计（改坏代码/重启/改目标三条路径的验证清单）；演示数据固定化方案（固定窗口与 seed，防现场翻车） | 演示剧本逐句排练稿；Phase 2 范围复核（依 Phase 1 实际进度裁剪 A6/A8 简化幅度） |
+
+**Phase 2（W6–10）**
+
+| 周 | 开发交付 | 研究 / Spike（独立 demo） | 细化设计产出 |
+|---|---|---|---|
+| W6 | GoalEvaluation 测评体系（四类 eval、快照与证据链） | demo①：用 T1 回测产出全指标快照 JSON，校准 vnpy statistics ↔ mission 指标 ↔ 平台统一口径（cost_drag/信号有效性）的计算定义；demo②：walk-forward 滚动窗口脚本验证样本外切分方法 | GoalEvaluation schema 定稿；指标口径表（公式+数据来源+边界条件）；证据链与资产注册表对接方式 |
+| W7 | 迭代循环（propose/coding/running/feedback/decide）；StrategyVersion 链；实验记录 | 精读 RD-Agent feedback 上下文构造；demo：历史实验摘要注入 propose 的提示词原型，用 T2 假数据试跑一轮假循环 | 实验记录 schema；**迭代循环各步的输入/输出提示词协议**（propose/反方/coding/feedback 各轮契约） |
+| W8 | 审批应用/回退；影子模式（A1）；过拟合防御 gate（A2）；反方评审（A3） | demo①：vnpy 同一模拟盘并行跑两个策略实例的记账方案（shadow 的核心可行性）；demo②：T4 参数 ±20% 扰动网格的算力耗时测量，定网格密度 | 影子模式的调度与对比展示设计；gate 判定阈值（参数数/样本量比、悬崖判定）；反方评审输出 schema |
+| W9 | 进化树+对比 UI（A5）；regime 分桶（A4）；健康分（A6 简化）；因子库（A8 简化）；终态判定 | 小 demo：进化树可视化组件选型（现有图表库可行性）；用 T3 调参标定 stalled/risk 终态阈值合理性 | 健康分公式；因子库 schema（IC/IR 证据字段）；终态判定阈值定稿 |
+| W10 | 全链路验收、可复现验证、历史回放演示；**第二次汇报** | 可复现验证方法研究：同一目标重放清单、证据完整性校验（回执+快照+代码版本哈希对账） | 可复现性验证报告模板；项目复盘与后续路线图更新 |
+
+### 12.1 各周文献研究主题与方向建议
+
+> 检索日期 2026-10-29。"已读摘要"= 仅阅读检索结果摘要/片段，**尚未精读全文**；每周研究时需精读入选论文并更新文献笔记。无法确认的论文编号不写入。方向结论是**初步建议**，由各周 demo+精读验证后定稿。
+
+| 周   | 研究主题                   | 建议检索式                                                                                                | 候选论文（已读摘要）                                                                                                                                                                                                                                                                                                                                                                                | 初步方向建议（落到本方案哪里）                                                                                                                                                                                                                                                                                                                                                                                    |
+| --- | ---------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| W1  | 长程任务的持久化调度与恢复          | `durable execution LLM agent checkpoint recovery`、`long-running agent reliability`                   | 本轮检索未取得有效结果（待补）                                                                                                                                                                                                                                                                                                                                                                           | 以平台 `workspace-automation` 工程实践为主；文献只用于补充"恢复语义/幂等"论据，**不阻塞设计**                                                                                                                                                                                                                                                                                                                                     |
+| W2  | 长程上下文管理、记忆蒸馏、经验→技能     | `Agent Workflow Memory`、`ExpeL`、`procedural memory agent skills survey`                              | **AWM**（Wang 等，ICML 2025，arXiv 2409.07429）：从轨迹归纳可复用 workflow 并按需注入，Mind2Web/WebArena 相对成功率提升 24.6%/51.1%；**ExpeL**（2308.10144）：无参数更新地提炼自然语言经验；**Agent Skills Survey**（过程记忆视角）与 **SoK: Agentic Skills**（获取/表示/调用/精炼框架）                                                                                                                                                                     | ① §5.4 记忆蒸馏改用 **AWM 式"workflow 归纳"**：不只存摘要，而是从成功 Run 轨迹归纳"可复用步骤序列"，下期按相似度选择性注入 ② 经验技能沉淀采用 survey 的四环节（获取/表示/调用/精炼），**精炼环节必须带版本+哈希冻结**（与现设计一致）③ 风险：AWM 在网页导航验证，**金融代码任务迁移性未知**，W2 demo 需用 T1 轨迹实测                                                                                                                                                                                                   |
+| W3  | LLM 生成量化回测代码的可靠性、前视偏差  | `LLM automated quantitative backtesting benchmark`、`look-ahead bias LLM finance`                     | **BacktestBench**（KDD 2026，DOI 10.1145/3770855.3817460）：18,246 题，指出"grounded verification 与标准化指标表示"是端到端成功关键，含 AutoBacktest 多智能体基线（Summarizer/Retriever/Coder）；**Look-Ahead-Bench**（2601.13770）：用跨时期 alpha 衰减区分真预测与记忆；**What survives honest evaluation?**（2608.27734）：agent 只能经"注册校验工具"行动，使特征空间**结构性排除前视**，且这一护栏不能被统计修正替代                                                                 | ① **GoalStrategyBase 的 API 面设计目标明确为"前视偏差构造性不可能"**（只暴露截至当前 bar 的数据），而非靠提示词/事后 lint——与 §5.6 薄封装思路一致，补充为硬约束 ② 复用 market-research 既有前视 lint 作第二道防线 ③ 标准化指标表示：指标计算统一走 quant-research 指标库，**不让模型自己写指标公式**（对应 BacktestBench 结论）④ 模型自身的时间泄露（训练数据含测试期）在 A 股 2025 之前窗口会污染"信号类"任务，建议样本外窗口**取晚于模型知识截止的时段**，T1–T4 为规则型策略风险较低                                                                                    |
+| W4  | 审批/人在回路与授权边界           | `human-in-the-loop approval LLM agent autonomy levels`                                               | 本轮检索未取得有效结果（待补）                                                                                                                                                                                                                                                                                                                                                                           | 以平台既有审批语义为准；文献用于"自动应用 vs 需审批"授权分级措辞，**不阻塞设计**                                                                                                                                                                                                                                                                                                                                                      |
+| W5  | 金融 agent 的真实评测与故障/风格差异 | `live trading benchmark LLM agent`、`Agent Market Arena`                                              | **LiveTradeBench**（2511.03628）：50 天实时评估 21 个 LLM，**高通用榜单分不等于交易表现**；**Agent Market Arena**（WWW 2026）：agent 框架对行为的影响大于底座模型；**Strat-LLM**（2605.06024）：A 股/美股 2025 live-forward，规则约束强度的效用**随市场状态变化**，标准模型陷入"高胜率陷阱"                                                                                                                                                                            | ① 汇报演示坚持**固定窗口+模拟盘 T+1 前向跟踪**（对应文献"live-forward 才可信"）② 不宣称"跑赢市场"，汇报口径为**流程可靠+证据完整** ③ 评价指标不能只看胜率（高胜率陷阱）：§6.1 指标必须同时含收益/回撤/成本拖累 ④ "严格/引导/自由"授权档位可借鉴为 Goal 的**策略修改权限档位**（只调参 / 可改逻辑 / 可改代码）                                                                                                                                                                                                          |
+| W6  | 策略测评口径与统计显著性           | `Deflated Sharpe Ratio`、`probability of backtest overfitting CSCV`、`walk-forward`                    | **Bailey & López de Prado：DSR/PBO**（经典方法）；**What survives honest evaluation?**（2608.27734）：记录**每一次**候选评估（试验账本）并按试验数 N 对 Sharpe 去膨胀，实验中其测试的 LLM 发现策略均未通过诚实评估；**Effective Trial Counts for LLM-Proposed Backtests**（System report，2026-07）：LLM 候选高度相关，原始提案数高估独立试验数，用收益相关矩阵特征值估计有效试验数 M_eff；开源工具 **oos-lab**（PSR/DSR/PBO/walk-forward/Harvey-Liu haircut）可作参照                                | ① **GoalEvaluation 新增必填字段：**`trial_count`**、**`effective_trials`**、**`psr`**、**`dsr`；② 新增**试验账本**（见 §4.4 补充）：所有 propose→回测都入账，**测评永远基于全量账本**而非"最优那一次" ③ A2 过拟合 gate 升级为：样本外 + DSR + PBO/CSCV + 参数邻域扰动四项（§8）④ oos-lab 仅作**公式对拍参照**，是否引入依赖由 W6 demo 评估（小型独立项目，需核对许可与维护状态后再决定，默认自实现）                                                                                                                  |
+| W7  | LLM 驱动的研究迭代循环          | `R&D-Agent-Quant`、`QuantAgent self-improving`、`Alpha-GPT`、`AlphaEvolve`、`hypothesis tree refinement` | **RD-Agent(Q)**（2505.15155，NeurIPS 2025）：Research/Development/Feedback 循环，**Co-STEER**（任务 DAG+失败案例知识库检索）与**多臂老虎机方向调度**，相对经典因子库约 2 倍年化、少 70% 因子；**QuantAgent**（2402.03755）：内循环用知识库精炼、**外循环用真实场景检验回灌知识库**；**Alpha-GPT**（2308.00016）：ideation→implementation→review，人机交互；**AlphaEvolve**（2506.13131）：LLM 产生代码 diff + 自动评测 + 程序数据库的进化；**Arbor/HTR**（2606.11926）：持久化假设树，关联假设/产物/证据/保留集验证（已读摘要） | ① 迭代循环保持 RDLoop 骨架（§6.2）② **新增"程序数据库"思想**：策略版本链记录 parent+评测快照，propose 时按"高分+多样性"采样历史版本做上下文（AlphaEvolve/DGM 的 archive 思路），避免只看最近一次 ③ **假设树**：`goal_experiment` 增加 `parent_experiment` 与 `hypothesis_class`（参数/过滤/风控/信号四类），为进化树（A5）与老虎机预算（B 组）提供数据基础 ④ QuantAgent 的"外循环=真实结果回灌"对应我们的**模拟盘跟踪结果回流 propose**，保证优化依据不止回测 ⑤ **不采纳**：DGM 式"agent 自改自身代码"——超出授权边界且无法满足金融审批要求，仅学习其"每次修改必须经实证验证+沙箱+人工监督"的安全做法 |
+| W8  | 影子并行、反方评审、多智能体辩论       | `TradingAgents`、`multi-agent debate trading`、`alpha decay regularized exploration`                   | **TradingAgents**（2412.20138）：Bull/Bear 研究员辩论 + 风控团队 + 交易员综合，报告累计收益/夏普/回撤改善（已读摘要，注意其评测窗口与真实性需精读核实）；**AlphaAgent**（Tang 等，KDD 2025，"regularized exploration to counteract alpha decay"，仅见引用条目，**需精读确认**）；**FinAgent**（2402.18485）：工具增强+双层反思+多样化记忆检索                                                                                                                                        | ① 反方评审（A3）采用 TradingAgents 的 Bull/Bear 对抗结构，但**评审对象是"策略改动提案"而非"买卖决策"**，输出结构化 schema（过拟合嫌疑/数据窥探/幸存者偏差）② 参考 AlphaAgent 的"对新因子相对已有因子的**原创性/复杂度正则**"，作为 propose 阶段的**去重+复杂度惩罚**（需精读后定稿）③ FinAgent 双层反思 → 执行期反思（本期决策）与周期反思（多期复盘）分层，对应 `goal_memory_digest` 两个粒度                                                                                                                                         |
+| W9  | 市场状态（regime）与终态阈值      | `market regime detection LLM agent`、`Strat-LLM regime`、`alpha decay`                                 | Strat-LLM 的 regime 依赖结论（已读摘要）；regime 检测文献**本轮未检索到合格结果，W9 补检**                                                                                                                                                                                                                                                                                                                             | regime 分桶（A4）先用**规则法**（趋势：MA 斜率/ADX；波动：已实现波动分位），不引入 HMM/学习法，除非 W9 文献+demo 证明收益；终态阈值（stalled=3 期）用 T3 实测定标                                                                                                                                                                                                                                                                                          |
+| W10 | 可复现与证据完整性              | `reproducibility LLM agent experiments`、`trial ledger audit`                                         | What survives honest evaluation? 的**试验账本全量可审计**思想；其余待补                                                                                                                                                                                                                                                                                                                                    | 可复现验证 = 账本对账：回执+快照+代码哈希+**试验账本条数**四项一致；汇报时给出"试验总数与去膨胀后结论"，比单一最优曲线更可信                                                                                                                                                                                                                                                                                                                               |
+
+**文献研究产出的横向结论（将进入本文档修订）**：
+
+1. **诚实评估是比"提升收益"更重要的卖点**。多篇 2026 工作（What survives honest evaluation?、Effective Trial Counts）指出：LLM 大量试错后挑最优，若不按试验数去膨胀，"优化成功"大概率是选择偏差。→ 本方案已将"优化无效时保留原策略"列为演示场景，应进一步**把试验账本+DSR 作为引擎强制 gate**，并在汇报中主动展示"被拦下的假改善"。
+2. **前视防护要在接口层构造性保证**，统计修正不能替代（那篇论文用一个夏普 35 的"泄露预言机"证明它可以通过 DSR/PBO 检验）。→ GoalStrategyBase 只暴露截至当前时点的数据。
+3. **研究循环需要结构化持久记忆**：RD-Agent(Q) 的 Co-STEER 知识库、AWM 的 workflow 归纳、AlphaEvolve/DGM 的 archive、Arbor 的假设树，共同指向"**按结构而非按时间顺序**存历史实验"。→ `goal_experiment`/策略版本链按树/archive 组织。
+4. **真实前向跟踪优于回测**（LiveTradeBench、AMA、Strat-LLM）：→ 模拟盘跟踪是 P2 的一等公民，不是附属项。
+5. **不采纳项**：agent 自改自身框架代码（DGM）、HFT 类（QuantAgent 2509.09995）、多模态 K 线图理解（FinAgent 的图像模块）——与本项目日频、规则型、可审批的目标不符。
+
+**检索工具局限**：本轮部分检索（durable execution、HITL 审批、regime）未返回有效结果，且专业文献库（dataPro）当前订阅不可用，故上表对应项标注"待补"。对应周需重新检索后再定稿，不得以现有结论代替。
+
+**验收与测试策略**：每个能力先立可失败测试（后端 pytest 定点、插件契约测试、前端渲染测试）；里程碑以**可运行功能+实际执行记录+验证证据**为据（两次汇报要求同源）；研究 demo 证据与决策记录计入里程碑证据；演示前完成故障注入演练（失败修复/重启恢复/目标调整）与 MySQL EXPLAIN 门禁；不以"历史基线失败"代替结论。
+
+---
+
+## 13. 风险与开放问题
+
+| 风险/开放项 | 影响 | 缓解 |
+|---|---|---|
+| 生产行情数据源可用性（akshare/tushare 需外网；内网环境待确认） | 数据链路是 demo 命脉 | W1 优先验证：内部行情服务 or 数据落地缓存；market-research 公开行情接口兜底日线 |
+| vnpy 在沙箱镜像的依赖安装与体积 | 回测可用性 | 生产镜像已有内网 pypi 代理（pypi-tsinghua）；只装核心包；W3 容器内验证 |
+| 受管 Run 的执行时长上限 vs 回测耗时 | 长窗口回测可能超时 | 数据缓存+增量窗口；超长回测拆批；平台 run 超时配置核对 |
+| 双前端仓适配工作量 | UI 交付节奏 | 贡献点先行、frontend-react 侧沿用既有 outlet 模式；注意 pnpm lock 漂移（仅刷快照后还原） |
+| 模拟盘数据回流的实时性 | paper 跟踪可信度 | 首版 T+1 收盘后批处理回流即可，不做盘中实时 |
+| 多目标并发的沙箱/预算争抢 | 资源隔离 | 平台沙箱池既有约束；goal 级预算先于执行检查 |
+| stalled/risk 判据的领域合理性 | 终态误判 | 判据全部 profile 化+阈值显式可配，演示前用 T3 调参验证 |
+
+---
+
+## 附：已确认决策记录
+
+1. 插件定位：**通用引擎（goal-agent）+ 金融领域层（quant-research）**，两插件公开契约通信
+2. 市场：**市场无关设计 + A股 profile 首发**
+3. 执行形态：**方案 B——目标状态机 + 调度触发受管 Run**（turn_context 注入、工具回执）
+4. 回测框架：**vnpy**（GoalStrategyBase 薄封装 + 双引擎复用）
+5. 记忆：hermes 式蒸馏落 memory facts；**经验技能隐式沉淀目标私有，不走 SkillHub**
+6. 创新：A1–A8 全部纳入设计（A6/A8 简化版），B 组为远期路线图
+7. 示例策略：T1 双均线 / T2 动量轮动 / T3 网格 / **T4 经典海龟**
+8. 文档位置：Desktop（用户指定，不进仓库）
+9. 推进方式：**研究-设计-开发交替循环**；每模块先以独立 demo（本地 scratch，不进生产包）建立理解，研究结论以决策记录+定点测试沉淀，并回写本文档后再开发（见 §12.0）
+10. 研究要求：**每周研究主题除 demo 外必须按主题检索最新论文并出文献笔记与方向结论**（见 §12.0/§12.1）；仅读摘要的文献不得当作已验证结论
+
+---
+
+## 附：参考文献（2026-10-29 检索，除标注外均为仅摘要级）
+
+- RD-Agent(Q): *R&D-Agent-Quant*, arXiv 2505.15155（NeurIPS 2025）
+- QuantAgent: *Seeking Holy Grail in Trading by Self-Improving LLM*, arXiv 2402.03755
+- Alpha-GPT: arXiv 2308.00016；AlphaAgent（KDD 2025，仅见引用）
+- FinAgent: arXiv 2402.18485；TradingAgents: arXiv 2412.20138
+- BacktestBench: KDD 2026, doi 10.1145/3770855.3817460
+- Look-Ahead-Bench: arXiv 2601.13770；What survives honest evaluation?: arXiv 2608.27734
+- Effective Trial Counts for LLM-Proposed Backtests（系统报告，非同行评审，2026-07）
+- Bailey & López de Prado, Deflated Sharpe Ratio（2014）；Bailey 等, PBO/CSCV
+- LiveTradeBench: arXiv 2511.03628；Agent Market Arena（WWW 2026）；Strat-LLM: arXiv 2605.06024
+- Agent Workflow Memory: arXiv 2409.07429（ICML 2025）；ExpeL: arXiv 2308.10144；Agent Skills Survey；SoK: Agentic Skills
+- AlphaEvolve: arXiv 2506.13131；Darwin Gödel Machine: arXiv 2505.22954；Hypothesis-Tree Refinement: arXiv 2606.11926；KAPSO: arXiv 2601.21526

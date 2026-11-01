@@ -1,0 +1,44 @@
+# macOS
+.DS_Store
+
+# 独立仓库的 demo（自带 git 仓库与远端，见 independent-demo-apps/README.md）
+independent-demo-apps/vn-demo/
+
+# 研究 demo 本体 / 本地 scratch（按约定不入库）
+scratch/
+*.scratch
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node（独立前端 demo）
+node_modules/
+dist/
+build/
+.next/
+.turbo/
+
+# 数据缓存与日志
+data/
+*.log
+logs/
+
+# 凭证与本地配置（禁止入库）
+.env
+.env.*
+*.key
+*.pem
+credentials*
+secrets*
+
+# IDE
+.idea/
+.vscode/
+*.swp

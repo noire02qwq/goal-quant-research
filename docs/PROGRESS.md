@@ -10,7 +10,7 @@ Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环；harness-hub �
 
 ### 2026-11-02（开源项目/文档研究计划增补）
 
-- **[research] brief-plan 新增 §3.1「开源项目 / 官方文档研究计划」**（@user 指令）：纳入 **OpenMuse、OpenDots、Rakazo、Hermes** 四个对象，逐项列仓库/文档链接、二手定位、与本项目的关联点、通道恢复后的研读任务与状态；完成判据为 `docs/essay-study/<repo短名>-<年>.md` 走读笔记 → 机制映射回填 §3 主表 → 推翻假设按 CONVENTIONS §3 规则 7 留痕；优先级 **Rakazo**（§12.2 W3 群组分工/`group-handoff` 直接同构）> OpenMuse（§3 已有四条映射待源码验证）> OpenDots（先确认 CopilotKit 还是 diggerhq 仓库归属）> Hermes（自身项目，利益相关需标注）。
+- **[research] brief-plan 新增 §3.1「开源项目 / 官方文档研究计划」**（@user 指令）：纳入 **OpenMuse、OpenDots、Rakazo、Hermes** 四个对象，逐项列仓库/文档链接、二手定位、与本项目的关联点、通道恢复后的研读任务与状态；完成判据为 `docs/essay-study/<repo短名>-<年>.md` 走读笔记 → 机制映射回填 §3 主表 → 推翻假设按 CONVENTIONS §3 规则 7 留痕；优先级 **Rakazo**（§12.2 W3 群组分工/`group-handoff` 直接同构）> OpenMuse（§3 已有四条映射待源码验证）> OpenDots > Hermes（自身项目，利益相关需标注）。**OpenDots 仓库归属经 @user 确认取 `CopilotKit/OpenDots`**（同名 diggerhq/opendots 不在计划内），表内「待确认」已改为「待读」。
 - **阻塞（境外通道，2026-11-02 实测）**：`github.com`/`api.github.com` TLS reset、代理 CONNECT 503、`gh` token 失效——四个项目的 README 与源码**均未读**，§3.1 表中定位取自可访问的二手来源（必应索引 + 中文技术站），已在表头显式标注"未读源码、不得当设计依据"。按 @user 指令**本轮只本地提交、不推远端**。
 - W3 暂停令不变；harness-hub 平台侧照旧等 @user 回公司内网。
 
@@ -69,7 +69,7 @@ Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环；harness-hub �
 
 ## 阻塞 / 待办
 
-- **境外通道恢复**（@user 换 Shadowrocket 节点/刷新订阅 + `gh auth refresh -h github.com`）→ 按 [brief-plan §3.1](brief-plan.md) 依次执行 Rakazo / OpenMuse / OpenDots / Hermes 走读；其中 **OpenDots 仓库归属待 @user 确认**（CopilotKit/OpenDots 还是 diggerhq/opendots）。通道恢复前不推远端（@user 2026-11-02 指令）。
+- **境外通道恢复**（@user 换 Shadowrocket 节点/刷新订阅 + `gh auth refresh -h github.com`）→ 按 [brief-plan §3.1](brief-plan.md) 依次执行 Rakazo / OpenMuse / OpenDots / Hermes 走读；OpenDots 仓库归属已由 @user 确认为 `CopilotKit/OpenDots`，无待确认项。通道恢复前不推远端（@user 2026-11-02 指令）。
 
 - harness-hub 平台侧开发（插件脚手架、goal_* schema 落地、状态机全转换表实现侧）待 @user 回公司内网后启动。
 - @dev：走 PR 修订 brief-plan §5.1/§5.4/§12.2（依据 0003 已采纳；含 coverage 阈值实例化参数说明 + safety gate 平台侧待补）。0002 的 §4.4/§5.2/§12.2 W1 修订已随 PR #4 完成。

@@ -8,6 +8,12 @@ Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环；harness-hub �
 
 ## 进度日志（倒序）
 
+### 2026-11-02（开源项目/文档研究计划增补）
+
+- **[research] brief-plan 新增 §3.1「开源项目 / 官方文档研究计划」**（@user 指令）：纳入 **OpenMuse、OpenDots、Rakazo、Hermes** 四个对象，逐项列仓库/文档链接、二手定位、与本项目的关联点、通道恢复后的研读任务与状态；完成判据为 `docs/essay-study/<repo短名>-<年>.md` 走读笔记 → 机制映射回填 §3 主表 → 推翻假设按 CONVENTIONS §3 规则 7 留痕；优先级 **Rakazo**（§12.2 W3 群组分工/`group-handoff` 直接同构）> OpenMuse（§3 已有四条映射待源码验证）> OpenDots（先确认 CopilotKit 还是 diggerhq 仓库归属）> Hermes（自身项目，利益相关需标注）。
+- **阻塞（境外通道，2026-11-02 实测）**：`github.com`/`api.github.com` TLS reset、代理 CONNECT 503、`gh` token 失效——四个项目的 README 与源码**均未读**，§3.1 表中定位取自可访问的二手来源（必应索引 + 中文技术站），已在表头显式标注"未读源码、不得当设计依据"。按 @user 指令**本轮只本地提交、不推远端**。
+- W3 暂停令不变；harness-hub 平台侧照旧等 @user 回公司内网。
+
 ### 2026-11-01（brief-plan 按 0003 设计修订）
 
 - **[dev] brief-plan 按 [decisions/0003](decisions/0003-w2-memory-distillation.md)（已采纳）完成设计修订**（PR 中）：§4.4 `goal_memory_digest` 增 lifecycle/valid_until/superseded_by/scope/author_agent_id 字段 + HaMo 三元组格式；§5.1 补 turn_context 记忆组装四步顺序（gate 先于 packing、挤出≠拒绝）；§5.4 主候选升级 SEPM+CALM 双主线（生命周期状态机、可计算晋升判据、TTL 第二通道、组装顺序、隐式沉淀须过 gate），含 @research 两条校准——coverage ≥0.30 为本项目实例化参数（HaMo 原文无固定阈值，机制为互补边际覆盖贪心+knee point）、SEPM safety/state-verification 两道 gate 未纳入（state 由回测/数据校验承担，safety 留平台侧）；§12.2 W2 群组记忆落点转「已定稿」（scope 三元组 + 准入 gate + 共享/私有注入规则）。四处均带修订留痕。
@@ -62,6 +68,8 @@ Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环；harness-hub �
 - **[user] 指令：今天先不做 W3**。@research 手头无在途 W3 工作（W3 检索式尚未启动，无草稿产出），确认即停；W2 闭环（`867526d` → `42164cb` → `3426729`）为当前停点。恢复时间等 @user 下令。
 
 ## 阻塞 / 待办
+
+- **境外通道恢复**（@user 换 Shadowrocket 节点/刷新订阅 + `gh auth refresh -h github.com`）→ 按 [brief-plan §3.1](brief-plan.md) 依次执行 Rakazo / OpenMuse / OpenDots / Hermes 走读；其中 **OpenDots 仓库归属待 @user 确认**（CopilotKit/OpenDots 还是 diggerhq/opendots）。通道恢复前不推远端（@user 2026-11-02 指令）。
 
 - harness-hub 平台侧开发（插件脚手架、goal_* schema 落地、状态机全转换表实现侧）待 @user 回公司内网后启动。
 - @dev：走 PR 修订 brief-plan §5.1/§5.4/§12.2（依据 0003 已采纳；含 coverage 阈值实例化参数说明 + safety gate 平台侧待补）。0002 的 §4.4/§5.2/§12.2 W1 修订已随 PR #4 完成。

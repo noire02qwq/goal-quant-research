@@ -64,7 +64,7 @@
 
 ## 3. 调研借鉴（四个参考项目的机制映射）
 
-> 调研对象：Microsoft RD-Agent、vnpy(VeighNa)、NousResearch hermes-agent、CopilotKit openmuse（用户所指 openmuse 为 GitHub 量化定位候选缺失后最接近的长程 agent 项目；hermes 同理取 hermes-agent）。
+> 调研对象：Microsoft RD-Agent、vnpy(VeighNa)、NousResearch hermes-agent、CopilotKit openmuse（用户所指 openmuse 为 GitHub 量化定位候选缺失后最接近的长程 agent 项目；hermes 同理取 hermes-agent）。本表只收**已读出机制映射**的项目；要读的开源项目/官方文档清单（OpenMuse、OpenDots、Rakazo、Hermes）与执行判据见 §3.1。
 
 | 来源 | 借鉴机制 | 落到本设计的位置 |
 |---|---|---|
@@ -85,6 +85,23 @@
 | | durable plan 的 approvals/receipts 门控 | 任务回执（result_json+产物指针）；重试先查回执防重复执行 |
 | | **结果不确定时不做隐藏重试** | 金融级执行安全：超时/中断标记 `outcome_unknown` → 显式恢复任务，绝不静默重跑（重复下单=真金白银） |
 | | 周期 Goal 巡检 + 告警去重 + 失败退避 | 巡检任务类型（数据源可用性/模拟盘持仓偏离/目标偏差） |
+
+### 3.1 开源项目 / 官方文档研究计划（2026-11-02 @user 增补）
+
+> **与 §3 主表的关系**：主表只收**已读出机制映射**的项目结论；本节是**研读计划**——列出要读的开源项目与官方文档、读什么、提取什么机制、落到本文档哪一节、当前状态。走读笔记产出归 `docs/essay-study/`（该目录职责含"外部项目源码走读笔记"，命名 `<repo短名>-<年>.md`，见 [essay-study/README](essay-study/README.md)）。
+>
+> **执行前置（阻塞）**：2026-11-02 本机境外通道不可用（代理 CONNECT 503 / TLS reset，`github.com`、`api.github.com` 与 raw 均不可达，`gh` token 亦失效），按 @user 指令**本轮只落计划、不推远端**。下表「定位」列依据为可访问的**二手来源**（必应索引摘要 + 中文技术站拆解），属**未读源码 / 未读 README**，按 CONVENTIONS §3 规则 2 只作计划输入，**不得当作设计依据**；机制映射须待通道恢复后读原文回填 §3 主表。
+
+| 项目 | 仓库 / 文档 | 定位（二手来源，未读源码） | 与本项目的关联点（初步） | 研读任务（通道恢复后按序执行） | 状态 |
+|---|---|---|---|---|---|
+| **Rakazo** | [elie222/rakazo](https://github.com/elie222/rakazo)（官网 [rakazo.com](https://rakazo.com/)；协议据 [CSDN 拆解](https://blog.csdn.net/gitblog_00752/article/details/166776412) 记为 Apache-2.0，待读 LICENSE 确认） | 开源 Grok Bot 替代：持久 Bot（对话线程 / 记忆 / Routines / Artifacts 产物面板）、Pi 模型层 BYOM、**Team Computer vs Private Computer**（Docker/E2B/Daytona 沙箱，容器暂停重建后状态保留）、浏览器/终端/文件/GUI 全访问 + Take control 接管、语音通话、**Bot 间委派与短命子代理**（`child-bots.ts`、`group-handoff.ts`）、Composio/MCP/OpenAPI 连接器；TypeScript + React 19 + PostgreSQL | **与 §12.2 群组分工/交接直接同构**（`assigned_role`、群组消息、handoff）；Routines ≈ `trading_day`/cron 调度（§5.3）；Artifacts 面板 ≈ 产物交付；Take control ≈ 人工接管/审批（§5.5） | 走读 ①`group-handoff`/`child-bots` 的委派与结果回传语义（是否 consume-once、失败归属）②Routines 触发与持久化（幂等键、断点恢复）③Computer 状态在容器重建后的保留机制；结论回填 §12.2 / §5.3 / §4.4 | **未读**（二手拆解已定位源码文件路径） |
+| **OpenMuse** | [CopilotKit/openmuse](https://github.com/CopilotKit/openmuse)（MIT，官网 [copilotkit.ai/openmuse](https://www.copilotkit.ai/openmuse)；中文拆解见 [知乎](https://zhuanlan.zhihu.com/p/2088284963326185703)、[mushroom.cv](https://blog.mushroom.cv/blog/openmuse-copilotkit-personal-ai-agent-browser-workspace/)） | 自托管个人 agent 模板：持久化 Chromium 浏览器（跨任务保留 profile）、可选 Linux 工作区（终端+文件）、**持久化后台任务（SQL 租约协调）**、Gmail/Google Calendar 连接器、iOS/Android/Web 三端 | §3 主表已有四条映射（SQL lease ≈ `workspace-automation`、approvals/receipts 门控、`outcome_unknown` 不隐藏重试、周期巡检） | 走读 durable background task 的租约/回执实现与中断恢复路径、approval gating、不确定结果标记；与 `goal_run`/`goal_receipt` 对拍，差异回填 §4.4 / §5.2 | 映射已入 §3（二手）；**源码未走读** |
+| **OpenDots** | [CopilotKit/OpenDots](https://github.com/CopilotKit/OpenDots)（官网 [copilotkit.ai/opendots](https://www.copilotkit.ai/opendots)）；同名候选另有 [diggerhq/opendots](https://github.com/diggerhq/opendots)（OpenAI Dots 的模型无关自托管替代，[open-dots.dev](https://open-dots.dev/)）；中文报道 [腾讯新闻](https://news.qq.com/rain/a/20261003A03BJP00) | "always-on AI coworker" 起点模板：clone → 定义 Dot → 接服务 → 改界面与工具；常驻 agent 各配一台机器，可在 Slack 等处接活、会话内持续交接任务 | 与本项目"常驻目标 + 目标工作台 + 受管 Run"形态对照；关注 Dot 定义/服务连接是否 schema 化 | ①**先确认 @user 所指仓库**（CopilotKit 还是 diggerhq，或两仓都读）②读 README + 官方 FAQ，提取 always-on 生命周期、Dot 定义 schema、任务交接与权限边界 ③落 §7 工作台与 §12.2 | **待确认仓库 + 待读** |
+| **Hermes** | [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent)（本 agent 运行时，[官方文档](https://hermes-agent.nousresearch.com/docs)） | 自管记忆 + 周期蒸馏（nudge）、经验 → 技能沉淀、cron + 持久化状态模块 + startup watchdog | §3 主表已有两条映射（Run 收尾记忆蒸馏、无人值守调度工程样板） | 文档级走读：memory/skill 生命周期与 cron 恢复语义，对照 §5.4 CALM 语义与 §5.2 规则 8 恢复扫描；笔记须标注"自身项目"利益相关 | 映射已入 §3；**文档未系统走读** |
+
+**完成判据**：每个项目一页走读笔记（`docs/essay-study/<repo短名>-<年>.md`，标注精读范围、附可点击链接）→ 机制映射回填 §3 主表 → 若推翻本文档假设，按 CONVENTIONS §3 规则 7 在对应小节留痕。
+
+**优先级**：Rakazo（§12.2 W3 群组分工直接同构）> OpenMuse（§3 已有映射待源码验证）> OpenDots（先确认仓库归属）> Hermes（自身项目，利益相关需标注）。
 
 ---
 

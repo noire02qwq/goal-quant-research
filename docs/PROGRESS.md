@@ -4,9 +4,15 @@
 
 ## 当前阶段
 
-Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环；harness-hub 平台侧开发待回公司内网）。当前：W1/W2 文献线达标（8 篇 2026H2 论文归档、7 篇精读 + DeepSeek Super-agent 精读）；W1、W2 demo 均合入 main，决策记录 [0002](decisions/0002-w1-recovery-semantics.md)、[0003](decisions/0003-w2-memory-distillation.md) 均已采纳（W1 设计修订 PR #4 已合入）；W2 设计修订 PR 走完后三件套闭环。下一步：进入 W3（角色分工×DAG + 群组记忆注入策略）。
+Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环）。当前：W1/W2 文献线达标（8 篇 2026H2 论文归档、7 篇精读 + DeepSeek Super-agent 精读）；W1、W2 demo 均合入 main，决策记录 [0002](decisions/0002-w1-recovery-semantics.md)、[0003](decisions/0003-w2-memory-distillation.md) 均已采纳（W1 设计修订 PR #4 已合入）；§3.1 四项目走读闭环（笔记 4/4 + §3 回填 + 两轮核验通过）。**W3 维持暂停（@user 2026-11-03 再次确认先不开）；harness-hub 已复制为本地副本并拉出 `zdf-dev-goal-quant` 分支，但 harness 部分暂不开发**——当前无阻塞，待办见文末。
 
 ## 进度日志（倒序）
+
+### 2026-11-03（harness-hub 本地副本 + `zdf-dev-goal-quant` 分支）
+
+- **[research] harness-hub 本地副本建立**（@user 指令）：`../harness-hub`（源仓 `/Users/amoris/agent-studio/harness-hub`）复制为 `goal-quant-research/harness-hub/`（12G，APFS clonefile）；`.gitignore` 新增 `harness-hub/`（已 `check-ignore` 验证命中）——按 CONVENTIONS §6 **不入库**，仅作本地研究引用源。源仓未被改动（复制期间其 HEAD 由另一会话从 `ae0d71aa6` 推进到 `653791df8`，仍在 `zdf-dev-1102`）。
+- **[research] 分支拉出**：在副本内 `git fetch origin fix-20261019203013`（公司 GitLab 可达，最新 `ee50ae7d3`）→ `git checkout -B zdf-dev-goal-quant origin/fix-20261019203013`，副本工作树现为该分支内容；源仓与远端分支均未动。
+- **[user] 指令（2026-11-03）**：harness 部分**先不开发**；**W3 也先不开**（暂停令维持，不进入 W3）；其余照常处理——§3.1 已闭环、通道已恢复、推送正常，当前无阻塞。
 
 ### 2026-11-03（通道恢复：oss-repos 建立 + 五仓克隆 + 四项目走读完成 + DeepSeek 源码增补）
 
@@ -78,9 +84,9 @@ Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环；harness-hub �
 
 ## 阻塞 / 待办
 
-- ~~境外通道恢复~~（**已解除 2026-11-03**：三探针 200 + `gh auth` 有效）→ §3.1 四项目走读已于同日完成（笔记 4/4、§3 回填），@dev 第二轮独立核验**已通过**，§3.1 判据闭环——**无阻塞，待 @user 拍板是否解除 W3 暂停令进入 W3**。
+- ~~境外通道恢复~~（**已解除 2026-11-03**：三探针 200 + `gh auth` 有效）→ §3.1 四项目走读已于同日完成（笔记 4/4、§3 回填），@dev 第二轮独立核验**已通过**，§3.1 判据闭环——**无阻塞**。~~待 @user 拍板是否解除 W3 暂停令~~ → **@user 2026-11-03 拍板：W3 先不开，暂停令维持**（无 W3 产物启动）。
 
-- harness-hub 平台侧开发（插件脚手架、goal_* schema 落地、状态机全转换表实现侧）待 @user 回公司内网后启动。
+- harness-hub 平台侧开发（插件脚手架、goal_* schema 落地、状态机全转换表实现侧）：**本地副本已就位 2026-11-03**（`harness-hub/`，gitignored，分支 `zdf-dev-goal-quant` ← `origin/fix-20261019203013` `ee50ae7d3`），但 @user 指示 **harness 部分先不开发**——源码引用可读，开发待后续下令。
 - ~~@dev：走 PR 修订 brief-plan §5.1/§5.4/§12.2~~（**已完成 2026-11-01，PR #8 合入**：§4.4 字段 + §5.1 组装四步 + §5.4 SEPM+CALM 主线 + §12.2 W2 行，coverage 实例化说明与 safety gate 平台侧待补均注明，落点清单见 [decisions/0003](decisions/0003-w2-memory-distillation.md) 修订落点段）；0002 的 §4.4/§5.2/§12.2 W1 修订已随 PR #4 完成。
 - AWM workflow 归纳迁移性 spike：等真实 T1 回测轨迹数据（W3+，依赖回测链路）。
-- @research：W3 文献检索式启动（角色分工×DAG 方向 + 群组记忆注入策略）。**已按 @user 指令暂停（2026-11-01）：当日不做 W3，未产生任何 W3 产物（检索式/笔记/草稿均未启动），W2 三件套闭环为当前停点。**
+- @research：W3 文献检索式启动（角色分工×DAG 方向 + 群组记忆注入策略）。**已按 @user 指令暂停（2026-11-01；2026-11-03 再次确认先不开）：未产生任何 W3 产物（检索式/笔记/草稿均未启动），恢复等 @user 下令。**

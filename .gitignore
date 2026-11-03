@@ -50,3 +50,6 @@ oss-repos/
 .idea/
 .vscode/
 *.swp
+
+# 公司 harness-hub 本地副本（仅本地研究引用，严禁入库）
+harness-hub/

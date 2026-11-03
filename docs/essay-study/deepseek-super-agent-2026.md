@@ -1,11 +1,11 @@
 # DeepSeek Super-agent 设计探索精读（2026）
 
-> 状态：定稿 ｜ 精读日期：2026-11-01 ｜ 材料：官方技术文章 + 开源原型仓库，非每周检索式产出（归 docs/essay-study/）
+> 状态：已按本地源码核对增补（2026-11-03）｜ 精读日期：2026-11-01（文档）/ 2026-11-03（源码）｜ 材料：官方技术文章 + 开源原型仓库，非每周检索式产出（归 docs/essay-study/）
 
 ## 材料与来源
 
 - 官方文章《Super-agent 设计探索：迈向更自主的 Agent 系统》（2026-10-31 晚 DeepSeek Harness 团队发布；全文转载：[知乎机构号](https://zhuanlan.zhihu.com/p/2099987320443237060)）
-- 开源原型：[deepseek-ai/dsh-superagent-prototype](https://github.com/deepseek-ai/dsh-superagent-prototype)（MIT，README + docs/000–008 设计文档全文已读）
+- 开源原型：[deepseek-ai/dsh-superagent-prototype](https://github.com/deepseek-ai/dsh-superagent-prototype)（MIT；README + docs/000–008 设计文档 2026-11-01 读；**2026-11-03 本地克隆 `oss-repos/dsh-superagent-prototype/` 源码走读** `src/`、`tests/`，增补见 §7——精读范围：核心域模型与授权路径，未逐行读 sources/ 各平台适配与 client UI）
 - 交叉核对：[智东西](https://www.zhidx.com/p/606311.html)、[钛媒体](https://www.tmtpost.com/8189032.html)、[第一财经](https://www.yicai.com/news/103419784.html)（数字与表述一致）
 
 ## 1. 背景与动机
@@ -22,7 +22,7 @@ Coding Agent 已证明模型能自主解决复杂问题，人上移到决策与�
 
 ## 3. 授权与治理（原型 docs/002）
 
-链路：Source→Trigger→Thread→**Eval**（gate 确定性准入 + assessment 模型研判，Decision 四值 accept/stop/ignore/unavailable）→ accept 生成 **Mandate** → **Ticket** → **Assignment** → Executor。
+链路：Source→Trigger→Thread→**Eval**（gate 确定性准入 + assessment 模型研判，Decision 五值 accept/stop/ignore/unavailable/**reopen**——前四值是 Eval 的产出（[docs/007](https://github.com/deepseek-ai/dsh-superagent-prototype/blob/main/docs/007-architecture.md)），第五值 `reopen` 由人工在 Thread 发消息恢复已结束 Ticket 时写入，[src/core/model.ts:190,251-253](https://github.com/deepseek-ai/dsh-superagent-prototype/blob/main/src/core/model.ts)）→ accept 生成 **Mandate** → **Ticket** → **Assignment** → Executor。
 
 - **Mandate** 是不可变授权记录：Policy version、scope、strength、命中规则名、发送者在该 Source 的身份、Trigger 来源；仅三种变更——accept 创建、**人的 stop 撤回**、恢复前按当前 Policy **重校验失败吊销**。
 - **"消息不得修改授权边界"**：聊天内容、评论、引用文档只是决策输入，权限只能源自 Policy。
@@ -48,7 +48,7 @@ README 首行声明 "Research prototype for reference only, not an official Deep
 **直接可借鉴：**
 
 1. **Mandate ≈ 审批归因**：授权依据固化为不可变记录+恢复前重校验+仅人工撤回，正是金融审批门审计留痕范式；"聊天内容不得修改权限边界"→ 落为"会话/群组消息不得扩大授权"（对应 §12.2 W4 群组治理）。
-2. **Policy version 治理**：规则版本化、变更以 Input 投递给存活工单而非强杀在途工作——与"规则升级不破坏在途 Run"同构。
+2. **Policy version 治理**（源码核对后为三段式，见 §7.2）：在途 Eval 撞上 Policy 变更 → 记 `unavailable` 并**按新版本立即重排队**（不作废业务）；规则的 disabled/changed 差异以 Effect **投递给存活 Ticket** 而非强杀；Mandate 按 `basis.via` 分路持续 `revalidate`，失权才撤——与"规则升级不破坏在途 Run"同构。
 3. **Watchdog ≈ 恢复扫描的语义层**：外部 Control Loop 判断"有无实质进展/是否偏航"，补纯心跳检测不到的无效循环异常（对应 §13 stalled 判据、A6 目标健康分）。
 4. **Source/Thread/Subscription ≈ goal_event 持久化+直通**：读取位置重启不重放、Trigger 幂等与 DB 权威+工具幂等回执完全同构；订阅直通=后续事件绕调度器直达受管 Run（实验：为调度层省约 37% 读缓存 token）。
 5. **Router/Worker ≈ 群组角色分工**（§12.2）：Router 只分派不执行、Worker 隔离单任务，与研究/开发/评审分工一致；Worker 靠共享 Thread 自发现冲突可减少中心化协调；Router 批处理可搬到调度器突发场景；Inline/Spill+链式召回是 16KB turn_context 预算的现成方法论（与 W2 笔记 CALM"gate 先于 packing"互补）。
@@ -62,8 +62,20 @@ README 首行声明 "Research prototype for reference only, not an official Deep
 4. **投机执行**在高风险动作上不可行；仅纯读分析类任务可有限采用且产出只作草稿不外发。
 5. dsh 无预算/pause-resume-terminate 语义，金融侧自建（brief-plan §7 既有设计）。
 
-## 7. 落点
+## 7. 源码走读增补（2026-11-03，本地克隆 `oss-repos/dsh-superagent-prototype/`）
 
-- W1：Watchdog 语义层 + Source 读取位置/Trigger 幂等 → recovery demo 参照（决策记录随 demo 落）。
+对文档叙事的**实证与修正**，引用均为仓库内路径（链接指向 GitHub `main` 同路径）：
+
+1. **observe 模式精确实现**：`mode` 默认即 `observe`（[src/policy.ts:84](https://github.com/deepseek-ai/dsh-superagent-prototype/blob/main/src/policy.ts)，`z.enum(['off','observe','auto']).default('observe')`）；inferred 候选在非 auto 模式下判 `ignore`，但写入 `audit.would_accept=true` + `reason.code='observed'`（policy.ts:55-57）——"研判留痕不动作"是**一条代码路径**，可直接抄为影子验证的审计字段设计。准入强度三档 `ignore<inferred<explicit`（policy.ts:141 `STRENGTH` 表），机器触发另设 `machineGate`：非白名单 bot 一律 `not_human` 拒绝。
+2. **Policy 变更三段式**（§6.2 的源码依据）：① 在途 Eval 发现 `policy().version !== evaluation.policyVersion` → 记 `unavailable` 并重排队到当前版本（[src/core/evals.ts:285](https://github.com/deepseek-ai/dsh-superagent-prototype/blob/main/src/core/evals.ts)、[docs/002](https://github.com/deepseek-ai/dsh-superagent-prototype/blob/main/docs/002-authorization.md) L151"immediately queues the batch under the current version"）；② `policyEffects()` 对每个在途 Ticket 计算规则 `disabled/changed` 差异并作为 Effect 投递，requester 失权→`requesterAllowed:false`，auto→非 auto 时 inferred 候选降级 `proactive=false`（policy.ts:144-161）；③ `revalidate()` 按 `basis.via`（followup/bot/admission）分路持续重校验（policy.ts:213 起）——**只有重校验失败才撤权**，与"规则升级不破坏在途 Run"精确对应。
+3. **中断恢复语义（新增，W1 直接参照）**：Assignment 忙时被中断 → **重启时带 recovery note**（[docs/003](https://github.com/deepseek-ai/dsh-superagent-prototype/blob/main/docs/003-execution.md) L45）；关停等待各 worker 后台作业最多 10s、未入 Session 史的 Input 保留（同 L45）；后台作业 30 分钟上限被杀后 Ticket 报 waiting、**Executor 下一轮读被杀作业的结果**（L35）；Input 投递幂等（"Add an Input once (idempotently)"，[src/core/tickets.ts:231](https://github.com/deepseek-ai/dsh-superagent-prototype/blob/main/src/core/tickets.ts)）；重启不重放：读取位置存 KV（[src/sources/feishu-loops.ts:146-151](https://github.com/deepseek-ai/dsh-superagent-prototype/blob/main/src/sources/feishu-loops.ts)）。这五条是 brief-plan §5.2 恢复扫描规则可逐条对拍的**已运行实现**。
+4. **批处理实证**：Thread 的 Eval 串行运行、把期间到达的 Trigger 并入下一批（[docs/001](https://github.com/deepseek-ai/dsh-superagent-prototype/blob/main/docs/001-domain.md) L43）；调度层 `evaluateDue()` 每 Thread 启一个 Eval、把等待 Trigger 合为一批（[src/app/passes.ts](https://github.com/deepseek-ai/dsh-superagent-prototype/blob/main/src/app/passes.ts)、docs/007 L93）；Eval 过期重排队两次、第三次记 `unavailable`（docs/007 L93）。
+5. **danger-full-access 实锤**：worker session 初始化即 `permissionPresets.set(session, 'danger-full-access')`（[src/app/sessions.ts:152](https://github.com/deepseek-ai/dsh-superagent-prototype/blob/main/src/app/sessions.ts)），docs/003 L27 明言"run commands without approval as the operator's OS user"——§5 自认的安全边界开放问题**在代码里成立**，非措辞。
+6. **Watchdog 确认缺席**：全仓 docs/ README grep `watchdog` **0 命中**——§2 第 5 条"原型未实现"从自述升级为代码证据。
+7. **文档与代码的一处出入**：docs/007 L57 把 Eval 结局列作"accept, stop, ignore or unavailable"四值，但域模型 `DecisionKind` 实为五值（含 `reopen`，model.ts:190）——`reopen` 不出自 Eval 而出自人工恢复路径，文档表述与类型定义粒度不一致，引用其 Decision 语义时以**类型定义**为准。
+
+## 8. 落点
+
+- W1：Watchdog 语义层 + Source 读取位置/Trigger 幂等 → recovery demo 参照（决策记录随 demo 落）；§7.3 的五条恢复语义（recovery note / 未入史 Input 保留 / 被杀作业下轮读取 / Input 幂等 / KV 读取位置）作 recovery demo 的逐条对拍清单。
 - §12.2 W2/W4：Mandate→审批归因字段设计、Router/Worker→群组静态编排参照（与 decisions/0001 的静态角色+SOP 结论互证）。
 - W2：Inline/Spill 链式召回补充 turn_context 组装协议候选方案（与 CALM gate 方案对比后定稿）。

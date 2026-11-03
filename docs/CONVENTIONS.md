@@ -23,6 +23,7 @@
 | `docs/decisions/` | 决策记录（ADR）：研究 demo 结论、设计取舍 | `NNNN-<主题>.md`，四位递增编号，如 `0001-vnpy-as-backtest-engine.md` |
 | `docs/essay-study/` | 论文/文章精读笔记（非每周检索式产出的深读材料） | `<作者或论文短名>-<年份>.md` |
 | `docs/papers/` | 研究涉及论文的 PDF 资源归档 | `arXiv-<ID>.pdf`，非 arXiv 来源用 `<短名>-<年份>.pdf` |
+| `docs/translations/` | 引用英文原材料（论文/项目文档）的中文译文，规范见其 README | `papers/arXiv-<ID>.md`、`literature/arXiv-<ID>.md`、`projects/<仓库短名>/<原路径>.md` |
 | `docs/templates/` | 文档模板，新增模板在此归档 | 见各模板文件 |
 | `research-demos/` | brief-plan 定稿之后的研究 demo 本体（入库） | demo 目录小写连字符，每个 demo 自带 README |
 | `independent-demo-apps/` | 需要独立仓库承载的 demo 的索引；每个 demo 目录需自带 README | demo 目录小写连字符 |

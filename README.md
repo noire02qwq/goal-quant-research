@@ -30,6 +30,7 @@ goal-quant-research/
 │   ├── decisions/                # 决策记录（ADR，研究 demo 结论沉淀于此）
 │   ├── essay-study/              # 论文/文章精读笔记（非每周检索式的深读材料）
 │   ├── papers/                   # 研究涉及论文的 PDF 归档（arXiv-<ID>.pdf）
+│   ├── translations/             # 引用论文/项目英文文档的中文译文（规范见其 README）
 │   └── templates/                # 文献笔记 / 决策记录 / spike 报告模板
 ├── research-demos/               # brief-plan 定稿之后的研究 demo 本体（入库）
 └── independent-demo-apps/        # 需独立仓库承载的 demo 索引区

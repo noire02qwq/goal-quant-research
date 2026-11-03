@@ -8,6 +8,15 @@ Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环）。当前：W1
 
 ## 进度日志（倒序）
 
+### 2026-11-03（全仓可读性排查 + docs/translations/ 中译目录建立）
+
+- **[user] 指令（2026-11-03）**：①排查当前工作区所有文档的人类可读性；②docs 下加翻译目录，把所有下载的论文、引用到的网上英文文献、项目英文文档翻译成人类可读的中文。
+- **[research] 可读性排查完成** → [readability-audit-2026-11-03.md](readability-audit-2026-11-03.md)：28 个自有 md 结构层全健康（0 断链 / 0 标题断层 / 0 围栏破损 / 0 敏感文件入库）；排版层 4 类问题——28 处墙式段落（最长 3996 字符）、走读笔记英文占比过高（opendots 2927:3288）、4 处缺状态头（brief-plan + hermes/openmuse/rakazo 笔记）、brief-plan 583 行无目录。**修复列为待拍板**：会移动 @dev 已核验的行号引用，建议批量改后重核；本轮未改任何既有文档。
+- **[research] `docs/translations/` 建立**（规范 [translations/README.md](translations/README.md)）：三类收录（papers=已下载论文全文中译 / literature=仅摘要级引用的题录摘要中译 / projects=被引用项目英文文档中译），文件头模板 + §4 人类可读性硬要求（自然中文、单段 ≤500 汉字、术语保留英文、翻译深度诚实标注）。CONVENTIONS §2 与根 README 目录树已同步。
+- **[research] 翻译批量执行完成（13 个并行子代理，三批）** → `docs/translations/` 共 **67 篇译文 / 1.6MB**：papers **8/8 全文**（含目录与图表题注，双栏提取交错各篇均换 `-layout`/`-raw` 重提解决并如实记录）；literature **30/30 摘要级**（23 篇 arXiv + 7 篇非 arXiv，零失败零「未获取」）；projects **29 篇**（rakazo 7 / opendots 5 / openmuse 4 / hermes 8 / dsh-superagent 5，含官网页中译与两篇官方中文 README 指路文件）。
+- **[research] 机器终检通过**（`check_translations.py`）：文件头六字段全齐、单段 ≤500 汉字 0 违例、围栏 0 破损、目录对正文 0 缺项；mtime 快照连续三轮零变化确认落盘稳定。终检发现的 14 条「尾部疑似截断」经逐条人工核看全部为完整列表项/链接行的误报，rakazo 3 个漏头小文件已就地补头。README §5 索引 67 条从磁盘逐篇点名生成，链接 0 断。
+- harness 先不开发、W3 先不开（@user 2026-11-03 拍板）不变；剩余待办 AWM spike（等 T1 回测数据）。
+
 ### 2026-11-03（harness-hub 本地副本 + `zdf-dev-goal-quant` 分支）
 
 - **[research] harness-hub 本地副本建立**（@user 指令）：`../harness-hub`（源仓 `/Users/amoris/agent-studio/harness-hub`）复制为 `goal-quant-research/harness-hub/`（12G，APFS clonefile）；`.gitignore` 新增 `harness-hub/`（已 `check-ignore` 验证命中）——按 CONVENTIONS §6 **不入库**，仅作本地研究引用源。源仓未被改动（复制期间其 HEAD 由另一会话从 `ae0d71aa6` 推进到 `653791df8`，仍在 `zdf-dev-1102`）。

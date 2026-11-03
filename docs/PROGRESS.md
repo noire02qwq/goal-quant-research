@@ -8,6 +8,15 @@ Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环；harness-hub �
 
 ## 进度日志（倒序）
 
+### 2026-11-03（通道恢复：oss-repos 建立 + 五仓克隆 + 四项目走读完成 + DeepSeek 源码增补）
+
+- **[research] 境外通道恢复实测**：`github.com`/`api.github.com`/`arxiv.org` 探针全 200，`gh auth status`（noire02qwq，keyring）有效——2026-11-02 的「不推远端」限制按 @user 指令解除，本轮提交全部已推送。
+- **[research] `oss-repos/` 本地克隆目录建立**（已 gitignore，提交 `0343e0c`）：克隆 `dsh-superagent-prototype` / `rakazo` / `openmuse` / `OpenDots` / `hermes-agent` 五仓（depth 1，约 538MB），为研究笔记提供可引用的本地源码。
+- **[research] DeepSeek Super-agent 笔记源码级增补**（`c80f4eb`）：新增 §7 七条——Decision 五值修正（`reopen`，docs/007 只列四值）、Policy 变更三段式（在途 Eval 重排队 / Effect 投递 / revalidate 失权才撤）、**W1 恢复语义五条对拍清单**（recovery note、未入史 Input 保留、被杀作业下轮读取、Input 幂等、KV 读取位置）、danger-full-access 与 Watchdog 缺席升级为代码证据 → [essay-study/deepseek-super-agent-2026.md](essay-study/deepseek-super-agent-2026.md)。
+- **[research] §3.1 四项目源码走读全部完成**（并行执行，笔记 4/4）：[rakazo-2026.md](essay-study/rakazo-2026.md)（交接 `clientNonce` 幂等 + 禁回弹 hop≤6、Routines 行级 CAS、15min 控制租约、**全仓无 `assigned_role`**——W3 角色字段需自建）；[openmuse-2026.md](essay-study/openmuse-2026.md)（四条映射逐条判定：一证实、三证实但有出入，`outcome_unknown` 仅 Action 层需上提到任务层）；[opendots-2026.md](essay-study/opendots-2026.md)（claim/interrupted UI 区分、权限三层 AND 热撤销、MCP 写动作 claim-once；与二手定位差异已留痕：无 agent 间交接/群组/事件触发）；[hermes-2026.md](essay-study/hermes-2026.md)（映射①主体证实+两处出入；**映射②后半推翻**——startup watchdog 是启动死锁看门狗不扫孤儿，恢复扫描改参照 kanban `reconcile_orphans` 与 cron pending_slot）。
+- **[research] §3 主表回填 + §3.1 状态更新**（提交见本轮）：openmuse 四条升级为源码判定并附出入、hermes 两行按判定修正（watchdog 推翻按 CONVENTIONS §3 规则 7 留痕）、新增 Rakazo 三行与 OpenDots 三行；§3.1 状态 4/4「已读」、执行前置段标注「已解除」。**待 @dev 第二轮独立核验**。
+- W3 暂停令不变；harness-hub 平台侧照旧等 @user 回公司内网。
+
 ### 2026-11-02（开源项目/文档研究计划增补）
 
 - **[research] brief-plan 新增 §3.1「开源项目 / 官方文档研究计划」**（@user 指令）：纳入 **OpenMuse、OpenDots、Rakazo、Hermes** 四个对象，逐项列仓库/文档链接、二手定位、与本项目的关联点、通道恢复后的研读任务与状态；完成判据为 `docs/essay-study/<repo短名>-<年>.md` 走读笔记 → 机制映射回填 §3 主表 → 推翻假设按 CONVENTIONS §3 规则 7 留痕；优先级 **Rakazo**（§12.2 W3 群组分工/`group-handoff` 直接同构）> OpenMuse（§3 已有四条映射待源码验证）> OpenDots > Hermes（自身项目，利益相关需标注）。**OpenDots 仓库归属经 @user 确认取 `CopilotKit/OpenDots`**（同名 diggerhq/opendots 不在计划内），表内「待确认」已改为「待读」。
@@ -69,7 +78,7 @@ Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环；harness-hub �
 
 ## 阻塞 / 待办
 
-- **境外通道恢复**（@user 换 Shadowrocket 节点/刷新订阅 + `gh auth refresh -h github.com`）→ 按 [brief-plan §3.1](brief-plan.md) 依次执行 Rakazo / OpenMuse / OpenDots / Hermes 走读；OpenDots 仓库归属已由 @user 确认为 `CopilotKit/OpenDots`，无待确认项。通道恢复前不推远端（@user 2026-11-02 指令）。
+- ~~境外通道恢复~~（**已解除 2026-11-03**：三探针 200 + `gh auth` 有效）→ §3.1 四项目走读已于同日完成（笔记 4/4、§3 回填），**待 @dev 对四份新走读笔记与 §3/§3.1 改动做第二轮独立核验**。
 
 - harness-hub 平台侧开发（插件脚手架、goal_* schema 落地、状态机全转换表实现侧）待 @user 回公司内网后启动。
 - @dev：走 PR 修订 brief-plan §5.1/§5.4/§12.2（依据 0003 已采纳；含 coverage 阈值实例化参数说明 + safety gate 平台侧待补）。0002 的 §4.4/§5.2/§12.2 W1 修订已随 PR #4 完成。

@@ -43,6 +43,9 @@ logs/
 credentials*
 secrets*
 
+# GitHub 开源项目本地 clone（仅作研究引用源，不入库）
+oss-repos/
+
 # IDE
 .idea/
 .vscode/

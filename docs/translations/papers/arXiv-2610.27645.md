@@ -75,7 +75,7 @@
 
 根源在于持久状态：早期的一个错误动作被写进文件、表格或数据库，后续步骤就在这个结果之上继续搭建。错误发生时几乎从不显形；它要到很多步之后才浮现，而造成它的那一步早已离开 agent 的上下文。图 1 展示了一个真实案例：Kimi-K3 在第 3 步没有打开订单历史，此后一直在这个错误上继续叠加，直到第 43 步 agent 虚报完成时错误才暴露。在这类任务中，agent 能否注意到并修复自己的错误，决定了它能否完成任务。
 
-![图1：从一次真实策略引发错误中恢复的案例研究（原文图片见 docs/papers/arXiv-2610.27645.pdf 第 2 页）](../../papers/arXiv-2610.27645.pdf)
+（原文位置：docs/papers/arXiv-2610.27645.pdf 第 2 页）
 
 **图 1：案例研究——从一次真实的策略引发错误中恢复。** 用户要的是他常点的 Sweetgreen 订单。上排：Kimi-K3 没能注意到并恢复错误；下排：ReRail-35B-A3B 在根因步骤接管，检测到错误并从中恢复。译注（可还原的图内元素）：上排标 error horizon h=40，依次为 step 3 root cause action（本该打开 Orders 了解常点订单，却改用搜索）、step 13 built from the menu（从菜单而非订单历史拼装订单）、step 29 “usual” invented（凭空加了一碗并称其为「常点的」）、step 43 false completion（报告成功，但购物车并不是用户的常点订单）；下排标注「ReRail-35B-A3B 在第 3 步（d=0）接管，继承到根因步骤为止的历史并恢复」，依次为 step 5 opens the Orders page（找到四条过去的 Sweetgreen 订单）、step 6 scrolls to Sweetgreen orders、step 31 checks items in each order（逐单查看菜品；Kale Caesar 出现在过去一半订单中，即为常点项）、step 40 correct completion。
 
@@ -134,7 +134,7 @@
 
 在上述形式化之上，我们提出 CUA-Recovery——一个面向长时程计算机使用任务中错误检测与恢复的基准——以及构建它的流水线 ReRail。CUA-Recovery 针对第 1 节的三点差距：它的错误来自 agent 自己的策略而非注入（覆盖面），会沿依赖关系跨应用传播并隐藏许多步（视界），并且发生在 agent 同时通过 GUI 与 CLI 行动的持久桌面环境中（界面）。ReRail 把种子任务组装成较长的多应用工作流，从多个 agent 收集失败，并把它们转化为 CUA-Recovery-Test（2,250 个错误状态的人工核验测试集）与 CUA-Recovery-Train（8,577 条经验证的恢复轨迹的训练集）。图 2 总结了这条流水线。
 
-![图2：方法与基准总览（原文图片见 docs/papers/arXiv-2610.27645.pdf 第 3 页）](../../papers/arXiv-2610.27645.pdf)
+（原文位置：docs/papers/arXiv-2610.27645.pdf 第 3 页）
 
 **图 2：我们的方法与基准总览。** 译注（可还原的图内元素）：左侧「Desktop tasks 377 train / 100 test；10.8k trajectories；60 Avg. steps；8.6k train / 2.25k test；67.5% Multi-application tasks」；中部「ReRail: Benchmark Construction：1 Collect failures（6 agent rollouts，184 → 477 tasks，locate root cause; cut prefix）→ 2 Verify recovery（retry；propose recovery；replay；task solved?；input: prefix → target: recovery）」；上方「Models rollout collect diverse real errors」与任务类别标签（aggregation、retrieval、counterfactual、contradiction、situated-action、cua-only、long-horizon、hard app、preference）、错误视界轴（S_root cause、S_r+5 … S_r+25）、错误类型；右侧为 MyPCBench 与 Odysseys 上 Baseline 与 Recovery-trained 的对比柱：MyPCBench Rubric Score 33.4 → 53.2（+19.8）、Pass@3 9.2 → 24.5（+15.3）；Odysseys Rubric Score 66.5 → 78.2（+11.7）、Pass@3 24.1 → 34.9（+10.8）。
 
@@ -158,7 +158,7 @@ ReRail 的关键思想是：每个任务都带一条 gold lineage，即每一步
 
 **超出单个动作的错误。** CUA-Recovery 中大多数失败是错误的决策，而不是错误的点击。它们横跨规划、进度与状态感知、执行、终止四类错误，例如选了错误年份的记录、把数量读错并用在订单里、在错误的日历应用中创建事件（附录 C.4.1）。这些案例要求 agent 回头检查先前的决策及其产生的数据。规划与感知占根因的 57.3%，终止占 23.5%，执行占 19.1%。作为对照，AgentNet 与 GUI-Reflection 现有的估计把 84.3% 与 71.2% 归给执行错误（图 3a）。
 
-![图3：错误类型与错误显式化前的延迟（原文图片见 docs/papers/arXiv-2610.27645.pdf 第 7 页）](../../papers/arXiv-2610.27645.pdf)
+（原文位置：docs/papers/arXiv-2610.27645.pdf 第 7 页）
 
 **图 3：错误类型，以及错误变得显式之前的延迟。** 译注：(a) 为三数据集错误类型占比的堆叠柱状图——CUA-Recovery：Planning 21.2、Perception 36.1、Execution 19.1、Termination 23.5；AgentNet：Perception 11.4、Execution 84.3；GUI-Reflection：Perception 26.4、Execution 71.2（AgentNet 与 GUI-Reflection 的 Planning/Termination 小段在图上没有数值标签，原文此处无法提取）。(b) 为按错误视界分桶（1–5、6–10、11–15、16–20、21+）的分组柱状图，柱上无数值标签，原文此处无法提取；正文给出的对应结论见下段。
 
@@ -491,7 +491,7 @@ R(M) = |{µ ∈ Mut(M) : caught(µ)}| / |Mut(M)|                              (3
 
 表 3 报告各 agent 的干净启动结果。图 4 按任务类别拆解 CUA-Recovery 工作流所源自的 MyPCBench 源任务上的干净启动表现。
 
-![图4：六个 agent 在 MyPCBench 源任务上的干净启动表现（按任务类别）（原文图片见 docs/papers/arXiv-2610.27645.pdf 第 22 页）](../../papers/arXiv-2610.27645.pdf)
+（原文位置：docs/papers/arXiv-2610.27645.pdf 第 22 页）
 
 **图 4：六个 agent 在 MyPCBench 源任务上的干净启动表现（按任务类别）。** 行按 Pass@3 从低到高排序，列按总体 Pass@3 排序。(a) Pass@3 暴露出若干 agent 得零分的类别；(b) Rubric Score 解析出这些零成功单元格中的部分进展。每个单元格报告其样本量，行、列标签为边际值。译注：数据已从原文还原为下表，单元格格式为 `Pass@3 (n)`。
 
@@ -538,7 +538,7 @@ R(M) = |{µ ∈ Mut(M) : caught(µ)}| / |Mut(M)|                              (3
 - [错误] 草稿断言了一项计划、协作者和截止日期，却没有任何支撑性观察。
 - [错误] 这份无依据的总结被发给 Toby，使编造产生了外部后果。
 
-![图5：案例 1 Fabricate Data（三列为任务证据、根错误、后果）（原文图片见 docs/papers/arXiv-2610.27645.pdf 第 22 页）](../../papers/arXiv-2610.27645.pdf)
+（原文位置：docs/papers/arXiv-2610.27645.pdf 第 22 页）
 
 **案例 2：Scope Error（范围错误）。** SpeedTax 任务要求取最近一个已申报的上一年报税表中的 W-2 工资（图 6）。EvoCUA-32B 先来到一个 2024 与 2023 已申报表都可见的页面，却在第 24 个动作打开了 2023 年的申报。操作本身合法、目标类型也正确，但时间范围错了；后续的滚动始终没有找回所要的 2024 年 W-2 工资。任务：报告最近一个上一年报税表中的 W-2 工资。
 
@@ -546,7 +546,7 @@ R(M) = |{µ ∈ Mut(M) : caught(µ)}| / |Mut(M)|                              (3
 - [错误] agent 打开了 Tax Year 2023，把所要的时间范围挪前了一年。
 - [错误] 它继续在 2023 年的申报里搜索，找错了年份的 W-2。
 
-![图6：案例 2 Scope Error（三列为任务证据、根错误、后果）（原文图片见 docs/papers/arXiv-2610.27645.pdf 第 23 页）](../../papers/arXiv-2610.27645.pdf)
+（原文位置：docs/papers/arXiv-2610.27645.pdf 第 23 页）
 
 **案例 3：Detail Misperception（细节误判）。** 源文档清楚列着十个已确定的 Dundies 类别（图 7）。EvoCUA-32B 数成了九个，把奖杯数量设为九，随后下了单——于是一次局部的读数错误传播成不可撤销的外部购买。这个案例把「读错可见细节」与「选错任务或应用」区分开来。任务：为每个已确定的 Dundies 类别订购一座奖杯。
 
@@ -554,7 +554,7 @@ R(M) = |{µ ∈ Mut(M) : caught(µ)}| / |Mut(M)|                              (3
 - [错误] 下单前购物车里只有九座奖杯。
 - [错误] 订单 #83 确认这笔九座奖杯的采购确实被提交了。
 
-![图7：案例 3 Detail Misperception（三列为任务证据、根错误、后果）（原文图片见 docs/papers/arXiv-2610.27645.pdf 第 23 页）](../../papers/arXiv-2610.27645.pdf)
+（原文位置：docs/papers/arXiv-2610.27645.pdf 第 23 页）
 
 **案例 4：State Misinterpretation（状态误读）。** 在处理三个 SprintBoard 项目时，EvoCUA-32B 试图键入一条文档抽取命令，但没有任何命令到达终端（图 8）。shell 明摆着停在一个空提示符上，agent 却仍把该命令描述为还在运行，连续执行了 96 次等待，终端与 SprintBoard 一直原封不动，直到动作预算耗尽。这是对当前工具状态的误读，而不是外部进程慢。任务：用本地笔记更新三个 SprintBoard 项目。
 
@@ -562,7 +562,7 @@ R(M) = |{µ ∈ Mut(M) : caught(µ)}| / |Mut(M)|                              (3
 - [错误] 到第 60 个动作时，提示符没有变化，尽管 agent 反复声称处理仍在继续。
 - [错误] 96 次等待之后，提示符与项目状态依旧没有变化。
 
-![图8：案例 4 State Misinterpretation（三列为任务证据、根错误、后果）（原文图片见 docs/papers/arXiv-2610.27645.pdf 第 23 页）](../../papers/arXiv-2610.27645.pdf)
+（原文位置：docs/papers/arXiv-2610.27645.pdf 第 23 页）
 
 **案例 5：Grounding Failure（定位失败）。** Qwen3.5-35B-A3B 正确打开了 LockedIn 的「Start a post」编辑框，准备写两三段草稿（图 9）。它的输入动作在语义上没问题，但文本框没有获得焦点，文字落进了 Firefox 的快速查找栏，编辑框依然空白。观察到这一状态之后，agent 又把同样的无焦点输入重复了一次，这就确认失败出在动作定位而非目标选择。任务：把一份领导力草稿键入 LockedIn 编辑框。
 
@@ -570,7 +570,7 @@ R(M) = |{µ ∈ Mut(M) : caught(µ)}| / |Mut(M)|                              (3
 - [错误] 由于焦点错位，草稿落进了 Firefox 快速查找，编辑框保持空白。
 - [错误] 第二次输入尝试仍然瞄准快速查找栏，而不是发帖编辑框。
 
-![图9：案例 5 Grounding Failure（三列为任务证据、根错误、后果）（原文图片见 docs/papers/arXiv-2610.27645.pdf 第 24 页）](../../papers/arXiv-2610.27645.pdf)
+（原文位置：docs/papers/arXiv-2610.27645.pdf 第 24 页）
 
 **案例 6：Incorrect UI Element（选错 UI 元素）。** 任务明确要求创建五个带受邀者、颜色与提醒的 HooliCalendar 事件（图 10）。从桌面应用网格出发，Qwen3.5-35B-A3B 选中了本地 Calendar 图标，而不是 HooliCalendar 网页应用。它创建了五个本地可见的事件，但所要求的共享日历里一个都没有，也没有邀请任何参会者。点击本身定位良好；错在所选 UI 元素对任务而言语义功能不对。任务：创建五个带参会者的共享 HooliCalendar 事件。
 
@@ -578,7 +578,7 @@ R(M) = |{µ ∈ Mut(M) : caught(µ)}| / |Mut(M)|                              (3
 - [错误] 选中的图标打开的是本地独立 Calendar，而非 HooliCalendar。
 - [错误] 五个事件只建在本地日历里，既无受邀者也无共享状态。
 
-![图10：案例 6 Incorrect UI Element（三列为任务证据、根错误、后果）（原文图片见 docs/papers/arXiv-2610.27645.pdf 第 24 页）](../../papers/arXiv-2610.27645.pdf)
+（原文位置：docs/papers/arXiv-2610.27645.pdf 第 24 页）
 
 **案例 7：Ineffective Action（无效动作）。** 在一个订奖杯的任务中，Qwen3.5-35B-A3B 正确得出数量十，并走到最后的订单确认弹窗（图 11）。从第 40 个动作起，它反复点击同一坐标，在购物车与确认状态之间来回切换，却始终没有下单。六十多次重复没有产生任何新的订单历史行，这是「有动作而无任务相关状态变化」的直接实例。任务：提交一笔十座奖杯的 HooliShop 订单。
 
@@ -586,7 +586,7 @@ R(M) = |{µ ∈ Mut(M) : caught(µ)}| / |Mut(M)|                              (3
 - [错误] 第一次重复点击退回了购物车，而不是下单。
 - [错误] 反复点击都退回购物车；订单没下，状态也不推进。
 
-![图11：案例 7 Ineffective Action（三列为任务证据、根错误、后果）（原文图片见 docs/papers/arXiv-2610.27645.pdf 第 24 页）](../../papers/arXiv-2610.27645.pdf)
+（原文位置：docs/papers/arXiv-2610.27645.pdf 第 24 页）
 
 ## D 提示词模板
 
@@ -955,7 +955,7 @@ r⋆ = first { r ∈ (r1,1, …, r1,8, r2,1, …, r2,8, r3,1, …, r3,8, rT) : �
 
 ### G.1 跨接管深度的感知与恢复
 
-![图12：跨错误深度的感知与恢复（自我接管）（原文图片见 docs/papers/arXiv-2610.27645.pdf 第 31 页）](../../papers/arXiv-2610.27645.pdf)
+（原文位置：docs/papers/arXiv-2610.27645.pdf 第 31 页）
 
 **图 12：跨错误深度的感知与恢复（自我接管）。** 上排为 Error Awareness Rate，下排为 Rubric Score；右列为 ReRail-35B-A3B 与 Qwen3.5-35B-A3B 在同一批失败上的对比（绿色填充为增益，灰色为损失）。阴影区标出 d ≥ 20，即根因截图触及或离开 20 张截图上下文的位置。Pass@3 见表 16。译注：曲线图，图内无数值标签，原文此处无法提取；对应数值见表 2、表 16、表 15。
 
@@ -978,7 +978,7 @@ r⋆ = first { r ∈ (r1,1, …, r1,8, r2,1, …, r2,8, r3,1, …, r3,8, rT) : �
 
 结果还取决于失败的来源。在 d = 0 的 Kimi-K3 状态上，ReRail-35B-A3B 的 Pass@3 高于 Kimi-K3 本身（16.6% 对 11.6%），但 Rubric Score 更低（36.4% 对 39.2%）；这一组合在 d = 5 与 d = 10 同样成立——一个策略可以在三次运行中完成更多案例，同时平均拿到更少的部分得分。在 EvoCUA-32B 的状态上，微调模型在每个深度都有更高的 EAR，却在 d = 20 与 d = 25 上 Pass@3 更低。在共享状态上比较策略，才能揭示这些在感知、部分进展与可靠完成上的差异。
 
-![图13：ReRail-35B-A3B 与其他 agent 在对方失败上的恢复对比（原文图片见 docs/papers/arXiv-2610.27645.pdf 第 32 页）](../../papers/arXiv-2610.27645.pdf)
+（原文位置：docs/papers/arXiv-2610.27645.pdf 第 32 页）
 
 **图 13：只要根因仍在上下文中，ReRail-35B-A3B 就比 agent 本身更好地恢复其失败。** 每列固定一个源 agent；上排为 Error Awareness Rate，下排为 Pass@3。虚线为自我接管，蓝色为 ReRail-35B-A3B 在同一批失败上的表现（蓝色填充为更高，灰色为更低）。阴影区标出 d ≥ 20，即根因截图触及或离开 20 张截图上下文的位置。译注：曲线图，图内无数值标签，原文此处无法提取；对应数值见表 15、表 16。
 

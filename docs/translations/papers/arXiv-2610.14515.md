@@ -66,8 +66,6 @@
 
 **图 1：AutoGen 下 MultiAgentBench 编码、研究与数据库环境的任务分（TS）与通信分（CS）对比。**
 
-![图1：AutoGen 下 MultiAgentBench 各环境的任务分与通信分对比](docs/papers/arXiv-2610.14515.pdf)
-
 （原文位置：PDF 第 2 页 Figure 1。图内柱状数值与图例文字因 PDF 字体编码在文本层为乱码，原文此处无法提取。）
 
 我们的贡献可概括为三点：
@@ -108,8 +106,6 @@ SEPM 通过共享黑板、感知分歧的对齐和基于图的记忆修订，把
 
 **图 2：SEPM 总览。检索到的程序实例化为协作任务图；挂在任务节点上的执行记录支撑目标、计划与状态的对齐；经过验证的结果与前置关系则支撑程序创建、结构性修订以及条件性警告的更新。**
 
-![图2：SEPM 总览框架图](docs/papers/arXiv-2610.14515.pdf)
-
 （原文位置：PDF 第 4 页 Figure 2。图内英文框架文字可读，如 Self-Evolving Procedural Memory Process、Divergence-Aware Alignment Process、Evidence Hierarchy（1 Authoritative State / 2 Tool Observation / 3 Verified Artifact / 4 Agent Inference）、三种分歧检测与触发规则，以及示例元数据（Travel Planning v1.2，Success: 0.87；Group Booking v1.0，Success: 0.78）等；图内细小说明文字原文此处无法提取，以原文为准。）
 
 ### 4.1 面向程序执行的共享黑板
@@ -128,8 +124,6 @@ ba,t = (qa,t, oa,t, ua,t, ra,t, ϵa,t)，　Bτt+1 = Bτt ⊕ ba,t，　　　�
 分别对应分派的子任务、观察、已执行动作、结果与错误。每条记录都挂到其图节点上；私有推理保持在本地。manager 更新节点状态，并把已验证的观察并入 Στt。这些记录同时保留成功动作与失败信息，供后续抽取程序使用。
 
 **图 3：清洁—收纳示例。Agent B 引入了一个无关动作，而 Agent C 在清洗尚未被验证之前就索要杯子。重新对齐恢复了分派的计划以及"先清洗、后交接"的前置条件；修订后的程序保留了这一依赖，并增加了关于状态验证、以及从已验证检查点恢复执行的指导。**
-
-![图3：清洁与收纳任务的分歧检测与重新对齐示例](docs/papers/arXiv-2610.14515.pdf)
 
 （原文位置：PDF 第 5 页 Figure 3。图内轨迹与警告条目文字可读性不一，细小文字原文此处无法提取，以原文为准。）
 
@@ -203,8 +197,6 @@ ALFWorld 评测具身的程序化交互（Shridhar et al., 2021）；WebArena �
 
 **图 4：任务表现与 token 成本。（a）ALFWorld、WebArena、OfficeBench 上的平均任务分，每条线段把同一宿主下的"无附加记忆"基线与该宿主下的某个记忆策略相连。（b）AutoGen 下完整评测中 ALFWorld 任务分相对输入与输出 token 总量（以百万计）。**
 
-![图4：按宿主的平均任务分与 ALFWorld 任务分- token 成本散点图](docs/papers/arXiv-2610.14515.pdf)
-
 （原文位置：PDF 第 7 页 Figure 4，含 (a)(b) 两个子图。坐标轴与图例文字因 PDF 字体编码在文本层为乱码，原文此处无法提取。）
 
 ### 5.2 跨宿主系统的表现
@@ -260,8 +252,6 @@ SEPM 在全部六种基准设置中都取得观测到的最高任务分（表 1�
 显式边让同一套依赖结构可以被前置检查、计划比对与修正传播直接使用，某一步的改动因此可以直接关联到依赖它的下游步骤；而文本对照组必须在相应操作中从描述里重新恢复这些关系。结果支持"显式依赖 + 基于图的执行操作"二者结合，才能把程序性知识转化为协调一致的行为。
 
 **图 5：AutoGen 下的消融结果。（a）完整 SEPM 与文本化程序记忆对照组的对比。（b）各组件配置。AW、WA、OB 分别指 ALFWorld、WebArena、OfficeBench；Memory 指构建在共享黑板之上的完整跨任务程序抽取、修订与复用机制。**
-
-![图5：显式图与文本化程序的对比及组件消融](docs/papers/arXiv-2610.14515.pdf)
 
 （原文位置：PDF 第 9 页 Figure 5，含 (a)(b) 两个子图；坐标轴与标签文字因 PDF 字体编码在文本层为乱码，原文此处无法提取。图内数据转录如下，供核对：）
 

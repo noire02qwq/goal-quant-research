@@ -21,11 +21,14 @@
 goal-quant-research/
 ├── README.md                     # 本文件：概览与快速导航
 ├── .gitignore
+├── .github/                      # PR 模板 + doc-lint CI（PR 标题/敏感文件/.DS_Store 守卫）
 ├── docs/                         # 全部研究/设计文档（本仓库主体）
 │   ├── mission.md                # 任务说明（需求原文）
 │   ├── brief-plan.md             # 总体设计方案
 │   ├── CONVENTIONS.md            # 仓库与文档规范
 │   ├── PROGRESS.md               # 进度记录（阶段状态、进展日志、阻塞）
+│   ├── process-review-*.md       # 流程复盘（过程文档，按 <主题>-<YYYY-MM-DD> 命名）
+│   ├── readability-audit-*.md    # 全仓可读性排查（同上；当前 2026-11-03 版）
 │   ├── literature/               # 每周文献笔记（W1–W10，模板见 templates/）
 │   ├── decisions/                # 决策记录（ADR，研究 demo 结论沉淀于此）
 │   ├── essay-study/              # 论文/文章精读笔记（非每周检索式的深读材料）

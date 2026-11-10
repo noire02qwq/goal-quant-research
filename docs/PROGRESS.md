@@ -4,11 +4,13 @@
 
 ## 当前阶段
 
-Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环）。当前：W1/W2 文献线达标（8 篇 2026H2 论文归档、7 篇精读 + DeepSeek Super-agent 精读）；W1、W2 demo 均合入 main，决策记录 [0002](decisions/0002-w1-recovery-semantics.md)、[0003](decisions/0003-w2-memory-distillation.md) 均已采纳（W1 设计修订 PR #4 已合入）；§3.1 四项目走读闭环（笔记 4/4 + §3 回填 + 两轮核验通过）。**W3 维持暂停（@user 2026-11-03 再次确认先不开）；harness-hub 已复制为本地副本并拉出 `zdf-dev-goal-quant` 分支，但 harness 部分暂不开发**——当前无阻塞，待办见文末。
+Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环）。当前：W1/W2 文献线达标（8 篇 2026H2 论文归档、7 篇精读 + DeepSeek Super-agent 精读）；W1、W2 demo 均合入 main，决策记录 [0002](decisions/0002-w1-recovery-semantics.md)、[0003](decisions/0003-w2-memory-distillation.md) 均已采纳（W1 设计修订 PR #4 已合入）；§3.1 四项目走读闭环（笔记 4/4 + §3 回填 + 两轮核验通过）。**W3 维持暂停（@user 2026-11-03 再次确认先不开）；harness-hub 已复制为本地副本并拉出 `zdf-dev-goal-quant` 分支，但 harness 部分暂不开发**——2026-11-10 新增：Anthropic 记忆走读笔记与[全流程规范复盘](process-review-2026-11-10.md)落库、`oss-repos/` 增补两仓、目录树各级规范文档对账补齐（essay-study README 补索引、根 README 补 `.github/` 与过程散档、CONVENTIONS §2 补过程散档命名）；复盘待拍板 **P3–P7**（直推 vs PR 口径、署名口径、spike 模板去留、§12.0 scratch 表述、可读性批量修复）**均未决**——当前无阻塞，待办见文末。
 
 ## 进度日志（倒序）
 
 ### 2026-11-10（Anthropic 记忆文献走读 + oss-repos 增补 + 全流程规范复盘）
+
+- **[dev] 目录树各级规范文档对账补齐**（按 technical-documentation skill review 流程）：`docs/essay-study/README.md` 补「已归档」6 篇索引（原只有规则无清单）；根 `README.md` 目录树补 `.github/`（PR 模板 + doc-lint CI）与 `process-review-*`/`readability-audit-*` 过程散档两行；`docs/CONVENTIONS.md` §2 `docs/` 行补过程散档命名口径 `<主题>-<YYYY-MM-DD>.md`；本文件「当前阶段」补 11-10 概况与 P3–P7 未决状态。对账实测：papers PDF 索引 8/8、translations 索引 67/67 零缺项零断链、decisions 3/3、research-demos 2/2、literature W1–W2 齐、essay-study 6 篇齐。
 
 - **[user] 指令（2026-11-10）**：①能克隆的项目仓库落到 `oss-repos/`；②docs 对应部分补研究笔记；③重新复盘本仓整个研究、开发的流程规范。
 - **[research] `oss-repos/` 增补两仓浅克隆**（gitignore 覆盖，不入库）：`claude-cookbooks`（410MB，HEAD `ce8b262` 2026-11-04）、`claude-quickstarts`（17MB，HEAD `4a4224b` 2026-11-06），为 Anthropic agent memory 走读提供本地源码。

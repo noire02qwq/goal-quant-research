@@ -18,7 +18,7 @@
 
 | 目录 | 用途 | 命名 |
 |---|---|---|
-| `docs/` | 稳定文档：任务说明、总体设计、规范 | 小写英文连字符，如 `brief-plan.md` |
+| `docs/` | 稳定文档：任务说明、总体设计、规范；另有过程散档（排查/复盘类） | 稳定文档小写英文连字符，如 `brief-plan.md`；过程散档 `<主题>-<YYYY-MM-DD>.md`，如 `process-review-2026-11-10.md` |
 | `docs/literature/` | 每周文献笔记 | `W<周号>-<主题关键词>.md`，如 `W2-context-memory-distillation.md` |
 | `docs/decisions/` | 决策记录（ADR）：研究 demo 结论、设计取舍 | `NNNN-<主题>.md`，四位递增编号，如 `0001-vnpy-as-backtest-engine.md` |
 | `docs/essay-study/` | 论文/文章精读笔记（非每周检索式产出的深读材料） | `<作者或论文短名>-<年份>.md` |

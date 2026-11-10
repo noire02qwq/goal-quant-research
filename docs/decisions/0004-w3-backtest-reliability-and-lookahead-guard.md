@@ -1,6 +1,6 @@
 # 0004：W3 回测可靠性——前视构造性防护定稿与回测验收口径（分层验证状态）
 
-> 状态：提议（待 @research 双轮核验后转已采纳）｜ 日期：2026-11-10 ｜ 作者：@dev ｜ 关联：[literature/W3](../literature/W3-backtest-reliability.md)（7 精读 + 1 摘要级，采纳①–⑤）／[w3-lookahead-proof-demo](../../research-demos/w3-lookahead-proof-demo/README.md)（12/12 测试实测）／ brief-plan §5.6、§6.1、§8 A2、§12.1 W3、§12.2 W3
+> 状态：已采纳（@research 双轮核验通过，2026-11-10：0004 vs W3 笔记采纳①–⑤逐条口径比对一致 + demo 实测独立回抽 12/12、四步数字逐位复现、3bp 费率回抽 `backtest.py cost_rate=0.0003`）｜ 日期：2026-11-10 ｜ 作者：@dev ｜ 核验：@research 2026-11-10 ｜ 关联：[literature/W3](../literature/W3-backtest-reliability.md)（7 精读 + 1 摘要级，采纳①–⑤）／[w3-lookahead-proof-demo](../../research-demos/w3-lookahead-proof-demo/README.md)（12/12 测试实测）／ brief-plan §5.6、§6.1、§8 A2、§12.1 W3、§12.2 W3
 
 ## 背景
 
@@ -53,7 +53,7 @@ W3 周主题「LLM 生成量化回测代码的可靠性、前视偏差」的文�
 
 ## 后续动作
 
-- [ ] @research 双轮核验：0004 vs W3 笔记 §3 采纳①–⑤口径 + demo 实测回抽（本轮，@research）
+- [x] @research 双轮核验：0004 vs W3 笔记 §3 采纳①–⑤口径 + demo 实测回抽（2026-11-10 通过：①–⑤验证状态标注与笔记一致；`124ac3a` 仅改标签/文档未动代码路径，回抽与上轮复跑逐位一致）
 - [ ] 核验通过转"已采纳"后，brief-plan §5.6/§6.1/§8/§12.1/§12.2 定点修订留痕（@dev）
 - [ ] registry flag + 回调前入 buffer 的平台侧实现（harness 集成解除搁置后，@dev）
 - [ ] ActionMatch 参考比对验收 + trial ledger/DSR/PBO/held-out 三仪器（W6 测评线，@dev/@research 分工随 W6 定）

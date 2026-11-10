@@ -8,6 +8,14 @@ Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环）。当前：W1
 
 ## 进度日志（倒序）
 
+### 2026-11-10（Anthropic 记忆文献走读 + oss-repos 增补 + 全流程规范复盘）
+
+- **[user] 指令（2026-11-10）**：①能克隆的项目仓库落到 `oss-repos/`；②docs 对应部分补研究笔记；③重新复盘本仓整个研究、开发的流程规范。
+- **[research] `oss-repos/` 增补两仓浅克隆**（gitignore 覆盖，不入库）：`claude-cookbooks`（410MB，HEAD `ce8b262` 2026-11-04）、`claude-quickstarts`（17MB，HEAD `4a4224b` 2026-11-06），为 Anthropic agent memory 走读提供本地源码。
+- **[research] 走读笔记新增** → [essay-study/anthropic-agent-memory-2026.md](essay-study/anthropic-agent-memory-2026.md)：Anthropic《The components of agent memory》（2026-11-06）博客全文 + dreaming cookbook notebook（全部 markdown 单元）+ `dreaming_nightly.py` 全文 + knowledge-wiki quickstart README 的静态走读；四层记忆架构、CL-Bench/Pokémon 数据（first-party 未复现标注）、**共享可写页并发覆盖（57→41 条）必须分片**对 §12.2 的教训、与 0002/0003 设计的 7 条映射（2 条标"待拍板"，未改 brief-plan）。未跑端到端（无 Managed Agents 凭据，前置条件已按 @dev 2026-11-08 静态验证结论收录）。
+- **[research] 全流程规范复盘** → [process-review-2026-11-10.md](process-review-2026-11-10.md)：现行"研究→决策→设计修订→demo→双轮核验→PROGRESS"链路与实测健康度（23 提交/8 PR/3 决策全已采纳/67 译文）；**已修正 2 项**——decisions 与 research-demos 两处索引把 0002/0003 误标"提议"（实为已采纳）、README 目录树与 CONVENTIONS §2 补 `oss-repos/`/`harness-hub/` 本地目录说明；**待拍板 5 项**（P3 直推 vs PR 口径与分支保护冲突、P4 提交署名 3 人不统一、P5 spike 模板零使用且与 §4 矛盾、P6 brief-plan §12.0 scratch 表述与 §4 冲突、P7 可读性修复挂起）；观察项 3 条。**未触碰 brief-plan 正文实质章节与 W3/harness 暂停令。**
+- **[research] brief-plan 工作区改动处置（@dev 落库前核验发现）**：工作区一处非本轮产出的内容更正——附录第 8 条"文档位置 Desktop 不进仓库"改删除线标注"已进仓库"——**保留并在复盘 §5 披露**；同批表格格式化噪声（含 `test_expired_*` code span 被破坏、Rakazo 行 bold 断行）已 `git checkout` 还原，brief-plan 仍 583 行、行号引用不受影响，`git diff` 仅剩该第 8 条一处。
+
 ### 2026-11-03（全仓可读性排查 + docs/translations/ 中译目录建立）
 
 - **[user] 指令（2026-11-03）**：①排查当前工作区所有文档的人类可读性；②docs 下加翻译目录，把所有下载的论文、引用到的网上英文文献、项目英文文档翻译成人类可读的中文。

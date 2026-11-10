@@ -33,6 +33,8 @@ goal-quant-research/
 │   ├── translations/             # 引用论文/项目英文文档的中文译文（规范见其 README）
 │   └── templates/                # 文献笔记 / 决策记录 / spike 报告模板
 ├── research-demos/               # brief-plan 定稿之后的研究 demo 本体（入库）
+├── oss-repos/                    # 本地开源仓库浅克隆（走读/翻译的引用源；已 gitignore，不入库）
+├── harness-hub/                  # 公司平台仓本地副本（已 gitignore，严禁入库，见 CONVENTIONS §6）
 └── independent-demo-apps/        # 需独立仓库承载的 demo 索引区
     └── vn-demo/                  # vnpy 回测集成 demo（brief-plan 前的例外）—— 独立仓库，本仓忽略
 ```

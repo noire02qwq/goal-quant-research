@@ -17,5 +17,5 @@
 | 编号 | 主题 | 状态 |
 |---|---|---|
 | [0001](0001-multi-agent-group-research-increment.md) | 多智能体群组配合交互以增量研究线并入 W1–W5 | 已采纳 |
-| [0002](0002-w1-recovery-semantics.md) | W1 恢复语义定稿：原子认领 + fencing + 步骤级幂等回执 + 显式 outcome_unknown + 群组消息独立持久化 | 提议 |
-| [0003](0003-w2-memory-distillation.md) | W2 记忆蒸馏语义：可计算晋升 gate + 生命周期 supersede 不删除 + gate 先于 packing | 提议 |
+| [0002](0002-w1-recovery-semantics.md) | W1 恢复语义定稿：原子认领 + fencing + 步骤级幂等回执 + 显式 outcome_unknown + 群组消息独立持久化 | 已采纳 |
+| [0003](0003-w2-memory-distillation.md) | W2 记忆蒸馏语义：可计算晋升 gate + 生命周期 supersede 不删除 + gate 先于 packing | 已采纳 |

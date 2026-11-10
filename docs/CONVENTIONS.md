@@ -26,6 +26,8 @@
 | `docs/translations/` | 引用英文原材料（论文/项目文档）的中文译文，规范见其 README | `papers/arXiv-<ID>.md`、`literature/arXiv-<ID>.md`、`projects/<仓库短名>/<原路径>.md` |
 | `docs/templates/` | 文档模板，新增模板在此归档 | 见各模板文件 |
 | `research-demos/` | brief-plan 定稿之后的研究 demo 本体（入库） | demo 目录小写连字符，每个 demo 自带 README |
+| `oss-repos/` | 本地开源仓库浅克隆（走读/中译的引用源）；**已 gitignore，不入库、不推送** | 目录名 = GitHub 仓名，如 `rakazo` |
+| `harness-hub/` | 公司平台仓本地副本；**已 gitignore，严禁入库**（§6） | 不适用 |
 | `independent-demo-apps/` | 需要独立仓库承载的 demo 的索引；每个 demo 目录需自带 README | demo 目录小写连字符 |
 
 ## 3. 文档规范

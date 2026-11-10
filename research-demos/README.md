@@ -15,5 +15,5 @@
 |---|---|---|
 | [w1-recovery-demo](w1-recovery-demo/README.md) | 双 worker 抢占、进程崩溃恢复扫描、群组会话中断恢复（brief-plan §5.2 规则 1/2/4/5 + §12.2 W1） | [0002](../docs/decisions/0002-w1-recovery-semantics.md)（已采纳） |
 | [w2-memory-distillation-demo](w2-memory-distillation-demo/README.md) | 晋升 gate 可计算判据、记忆生命周期 supersede/TTL 不删除、16KB 组装 gate 先于 packing（brief-plan §5.4 + §12.2 W2） | [0003](../docs/decisions/0003-w2-memory-distillation.md)（已采纳） |
-| [w3-lookahead-proof-demo](w3-lookahead-proof-demo/README.md) | 前视偏差构造性不可能（窗口数据 API 拒未来）+ 前视 lint 第二道防线 + 指标库统一计算 + assigned_role opt-in（§12.1 W3 + §12.2 W3） | 待写（demo 跑通后 0004）；依据文献 W3 产出中 |
-| [w4-approval-gate-demo](w4-approval-gate-demo/README.md) | 审批门 requested_by 归因、成员互批绕过被拒、角色×工具授权矩阵、消息不得改授权边界、预算按 goal 计（§12.1 W4 + §12.2 W4） | 待写（demo 跑通后 0005）；依据文献 W4 产出中 |
+| [w3-lookahead-proof-demo](w3-lookahead-proof-demo/README.md) | 前视偏差构造性不可能（窗口数据 API 拒未来）+ 前视 lint 第二道防线 + 指标库统一计算 + assigned_role opt-in（§12.1 W3 + §12.2 W3） | **可运行（11-10 实测 12/12 测试 + 4 步剧本全过）**；决策记录待写 0004，依据 [W3 笔记](../docs/literature/W3-backtest-reliability.md) |
+| [w4-approval-gate-demo](w4-approval-gate-demo/README.md) | 审批门 requested_by 归因、成员互批绕过被拒、角色×工具授权矩阵、消息不得改授权边界、预算按 goal 计（§12.1 W4 + §12.2 W4） | 脚手架就绪、实现中；决策记录待写 0005，依据 [W4 笔记](../docs/literature/W4-hitl-approval-authorization.md) |

@@ -18,4 +18,4 @@
 
 ## 4. 结论指向的决策记录（待写：demo 跑通后先写 `docs/decisions/0005-*.md`，再回写 brief-plan）
 
-- 依据文献：W4 精读（HITL/审批 4 篇，见 `docs/literature/W4-hitl-approval-authorization.md`——@research 产出中）
+- 依据文献：[docs/literature/W4-hitl-approval-authorization.md](../../docs/literature/W4-hitl-approval-authorization.md)（4 精读，commit `58f9c2a`）；demo 落点以笔记 §4 采纳①–④为准（use-time 绑定原子消费 / 审批通道独立于 agent / 矩阵不可变上限 / 模型之下强制+委派记录权威）

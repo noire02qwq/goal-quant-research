@@ -45,6 +45,8 @@
 
 ## 5. 索引
 
+`papers/` 20 篇（既有 8 篇 + 2026-11-10 W3/W4 批次新增 12 篇，均全文）：
+
 | [papers/arXiv-2608.03836.md](papers/arXiv-2608.03836.md) | Resume Means Resume：工作流持久化层中 Checkpoint、Interrupt 与 Resume 语义的机器校验一致性契约 | 全文 |
 | [papers/arXiv-2608.14380.md](papers/arXiv-2608.14380.md) | AgentRewind：面向长时程 LLM Agent 的可恢复执行 | 全文 |
 | [papers/arXiv-2609.34215.md](papers/arXiv-2609.34215.md) | 同样的赢家，不同的成功率：LLM Agent 如何从失败中恢复 | 全文 |
@@ -53,6 +55,18 @@
 | [papers/arXiv-2610.27645.md](papers/arXiv-2610.27645.md) | CUA-Recovery：长时程计算机使用 agent 的错误恢复基准 | 全文 |
 | [papers/arXiv-2610.34724.md](papers/arXiv-2610.34724.md) | 面向长时程持续学习的 Harness–Model 协作 | 全文 |
 | [papers/arXiv-2610.38573.md](papers/arXiv-2610.38573.md) | CALM：面向长程语言智能体的冲突感知生命周期记忆治理 | 全文 |
+| [papers/arXiv-2601.13770.md](papers/arXiv-2601.13770.md) | Look-Ahead-Bench：金融场景下 Point-in-Time LLM 前视偏差的标准化基准 | 全文 |
+| [papers/arXiv-2605.17937.md](papers/arXiv-2605.17937.md) | BacktestBench：面向自动化量化策略回测的 LLM 基准 | 全文 |
+| [papers/arXiv-2605.23959.md](papers/arXiv-2605.23959.md) | 当 Alpha 消失：金融回测决策时点泄漏的单开关基准 | 全文 |
+| [papers/arXiv-2608.27734.md](papers/arXiv-2608.27734.md) | 诚实评估能留下什么？面向 LLM 驱动交易策略发现的防泄漏、感知搜索强度的评估 | 全文 |
+| [papers/arXiv-2609.21081.md](papers/arXiv-2609.21081.md) | Loopjacking：劫持人在回路审批 | 全文 |
+| [papers/arXiv-2610.03080.md](papers/arXiv-2610.03080.md) | MintEval：LLM 真的实现了你要求的交易策略吗？——面向自然语言到策略代码的行为等价基准 | 全文 |
+| [papers/arXiv-2610.22987.md](papers/arXiv-2610.22987.md) | 从批准到滥用：针对 Harness 保护的编码智能体的权限提升攻击 | 全文 |
+| [papers/arXiv-2610.26101.md](papers/arXiv-2610.26101.md) | 先可靠，后盈利：以 QuantHarness 治理 LLM 智能体的金融策略开发 | 全文 |
+| [papers/arXiv-2610.35835.md](papers/arXiv-2610.35835.md) | I-HITL：不可剥夺的人在回路 | 全文 |
+| [papers/arXiv-2611.04086.md](papers/arXiv-2611.04086.md) | 被许可但未获授权：多智能体 LLM 系统中由 affordance 诱发的受托范围越界 | 全文 |
+| [papers/arXiv-2611.06607.md](papers/arXiv-2611.06607.md) | 难不倒的循环：一个有界的量化金融 LLM 研究循环，以及二十多场战役的发现 | 全文 |
+| [papers/arXiv-2611.11588.md](papers/arXiv-2611.11588.md) | FinCutBench：测量 LLM 金融知识时间边界的持续更新基准 | 全文 |
 
 `literature/` 30 篇（23 篇 arXiv + 7 篇非 arXiv 短名文件），全部摘要级：
 

@@ -1,6 +1,6 @@
 # 0005：W4 审批/授权边界——use-time 审批绑定定稿与授权治理口径（分层验证状态）
 
-> 状态：提议（待 @research 双轮核验后转已采纳）｜ 日期：2026-11-10 ｜ 作者：@dev ｜ 关联：[literature/W4](../literature/W4-hitl-approval-authorization.md)（4 精读，采纳①–④）／[w4-approval-gate-demo](../../research-demos/w4-approval-gate-demo/README.md)（16/16 测试实测）／ brief-plan §5.5、§4.4、§12.1 W4、§12.2 W4
+> 状态：已采纳（@research 双轮核验通过，2026-11-10：采纳①–④逐子项与 W4 笔记 §3 口径比对一致 + 实测回抽 16/16、5 步剧本逐项复现、`f7052ae` 后代码零改动（git diff 空）、27/40 回抽原文命中）｜ 日期：2026-11-10 ｜ 作者：@dev ｜ 核验：@research 2026-11-10 ｜ 关联：[literature/W4](../literature/W4-hitl-approval-authorization.md)（4 精读，采纳①–④）／[w4-approval-gate-demo](../../research-demos/w4-approval-gate-demo/README.md)（16/16 测试实测）／ brief-plan §5.5、§4.4、§12.1 W4、§12.2 W4
 
 ## 背景
 
@@ -56,7 +56,7 @@ W4 周主题「审批/人在回路与授权边界」的文献结论已由 W4 笔
 
 ## 后续动作
 
-- [ ] @research 双轮核验：0005 vs W4 笔记 §3 采纳①–④逐子项口径 + demo 实测回抽（本轮，@research）
+- [x] @research 双轮核验：0005 vs W4 笔记 §3 采纳①–④逐子项口径 + demo 实测回抽（2026-11-10 通过：③拆两半与④四子项 1.5 覆盖的标注与笔记逐子项一致；数字 47/58=81.0%/56.9%/9/10/0/40/27/40 全部回抽命中；一处非阻塞提醒——笔记采纳②的「金融动作批准方必须是人」请在 §5.5 修订留痕中带上，勿因 demo 最小形态而丢失）
 - [ ] 核验通过转"已采纳"后，brief-plan §5.5/§4.4/§12.1 W4/§12.2 W4 定点修订留痕（@dev）
 - [ ] allow-rule 提议来源约束（不可信上下文、绑 goal scope 与过期）平台侧实现（harness 解除搁置后，@dev）
 - [ ] 按资源的 versioned delegation record、peer 动作可见性开关、self-report effect 校验——留群组扩展/W8 合并推进（@dev/@research 随 W8 定）

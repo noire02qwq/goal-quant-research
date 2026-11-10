@@ -54,5 +54,5 @@ python3.14 demo.py monitor    # 步骤 5：确定性 monitor
 
 ## 4. 结论指向的决策记录
 
-- **已落**：[decisions/0005](../../docs/decisions/0005-w4-approval-binding-and-authorization-governance.md)（2026-11-10 **提议**，待 @research 双轮核验采纳①–④逐子项口径 + 实测回抽 → 转已采纳后 brief-plan §5.5/§4.4/§12.1 W4/§12.2 W4 四处定点修订）
+- **已落**：[decisions/0005](../../docs/decisions/0005-w4-approval-binding-and-authorization-governance.md)（2026-11-10 提议、同日双轮核验转**已采纳**）；brief-plan §5.5 / §4.4 / §12.1 W4 / §12.2 W4 四处待按 0005 定点修订留痕（@dev）
 - 依据文献：[docs/literature/W4-hitl-approval-authorization.md](../../docs/literature/W4-hitl-approval-authorization.md)（4 精读，commit `58f9c2a`）；demo 落点以笔记 §4 采纳①–④为准（use-time 绑定原子消费 / 审批通道独立于 agent / 矩阵不可变上限 / 模型之下强制+委派记录权威）

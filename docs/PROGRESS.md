@@ -4,9 +4,17 @@
 
 ## 当前阶段
 
-Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环）。当前：W1/W2 文献线达标（8 篇 2026H2 论文归档、7 篇精读 + DeepSeek Super-agent 精读）；W1、W2 demo 均合入 main，决策记录 [0002](decisions/0002-w1-recovery-semantics.md)、[0003](decisions/0003-w2-memory-distillation.md) 均已采纳（W1 设计修订 PR #4 已合入）；§3.1 四项目走读闭环（笔记 4/4 + §3 回填 + 两轮核验通过）。**W3 维持暂停（@user 2026-11-03 再次确认先不开）；harness-hub 已复制为本地副本并拉出 `zdf-dev-goal-quant` 分支，但 harness 部分暂不开发**——2026-11-10 新增：Anthropic 记忆走读笔记与[全流程规范复盘](process-review-2026-11-10.md)落库、`oss-repos/` 增补两仓、目录树各级规范文档对账补齐（essay-study README 补索引、根 README 补 `.github/` 与过程散档、CONVENTIONS §2 补过程散档命名）；复盘待拍板 **P3–P7**（直推 vs PR 口径、署名口径、spike 模板去留、§12.0 scratch 表述、可读性批量修复）**均未决**——当前无阻塞，待办见文末。
+Phase 1 W2 已闭环、W3/W4 研究线进行中（@user 2026-11-10 指令「进行 W3W4 论文/文献/独立 demo 研究，harness-hub 集成开发先搁置」——**W3 暂停令就研究线解除**；harness 侧维持搁置不变）。当前：W1/W2 文献+demo+决策全闭环（决策 [0002](decisions/0002-w1-recovery-semantics.md)、[0003](decisions/0003-w2-memory-distillation.md) 均已采纳）；**W3/W4 文献线 2026-11-10 完成**——12 篇新 PDF 归档、[W3 笔记](literature/W3-backtest-reliability.md)（7 精读+1 摘要级）、[W4 笔记](literature/W4-hitl-approval-authorization.md)（4 精读，原「检索无结果」解除），brief-plan §12.1 W3/W4 行与 §12.2 W4 行已回填；**W3/W4 独立 demo 与中译为下一步**；§3.1 四项目走读闭环（笔记 4/4 + 两轮核验通过）。2026-11-10 另有：Anthropic 记忆走读笔记与[全流程规范复盘](process-review-2026-11-10.md)落库、目录树各级规范文档对账补齐；复盘待拍板 **P3–P7 均未决**——当前无阻塞，待办见文末。
 
 ## 进度日志（倒序）
+
+### 2026-11-10（W3/W4 文献研究：12 篇归档 + 双笔记 + brief-plan 回填）
+
+- **[user] 指令（2026-11-10）**：根据进度进行 W3W4 的论文、文献、独立 demo 研究，harness-hub 集成开发先搁置——W3 暂停令就研究线解除，harness 侧维持搁置。
+- **[research] 检索与归档**：arXiv API 四式补检（backtest+LLM / look-ahead bias+LLM / quantitative trading+LLM agent / trading strategy+LLM）+ W4 三式（HITL approval / authorization autonomy / multi-agent permission），**12 篇新 PDF 归档 `docs/papers/`**（`%%EOF` 全部校验通过），`papers/README.md` 索引 +12 行（W3 8 篇 / W4 4 篇）。
+- **[research] 并行精读**（3 个子代理分组读完 `pdftotext -layout` 提取件，关键数字回抽 PDF `grep -a` 逐条核验）→ **[literature/W3-backtest-reliability.md](literature/W3-backtest-reliability.md)**（7 篇精读 + 1 摘要级：BacktestBench/MintEval/QuantHarness/Hard to Fool/Look-Ahead-Bench/What survives 全文升级/FinCutBench/When Alpha Disappears）与 **[literature/W4-hitl-approval-authorization.md](literature/W4-hitl-approval-authorization.md)**（4 篇精读：I-HITL/Loopjacking/From Approval to Abuse/Permitted but Unauthorized，**原「本轮检索未取得有效结果」解除**）。
+- **[research] brief-plan 回填**（整行替换 + 列数校验 6 管道=5 列通过）：§12.1 W3 行——方向结论五条采纳（前视三层构造性防护、试验账本单入口三仪器齐算、行为等价验收、实测知识边界窗口、门禁合取+预算化选型）+ 改造（声明式词表→spec+行为校验）+ 不采纳（单分数验收）；§12.1 W4 行——补检结果与四条采纳（use-time 绑定原子消费、审批通道独立于 agent、矩阵不可变上限、矩阵模型之下强制）；§12.2 W4 群组行——候选补 4 篇精读 + 落点新增 ④–⑦ 四条（runtime 强制/委派记录权威/peer 动作不入候选空间/self-report effect 校验）。**机制级设计修订（§5.5/§5.6/§6.1/§8 A2）未动**——按「先 demo 后决策再改设计」留待 W3/W4 demo 证据，决策记录 0004/0005 顺延预留。
+- **待办**：① W3 独立 demo（行情源可达性、干净容器 vnpy、GoalStrategyBase 最小子集——依 §12.1 W3 开发交付行）② W4 独立 demo（审批挂起-恢复语义验证）③ 12 篇新 PDF 中译入 `docs/translations/papers/` ④ §12.2 W3 群组子题（角色×DAG）文献仍待补。
 
 ### 2026-11-10（Anthropic 记忆文献走读 + oss-repos 增补 + 全流程规范复盘）
 
@@ -110,4 +118,5 @@ Phase 1 W1–W2 进行中（@user 2026-11-01 下令启动循环）。当前：W1
 - harness-hub 平台侧开发（插件脚手架、goal_* schema 落地、状态机全转换表实现侧）：**本地副本已就位 2026-11-03**（`harness-hub/`，gitignored，分支 `zdf-dev-goal-quant` ← `origin/fix-20261019203013` `ee50ae7d3`），但 @user 指示 **harness 部分先不开发**——源码引用可读，开发待后续下令。
 - ~~@dev：走 PR 修订 brief-plan §5.1/§5.4/§12.2~~（**已完成 2026-11-01，PR #8 合入**：§4.4 字段 + §5.1 组装四步 + §5.4 SEPM+CALM 主线 + §12.2 W2 行，coverage 实例化说明与 safety gate 平台侧待补均注明，落点清单见 [decisions/0003](decisions/0003-w2-memory-distillation.md) 修订落点段）；0002 的 §4.4/§5.2/§12.2 W1 修订已随 PR #4 完成。
 - AWM workflow 归纳迁移性 spike：等真实 T1 回测轨迹数据（W3+，依赖回测链路）。
-- @research：W3 文献检索式启动（角色分工×DAG 方向 + 群组记忆注入策略）。**已按 @user 指令暂停（2026-11-01；2026-11-03 再次确认先不开）：未产生任何 W3 产物（检索式/笔记/草稿均未启动），恢复等 @user 下令。**
+- ~~@research：W3 文献检索式启动（已暂停）~~ → **@user 2026-11-10 指令恢复：W3/W4 文献线当日完成**（[W3 笔记](literature/W3-backtest-reliability.md)、[W4 笔记](literature/W4-hitl-approval-authorization.md)，原暂停令就研究线解除）。**剩余待补**：§12.2 W3 群组子题（角色分工×DAG）文献本轮未产出新增，MetaGPT/ChatDev 维持仅摘要级。
+- @research：W3/W4 独立 demo 与 12 篇新 PDF 中译（见 2026-11-10 进度日志待办）。

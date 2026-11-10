@@ -17,5 +17,7 @@
 
 - [W1-durable-scheduling-recovery.md](W1-durable-scheduling-recovery.md)（2026-11-01，4 篇精读：2608.03836 / 2608.14380 / 2609.34215 / 2610.27645）
 - [W2-context-memory-distillation.md](W2-context-memory-distillation.md)（2026-11-01，3 篇精读 + 1 篇仅摘要级：2610.14515 / 2610.34724 / 2610.38573 / 2610.26995）
+- [W3-backtest-reliability.md](W3-backtest-reliability.md)（2026-11-10，7 篇精读 + 1 篇仅摘要级：2605.17937 / 2610.03080 / 2610.26101 / 2611.06607 / 2601.13770 / 2608.27734 / 2611.11588 / 2605.23959）
+- [W4-hitl-approval-authorization.md](W4-hitl-approval-authorization.md)（2026-11-10，4 篇精读：2610.35835 / 2609.21081 / 2610.22987 / 2611.04086）
 
 相关：[../essay-study/deepseek-super-agent-2026.md](../essay-study/deepseek-super-agent-2026.md)（DeepSeek Super-agent 官方文章+原型精读，非检索式产出）。

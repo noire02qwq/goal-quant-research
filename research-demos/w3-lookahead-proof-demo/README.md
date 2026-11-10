@@ -6,7 +6,7 @@
 
 1. **前视偏差在接口层构造性不可能**（§12.1 W3 方向①）：策略唯一数据入口 `WindowedView` 把一切读取钳制在 `[0, t]`，越界即抛 `LookaheadViolation`——正常路径下拿不到未来数据，不靠提示词、不靠事后 lint。参照 W3 文献笔记采纳①（MintEval「bar 回调前入 buffer、越界抛错」）。
 2. **第二道防线前视 lint**（§12.1 W3 方向②）：绕过视图直读原始源的策略，由**动态审计**（access_log 中 index > step 即定罪，带 file:line）+ **静态扫描**（策略源文件禁用模式行号级命中）双层捕获。
-3. **指标统一计算，不让模型自己写公式**（§12.1 W3 方向③，BacktestBench 结论）：收益/夏普/回撤全部走 `lookahead_guard/metrics.py`，策略只产出 0/1 仓位序列；汇报三仪器齐算（W3 笔记采纳②"账本单入口"）。
+3. **指标统一计算，不让模型自己写公式**（§12.1 W3 方向③，BacktestBench 结论）：收益/夏普/回撤全部走 `lookahead_guard/metrics.py`，策略只产出 0/1 仓位序列。**验证状态：部分验证**——指标单入口已落地（W3 采纳②"账本单入口"的前提）；trial ledger 与 DSR/PBO/held-out 三仪器本 demo **未实现**，留 §8 A2/测评阶段（W6+）。
 4. **群组任务分解 opt-in**（§12.2 W3）：任务 `assigned_role` 可选——不填即单角色路径零改动，填了则角色不匹配的认领被拒；两条路径在同一函数里共存。
 
 ## 2. 运行方式（2026-11-10 实测）
@@ -33,8 +33,8 @@ python3.14 demo.py roles      # 步骤 4：assigned_role 双路径
 
 **步骤 1 `clean`——干净回测双 lint 全绿**
 - 输入：`python3.14 demo.py clean`
-- 现象：`{'total_return': 1.238231, 'sharpe': 5.0515, 'max_drawdown': -0.1027, 'bars': 300}`；access_log 6390 条中 index≤step 违例 **0** 条；动态 0 发现 / 静态 0 发现 → **全绿 PASS**
-- 对应结论：接口层构造性保证下策略吃到了埋藏行情（+123.8%）且全程零越界——行为等价验收（W3 笔记采纳③）成立
+- 现象：`{'total_return': 1.238231, 'sharpe': 5.0515, 'max_drawdown': -0.1027, 'bars': 300}`；因果合规复核：access_log 6390 条读取中 index≤step 违例 **0** 条；动态 0 发现 / 静态 0 发现 → **全绿 PASS**
+- 对应结论：接口层构造性保证下策略吃到了埋藏行情（+123.8%）且全程零越界——**因果合规成立（没读未来的必要条件）**；语义等价（ActionMatch 逐 bar 参考比对）本 demo 未实现、留 W6 验收路径（W3 采纳③拆分口径，@research 2026-11-10 校正）
 
 **步骤 2 `leak`——走合法接口读未来也被拒绝**
 - 输入：`python3.14 demo.py leak`

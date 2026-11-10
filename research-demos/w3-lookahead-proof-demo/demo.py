@@ -29,7 +29,7 @@ def step_clean() -> None:
     dyn = dynamic_audit(feed)
     sta = static_scan("strategies.py")
     print(f"  回测完成：{res.report}")
-    print(f"  行为等价复核：access_log {len(feed.access_log)} 条，index≤step 违例 {len(dyn)} 条")
+    print(f"  因果合规复核（access_log 只能证明'没读未来'）：{len(feed.access_log)} 条读取，index≤step 违例 {len(dyn)} 条")
     print(f"  双 lint：动态 {len(dyn)} 发现 / 静态 {len(sta)} 发现 → {'全绿 PASS' if not dyn and not sta else 'FAIL'}")
     print("  指标口径：全部来自 lookahead_guard.metrics（策略不得自写公式，BacktestBench 结论）")
 

@@ -53,5 +53,5 @@ python3.14 demo.py roles      # 步骤 4：assigned_role 双路径
 
 ## 4. 结论指向的决策记录
 
-- **待写**：demo 跑通后先写 `docs/decisions/0004-*.md`，按 CONVENTIONS §3.6「先决策、后设计修订」再回写 brief-plan（落点以 W3 笔记 §4 采纳①–⑤为准：前视三层防护 / 账本单入口三仪器齐算 / 行为等价验收 / 实测知识边界窗口 / 门禁合取+预算化）
+- **已落**：[decisions/0004](../../docs/decisions/0004-w3-backtest-reliability-and-lookahead-guard.md)（2026-11-10 提议、同日双轮核验转**已采纳**，commit `0ec7d40`）；brief-plan §5.6 / §6.1 / §8 A2 / §12.1 W3 / §12.2 W3 五处已按 0004 定点修订留痕（2026-11-10，@dev）
 - 依据文献：[docs/literature/W3-backtest-reliability.md](../../docs/literature/W3-backtest-reliability.md)（7 精读 + 1 摘要级，commit `58f9c2a`）；对应 PDF 见 [docs/papers/README.md](../../docs/papers/README.md) 索引

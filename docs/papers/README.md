@@ -36,3 +36,8 @@
 | arXiv-2609.21081.pdf | Loopjacking: Hijacking Human-in-the-Loop Approval | https://arxiv.org/abs/2609.21081 | docs/literature/W4-hitl-approval-authorization.md |
 | arXiv-2610.22987.pdf | From Approval to Abuse: Privilege Escalation Attacks on Harness-Protected Coding Agents | https://arxiv.org/abs/2610.22987 | docs/literature/W4-hitl-approval-authorization.md |
 | arXiv-2611.04086.pdf | Permitted but Unauthorized: Affordance-Induced Delegated-Scope Violations in Multi-Agent LLM Systems | https://arxiv.org/abs/2611.04086 | docs/literature/W4-hitl-approval-authorization.md |
+| arXiv-2605.06320.pdf | Improving the Efficiency of Language Agent Teams with Adaptive Task Graphs | https://arxiv.org/abs/2605.06320 | docs/literature/W3-backtest-reliability.md |
+| arXiv-2610.07860.pdf | WorkflowOps: Learning Agent Collaboration Priors for Multi-Agent Workflow Orchestration | https://arxiv.org/abs/2610.07860 | docs/literature/W3-backtest-reliability.md |
+| arXiv-2610.17143.pdf | OpenDGO: Benchmarking Multi-Agent Organizations Across Diverse Application Domains | https://arxiv.org/abs/2610.17143 | docs/literature/W3-backtest-reliability.md |
+| arXiv-2604.02770.pdf | Improving Role Consistency in Multi-Agent Collaboration via Quantitative Role Clarity | https://arxiv.org/abs/2604.02770 | docs/literature/W3-backtest-reliability.md |
+| arXiv-2505.13516.pdf | HALO: Hierarchical Autonomous Logic-Oriented Orchestration for Multi-Agent LLM Systems | https://arxiv.org/abs/2505.13516 | docs/literature/W3-backtest-reliability.md |

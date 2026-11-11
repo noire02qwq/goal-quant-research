@@ -22,7 +22,10 @@ def feed_from_tuples(bars: list[tuple]) -> MarketFeed:
                        for i, (o, h, l, c) in enumerate(bars)])
 
 
-def run_template(strategy, bars: list[tuple]) -> dict:
-    """用 w3 的构造性防护回测跑一个策略模板，返回指标报告。"""
-    res = run_backtest(feed_from_tuples(bars), strategy)
+def run_template(strategy, bars: list[tuple], cost_rate: float = 0.0003) -> dict:
+    """用 w3 的构造性防护回测跑一个策略模板，返回指标报告。
+
+    cost_rate 即执行假设档位（佣金+滑点合并口径，见 report.EXEC_TIERS）。
+    """
+    res = run_backtest(feed_from_tuples(bars), strategy, cost_rate=cost_rate)
     return dict(res.report)

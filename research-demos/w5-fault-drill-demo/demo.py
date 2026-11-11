@@ -1,7 +1,7 @@
 """W5 故障注入演练 Demo（五类注入 + 数据固定化 + T3/T4 模板）。
 
 运行（demo 目录内）：python3.14 -m unittest discover -s tests -v
-交互入口：python3.14 demo.py ｜ 分步：python3.14 demo.py <repair|restart|goalchange|interface|feed|fixtures>
+交互入口：python3.14 demo.py ｜ 分步：python3.14 demo.py <repair|restart|goalchange|interface|feed|fixtures|taub>
 """
 from __future__ import annotations
 
@@ -110,8 +110,26 @@ def step_fixtures() -> None:
     print(f"  → {'PASS' if ok else 'FAIL'}：固定窗口可复现 + 模板可运行（回测走 w3 构造性防护）")
 
 
+def step_taub() -> None:
+    print(STEP, "\n[7/7] 排名稳定性：两档执行假设下策略 Kendall τ_b（0006 实测行）")
+    from strategies import DualMA
+    from drill.report import EXEC_TIERS, stability, tier_table
+    bars = fixture.make_bars()
+    roster = [("T1 双均线", DualMA()), ("T3 网格", fixture.T3Grid()), ("T4 海龟", fixture.T4Turtle())]
+    table = tier_table(bars, roster)
+    for tier, scores in table.items():
+        order = sorted(scores, key=scores.get, reverse=True)
+        print(f"  {tier}: " + " > ".join(f"{n} {scores[n]:+.4f}" for n in order))
+    names, x, y, tau = stability(table)
+    print(f"  Kendall τ_b（{list(EXEC_TIERS)[0]} vs {list(EXEC_TIERS)[1]}，n={len(names)}）= {tau:+.4f}")
+    print("  → PASS：执行假设档位已披露、排序稳定性可复算（Execution 反例的正面口径）"
+          if -1 <= tau <= 1 else "  → FAIL")
+    print(f"    （档位口径：{EXEC_TIERS}——滑点并入 cost_rate 的简化合并，披露即复算）")
+
+
 STEPS = {"repair": step_repair, "restart": step_restart, "goalchange": step_goalchange,
-         "interface": step_interface, "feed": step_feed, "fixtures": step_fixtures}
+         "interface": step_interface, "feed": step_feed, "fixtures": step_fixtures,
+         "taub": step_taub}
 
 
 def main(argv: list[str]) -> int:
@@ -122,10 +140,10 @@ def main(argv: list[str]) -> int:
             return 2
         fn()
         return 0
-    print("W5 故障注入演练 —— 输入 1-6，q 退出")
+    print("W5 故障注入演练 —— 输入 1-7，q 退出")
     menu = {str(i): fn for i, fn in enumerate(STEPS.values(), start=1)}
     while True:
-        choice = input("\n[1]改坏代码 [2]重启 [3]改目标 [4]interface [5]数据注入 [6]固定化/模板 (q): ").strip().lower()
+        choice = input("\n[1]改坏代码 [2]重启 [3]改目标 [4]interface [5]数据注入 [6]固定化/模板 [7]τ_b (q): ").strip().lower()
         if choice in ("q", "quit", "exit"):
             print("bye")
             return 0

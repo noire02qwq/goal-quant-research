@@ -115,3 +115,14 @@ Harness² 把 harness 本身当作可递归优化的对象：模型权重不动�
 - 仓库：https://github.com/google-research/harness2 （本地 `oss-repos/harness2`，HEAD `6868817`）
 - 论文：https://arxiv.org/abs/2610.14224 ｜ 官网：https://harness2.github.io
 - 关键文件：`README.md`、`docs/SETUP.md`、`docs/EXPERIMENTS.md`、`harness2/core/{recursion,proposer,selection,context,tree,library,spec,schedule,judge,runmark}.py`、`harness2/substrate/{opencode,codex}.py`、`harness2/config.py`
+
+
+## 6. 核验附注（回源核验）
+
+> 回源核验：@dev 2026-11-11，15 项抽核全中零偏差（行数 10/10 逐值、引文逐字、SCRUB_ENV elts=21 AST 实证）；体积一项为口径差异（size-pack vs du -sh）。方法：对照本地 `oss-repos/harness2`（HEAD `6868817`）逐条回源本笔记声明。
+
+- **模块表行数 10/10 逐值相等**：`recursion 589 / proposer 527 / selection 505 / context 546 / tree 427 / library 222 / spec 277 / schedule 918 / judge 171 / runmark 177`（另 `prompts.py 1163` 命中 §2 引文）
+- **引文逐字命中**：WIDTH 两模式（`core/recursion.py:368`）、EXPERIMENTS L8-19 双模式与按域库（`docs/EXPERIMENTS.md:8-19`）、c8 不可跳过（`substrate/codex.py:90` "so the model cannot skip it"）、预算帽理由（`substrate/opencode.py:51`）、AGENTS.md 32,768 截断（`substrate/codex.py:45`）、tripwire≠防线（`core/context.py:459` "not the defence itself"）、Codex 未指示下载 rubric（`docs/EXPERIMENTS.md:98`）、盲选后评测（`core/judge.py:15` "after it chose it"）、中性替身（`core/selection.py:238`）
+- **机制实证**：`SCRUB_ENV` 恰 21 项（AST 解析 `config.py:193` 的 `elts`）；空教训不入库（`library.py:120` `if not has_experience(...): return None`）；grader 判决双检（`library.py:121-122` 连续两次 assert）；INDEX 从磁盘重建（`library.py:116/155`）；`inputs_fingerprint` 同/异输入复用语义（`runmark.py` + `tests/test_task_input_identity.py` 4 例）
+- **体积口径**：正文 6.83 MiB = `git count-objects -vH` 的 size-pack（纯 packfile，已复测命中）；本地 `du -sh` 得 16M 含 `.git` 与工作区——两者度量对象不同、各自正确，**正文数字不改**
+- §4 同构比对表的「候选参考、未采纳，未改 brief-plan」边界经 @dev 确认与 decisions/0004/0005 口径一致（@research 复核不改）

@@ -41,3 +41,11 @@
 | arXiv-2610.17143.pdf | OpenDGO: Benchmarking Multi-Agent Organizations Across Diverse Application Domains | https://arxiv.org/abs/2610.17143 | docs/literature/W3-backtest-reliability.md |
 | arXiv-2604.02770.pdf | Improving Role Consistency in Multi-Agent Collaboration via Quantitative Role Clarity | https://arxiv.org/abs/2604.02770 | docs/literature/W3-backtest-reliability.md |
 | arXiv-2505.13516.pdf | HALO: Hierarchical Autonomous Logic-Oriented Orchestration for Multi-Agent LLM Systems | https://arxiv.org/abs/2505.13516 | docs/literature/W3-backtest-reliability.md |
+| arXiv-2511.03628.pdf | LiveTradeBench: Seeking Real-World Alpha with Large Language Models | https://arxiv.org/abs/2511.03628 | docs/literature/W5-real-eval-fault-style.md |
+| arXiv-2510.11695.pdf | When Agents Trade: Live Multi-Market Trading Benchmark for LLM Agents（Agent Market Arena） | https://arxiv.org/abs/2510.11695 | docs/literature/W5-real-eval-fault-style.md |
+| arXiv-2605.06024.pdf | Strat-LLM: Stratified Strategy Alignment for LLM-based Stock Trading with Real-time Multi-Source Signals | https://arxiv.org/abs/2605.06024 | docs/literature/W5-real-eval-fault-style.md |
+| arXiv-2609.34510.pdf | Can AI Make Money in Crypto? Measuring the Gap from Backtests to Real Markets | https://arxiv.org/abs/2609.34510 | docs/literature/W5-real-eval-fault-style.md |
+| arXiv-2605.16895.pdf | The Alpha Illusion: Reported Alpha from LLM Trading Agents Should Not Be Treated as Deployment Evidence | https://arxiv.org/abs/2605.16895 | docs/literature/W5-real-eval-fault-style.md |
+| arXiv-2610.26662.pdf | AllPath: Layered Verification for a Deployed, Self-Revising LLM Trading Agent under Human-Gated and Autonomous Regimes | https://arxiv.org/abs/2610.26662 | docs/literature/W5-real-eval-fault-style.md |
+| arXiv-2610.05077.pdf | How Execution Assumptions Change Short-Horizon Sharpe Rankings: Evidence from a Synthetic Trading Benchmark | https://arxiv.org/abs/2610.05077 | docs/literature/W5-real-eval-fault-style.md |
+| arXiv-2610.26438.pdf | Fake News, Real Crashes: Information Injection Attacks on LLM Financial Trading Agents | https://arxiv.org/abs/2610.26438 | docs/literature/W5-real-eval-fault-style.md |

@@ -21,4 +21,4 @@
 | [0003](0003-w2-memory-distillation.md) | W2 记忆蒸馏语义：可计算晋升 gate + 生命周期 supersede 不删除 + gate 先于 packing | 已采纳 |
 | [0004](0004-w3-backtest-reliability-and-lookahead-guard.md) | W3 回测可靠性：前视构造性防护三层定稿 + 验收口径拆分（因果合规✓/语义等价留W6）+ 账本三仪器留测评线，逐条标注验证状态 | 已采纳 |
 | [0005](0005-w4-approval-binding-and-authorization-governance.md) | W4 审批/授权边界：use-time digest 绑定+原子消费（Loopjacking 证伪弱绑定）、审批通道隔离最小验证、矩阵 immutable ceiling ✓/提议来源约束未验证、monitor 唯一防线（采纳④四子项覆盖 1.5） | 已采纳 |
-| [0006](0006-reporting-and-metrics-taub.md) | 汇报与测评口径：metrics 增排名稳定性 τ_b+exec_tier 披露、宣称强度四档收口（禁 3/4 档措辞）、成本必报（凡报收益必同报回撤与成本）、报告三件套（固定窗口/执行档/敏感性 τ_b）；demo 两档 τ_b=+1.0 实测 | 提议 |
+| [0006](0006-reporting-and-metrics-taub.md) | 汇报与测评口径：metrics 增排名稳定性 τ_b+exec_tier 披露、宣称强度四档收口（禁 3/4 档措辞）、成本必报（凡报收益必同报回撤与成本）、报告三件套（固定窗口/执行档/敏感性 τ_b）；demo 两档 τ_b=+1.0 实测 | 已采纳 |

@@ -1,6 +1,6 @@
 # 0006：汇报与测评口径——指标第四维排名稳定性 τ_b 与宣称强度分档
 
-> 状态：提议（待 @dev 双轮核验后转已采纳） ｜ 日期：2026-11-11 ｜ 作者：@research ｜ 关联：[literature/W5-real-eval-fault-style.md](../literature/W5-real-eval-fault-style.md)、`research-demos/w5-fault-drill-demo`（`992a2aa`+`d4ef01c`）、brief-plan §6.1
+> 状态：**已采纳**（2026-11-11 @dev 双轮核验 PASS：τ_b 逐位复算 + 决策 1–4 笔记/论文双层回源 + F1/F2 修正复扫通过） ｜ 日期：2026-11-11 ｜ 作者：@research ｜ 关联：[literature/W5-real-eval-fault-style.md](../literature/W5-real-eval-fault-style.md)、`research-demos/w5-fault-drill-demo`（`992a2aa`+`d4ef01c`）、brief-plan §6.1
 
 ## 背景
 
@@ -43,7 +43,7 @@ W5 文献线（8 篇全文精读）对既有四条结论的判定中，三条直
 
 ## 对设计文档的修订
 
-- brief-plan.md §6.1：metrics 增 `rank_stability_tau` 与 `exec_tier`、四档收口与三件套写入测评快照说明（是否已更新：**否**——待本记录转已采纳后由 @dev 定点修订留痕）
+- brief-plan.md §6.1：metrics 增 `rank_stability_tau` 与 `exec_tier`、四档收口与三件套写入测评快照说明（是否已更新：**是**——2026-11-11 转已采纳后同日定点修订留痕）
 - brief-plan.md §12.1 W5 行结论①②③：文献回填已按判定更新（是否已更新：是，`f42838b`）
 
 ## 后续动作

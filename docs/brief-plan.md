@@ -306,7 +306,8 @@ GoalEvaluation {
     returns, max_drawdown, volatility, sharpe, win_rate,
     turnover, cost_drag,           # 交易成本拖累（平台统一口径）
     signal_hit_rate, signal_lead,  # 信号有效性（命中率/提前量）
-    benchmark_relative             # 相对基准超额
+    benchmark_relative,            # 相对基准超额
+    rank_stability_tau, exec_tier, # 排名稳定性 τ_b（基准档 vs 压力档）+ 执行档位披露（0006 决策 1，缺 τ_b 的排序表不得出报告）
   },
   verdict_per_metric: {met / below / above},   # 对照 goal_strategy 评价指标定义
   deviation_analysis,                # 模型生成的偏差归因
@@ -315,6 +316,8 @@ GoalEvaluation {
 ```
 
 四种 `eval_kind` 对应 mission 四项：**历史回测**（vnpy 滚动窗口）、**模拟跟踪**（paper：当日信号次日开盘价模拟成交、实盘数据回流）、**基准对比**（同窗口持有基准/等权组合）、**样本外验证**（holdout 窗口，oos 权重高于 backtest——防过拟合是测评可信度关键）。
+
+**修订留痕（2026-11-11 @dev，依据 decisions/0006 决策 1–4）**：`metrics` 增列 **`rank_stability_tau`（Kendall τ_b，基准执行档 vs 压力执行档成对）与 `exec_tier`（档位参数与简化合并口径随输出同报）**，缺 τ_b 的策略排序表不得出报告，top-3 Jaccard 作扩展位暂不纳入（0006 决策 1 半采纳留痕）；**汇报宣称按四档收口**——Phase 1 仅第 1–2 档（历史回测/原型、无部署语言），禁第 3/4 档（0006 决策 2）；**凡报收益必同报回撤与成本**（`cost_drag` 必报，不报收益时改 operational 指标，AllPath 边界——0006 决策 3）；**报告三件套：固定窗口 + 执行档位 + 敏感性重跑 τ_b，缺一不得出报告**（0006 决策 4）。实测依据 w5-fault-drill-demo 第 7 步（两档 τ_b=+1.0000，`d4ef01c`）。
 
 
 **修订留痕（2026-11-10 @dev，依据 decisions/0004 决策 2/3）**：`metrics` 走统一指标库单入口（已实证：demo `metrics.py` 的收益/夏普/回撤三函数，策略不得自写公式）；**试验账本取数字段 `trial_count/effective_trials/psr/dsr` 未实现**——随 §8 A2 测评管线（W6+）落地，0004 将账本+DSR/PBO/held-out 标「部分验证/未实现」，本节字段在实现前不得按已就绪引用。回测验收口径两级：**因果合规**（access_log 零越界，已验证）与**语义等价**（ActionMatch 逐 bar 参考比对，留 W6 验收路径；读码 judge 不采纳）。

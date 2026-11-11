@@ -55,13 +55,13 @@
 
 ## 6. 补检：§12.2 W3 群组子题（角色分工 × goal_plan_task DAG）
 
-> 补检日期：2026-11-11 ｜ 触发：PROGRESS 待办④ ｜ 5 篇**全文精读**（2 个并行子代理分页读毕、关键数字由 @research 独立回抽命中：47.5% 提取件 L405、0.890 L116、62.6% L123、46.4→8.4 L47、95.2/78.6/14.6 L427+L536）｜ 检索式见 §1 补检行
+> 补检日期：2026-11-11 ｜ 触发：PROGRESS 待办④ ｜ 5 篇**全文精读**（2 个并行子代理分页读毕、关键数字由 @research 独立回抽命中：47.5% 提取件 L405、0.890 L116、62.6% L123（Tree 的 Sequential 均值；角色放置 Center=67.7% 另于 L131/L427 回抽，@dev 核验纠错后补）、46.4→8.4 L47、95.2/78.6/14.6 L427+L536）｜ 检索式见 §1 补检行
 
 | 论文 | 一句话贡献 | 与本项目的关系 | 状态 |
 |---|---|---|---|
 | LATTE（[2605.06320](https://arxiv.org/abs/2605.06320)，2026-05） | 动态任务图协调：1 Lead+N Worker、七算子（DISCOVER/ASSIGN/CLAIM/COMPLETE/RELEASE/CLOSE/VERIFY）按「图级后果」分权限、frontier 决定并行数；token 成本 47.5% vs 静态图消融 86.9%、准确率 79.7% vs 57.6%（p<0.01，MetaGPT 对照仅 33.9%） | `assigned_role` 应为**节点可变属性**（RELEASE 可退回重派）；五态状态机+heartbeat 兜底；领取式（CLAIM FIFO）分工；校验按需插入（19% trial 才触发） | 已精读 |
 | WorkflowOps（[2610.07860](https://arxiv.org/abs/2610.07860)，2026-10） | 编排先验学习：角色转移矩阵 P 给 DAG 补**软边**（硬依赖不可覆盖）、子任务能力描述与角色卡 embedding 余弦指派（τ=0.45 以下才 LLM 复核/新建角色）；Mixed 0.890 vs 最强基线 0.751（+13.9pp，p<0.001） | **能力驱动的 assigned_role** + 匹配阈值门槛（两级匹配省 80%+ LLM 路由调用）；角色卡 schema（id/description/instructions/…）可直接借用；软硬依赖分层=角色分工无权否决任务逻辑 | 已精读 |
-| OpenDGO（[2610.17143](https://arxiv.org/abs/2610.17143)，2026-10） | 组织基准：组织五元组 O=(G,R,P,I,B)，**任务依赖图 H 与通信图 G 解耦**（同一 DAG 可挂不同组织评测）；learned 组织赢 13/18 条件；Sequential 任务关键角色放 Center 62.6% vs Edge 差 7.5pp | **DAG 形状 → 角色放置查表**（Sequential→Center+集中输入、Parallel/Integration→Bridge+分散）；角色分配本身是性能变量非实现细节 | 已精读 |
+| OpenDGO（[2610.17143](https://arxiv.org/abs/2610.17143)，2026-10） | 组织基准：组织五元组 O=(G,R,P,I,B)，**任务依赖图 H 与通信图 G 解耦**（同一 DAG 可挂不同组织评测）；learned 组织赢 13/18 条件；Sequential 任务关键角色放 Center **67.7%**、移到 Edge 降至 60.2%（Δ7.5pp；62.6% 是 Tree 的 Sequential 均值，勿混） | **DAG 形状 → 角色放置查表**（Sequential→Center+集中输入、Parallel/Integration→Bridge+分散）；角色分配本身是性能变量非实现细节 | 已精读 |
 | Role Clarity（[2604.02770](https://arxiv.org/abs/2604.02770)，2026-04） | 角色越界（disobey role specification）量化：行为-角色相似度经 softmax 得清晰度矩阵 M，对角=一致性、非对角=越界；微调后越界率 Qwen 46.4%→8.4%、Llama 43.4%→0.2% | `assigned_role` 的**守规审计**：群组结束算一次清晰度分；无护栏基线近半任务越界 → 越界告警有动机；格式合规与角色遵守分开报数 | 已精读 |
 | HALO（[2505.13516](https://arxiv.org/abs/2505.13516)，2025-05） | 三层编排 plan（逐步分解）→ assign（按子任务实例化角色+模板）→ execute，MCTS 搜索工作流边；Avg 78.6 vs ADAS 64.0（+14.6pp）；去分解层 −11.3pp | `assigned_role` 三元组（角色名, 子任务, prompt 模板）随节点下发而非全局静态角色表；分解一步一做、回看执行历史 | 已精读（ID 见事故披露） |
 
@@ -71,7 +71,7 @@
 - **采纳方向②：改图级权限按「图级后果」分层**。依据：LATTE 七算子权限表——局部发现/完成归执行者，RELEASE/VERIFY/CLOSE 等全图操作归协调者；与 0005「矩阵不可变上限、越权拒」同族。
 - **采纳方向③：能力驱动指派 + 阈值门槛**。依据：WorkflowOps——子任务带能力需求描述、余弦匹配 argmax、τ 以下才走 LLM 复核/新建角色；角色池持续演化**不作默认**（+1.7 点要 2.7× token、长期复用未测），静态池+按需开关。
 - **采纳方向④：角色守规可审计（清晰度分/越界告警）**。依据：Role Clarity——行为-角色相似度对角值即映射质量；基线越界 43–46%（无护栏近半违规）。
-- **采纳方向⑤：任务图与通信图解耦，DAG 形状决定角色放置**。依据：OpenDGO——H（任务依赖）与 G（组织）分离评测；Sequential→Center 62.6%、Parallel/Integration→Bridge；**注意**：结构-属性关联作者自认非因果（not an identified causal chain），查表规则按经验参考对待。
+- **采纳方向⑤：任务图与通信图解耦，DAG 形状决定角色放置**。依据：OpenDGO——H（任务依赖）与 G（组织）分离评测；Sequential→Center 67.7%（vs Edge 60.2%）、Parallel/Integration→Bridge；**注意**：结构-属性关联作者自认非因果（not an identified causal chain），查表规则按经验参考对待。
 - **不采纳/存疑**：WorkflowOps 角色池持续演化作默认（性价比与长期效果未证）；HALO 66% 早停阈值（拜占庭类比、未调参敏感性）；全部 preprint、多为单框架单骨干（GPT-4o/gpt-5/同质模型 N=5），「专家型异质分工」证据有限；OpenDGO 胜场口径正文两处不一（12/18 L121 vs 13/18 L384，以后者附录拆解 7+5+1=13 为准并双注）。
 - **执行细节留设计参考**（不升格为结论）：五态状态机（pending/assigned/in_progress/done/verified）+ heartbeat 掉队兜底、领取式 FIFO 分工、协调指标五项（跨执行者覆盖/并发写/浪费字符/空闲轮/掉队尾延迟）、按拓扑层并行+多前驱 fan-in——随 §12.2 落点、留群组扩展实证。
 

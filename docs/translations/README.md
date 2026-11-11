@@ -45,7 +45,7 @@
 
 ## 5. 索引
 
-`papers/` 20 篇（既有 8 篇 + 2026-11-10 W3/W4 批次新增 12 篇，均全文）：
+`papers/` 28 篇（既有 8 篇 + 2026-11-10 W3/W4 批次 12 篇 + 2026-11-11 W5 批次 8 篇，均全文）：
 
 | [papers/arXiv-2608.03836.md](papers/arXiv-2608.03836.md) | Resume Means Resume：工作流持久化层中 Checkpoint、Interrupt 与 Resume 语义的机器校验一致性契约 | 全文 |
 | [papers/arXiv-2608.14380.md](papers/arXiv-2608.14380.md) | AgentRewind：面向长时程 LLM Agent 的可恢复执行 | 全文 |
@@ -67,6 +67,14 @@
 | [papers/arXiv-2611.04086.md](papers/arXiv-2611.04086.md) | 被许可但未获授权：多智能体 LLM 系统中由 affordance 诱发的受托范围越界 | 全文 |
 | [papers/arXiv-2611.06607.md](papers/arXiv-2611.06607.md) | 难不倒的循环：一个有界的量化金融 LLM 研究循环，以及二十多场战役的发现 | 全文 |
 | [papers/arXiv-2611.11588.md](papers/arXiv-2611.11588.md) | FinCutBench：测量 LLM 金融知识时间边界的持续更新基准 | 全文 |
+| [papers/arXiv-2511.03628.md](papers/arXiv-2511.03628.md) | LiveTradeBench：在真实交易中寻求大语言模型的 Alpha | 全文 |
+| [papers/arXiv-2510.11695.md](papers/arXiv-2510.11695.md) | 当智能体交易：面向 LLM 智能体的实盘多市场交易基准（Agent Market Arena） | 全文 |
+| [papers/arXiv-2605.06024.md](papers/arXiv-2605.06024.md) | Strat-LLM：面向 LLM 股票交易的分层策略对齐与实时多源信号 | 全文 |
+| [papers/arXiv-2609.34510.md](papers/arXiv-2609.34510.md) | AI 能在加密货币市场赚钱吗？衡量回测与真实市场的差距 | 全文 |
+| [papers/arXiv-2605.16895.md](papers/arXiv-2605.16895.md) | Alpha 幻觉：LLM 交易智能体报告的 Alpha 不应被当作部署证据 | 全文 |
+| [papers/arXiv-2610.26662.md](papers/arXiv-2610.26662.md) | AllPath：面向人工把关与自治两种运行模式的已部署自我修订 LLM 交易 Agent 的分层验证 | 全文 |
+| [papers/arXiv-2610.05077.md](papers/arXiv-2610.05077.md) | 执行假设如何改变短视野 Sharpe 排名：来自一个合成交易基准的证据 | 全文 |
+| [papers/arXiv-2610.26438.md](papers/arXiv-2610.26438.md) | 假新闻，真实崩盘：面向 LLM 金融交易智能体的信息注入攻击 | 全文 |
 
 `literature/` 30 篇（23 篇 arXiv + 7 篇非 arXiv 短名文件），全部摘要级：
 

@@ -73,4 +73,4 @@
 
 - 「T+1 前向」在 8 篇中仅 Strat-LLM 直接实现——W5 汇报演示的成交时序口径须先自定（T+1 开盘 vs next-open vs 日频 t→t+1）并写进剧本，不能含混引用。
 - 全部预印本 + 短窗普遍（50d/2 月/28d/7.5 周），数字按方向性参考；AMA/Strat-LLM 均无显著性检验。
-- 翻译债：本轮 8 篇新 PDF 尚未入 `docs/translations/papers/`（待办见 PROGRESS）。
+- ~~翻译债：本轮 8 篇新 PDF 尚未入 `docs/translations/papers/`~~（已清：8/8 于 2026-11-11 入库、机器终检 ALL PASS，AllPath 归 `d4ef01c`、余 7 篇随收尾提交）。

@@ -10,6 +10,7 @@
 
 | 笔记 | 日期 | 类型与范围 |
 |---|---|---|
+| [harness2-2026.md](harness2-2026.md) | 2026-11-10 | google-research/harness2（Harness²）源码静态走读（README/docs 全文 + 11 模块 AST 地图 + 关键机制行级细读；未安装未运行，数字均为论文/README 自报） |
 | [anthropic-agent-memory-2026.md](anthropic-agent-memory-2026.md) | 2026-11-10 | Anthropic 记忆博客精读 + cookbook/quickstarts 源码静态走读（未编译未运行，无凭据） |
 | [rakazo-2026.md](rakazo-2026.md) | 2026-11-03 | Rakazo 源码走读（静态，未编译未运行） |
 | [opendots-2026.md](opendots-2026.md) | 2026-11-03 | OpenDots 源码走读 |

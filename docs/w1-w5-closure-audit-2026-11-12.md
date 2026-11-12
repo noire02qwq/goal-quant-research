@@ -28,7 +28,7 @@
 | W3 | [W3 笔记](../literature/W3-backtest-reliability.md)（7+1 精读 + §6 补检 5 篇） | w3-lookahead-proof-demo **12/12 OK** | [0004](../decisions/0004-w3-backtest-reliability-and-lookahead-guard.md) 已采纳 | 留痕 4 处（§5.6/§6.1/§8 A2/§12.1；§12.2 W3 为纯文本引用不计入） | 8 篇已译已核 + 5 篇补检 **2026-11-12 入库已核（@dev PASS）** |
 | W4 | [W4 笔记](../literature/W4-hitl-approval-authorization.md)（4 精读） | w4-approval-gate-demo **16/16 OK** | [0005](../decisions/0005-w4-approval-binding-and-authorization-governance.md) 已采纳 | 留痕 4 处（§5.5/§4.4/§12.1/§12.2 W4） | 4 篇已译已核 |
 | W5 | [W5 笔记](../literature/W5-real-eval-fault-style.md)（8 精读，A–D 判定+新增⑤⑥⑦） | w5-fault-drill-demo **19/19 OK**（含 τ_b 第 7 步） | [0006](../decisions/0006-reporting-and-metrics-taub.md) 已采纳 | 留痕 1 处（§6.1 两块修订） | 8 篇 **入库已核（@dev PASS 2026-11-12）** |
-| 合计 | **5/5 笔记**（模板四段齐） | **68/68 OK**（9+12+12+16+19；@dev 独立复跑逐数一致） | **0001–0006 全部已采纳** | **18 处留痕**（0002×6/0003×3/0004×4/0005×4/0006×1） | **57 篇全部已核**（44 既有 + 13 本两批，@dev 2026-11-12 双 PASS） |
+| 合计 | **5/5 笔记**（模板四段齐） | **68/68 OK**（9+12+12+16+19；@dev 独立复跑逐数一致） | **0001–0006 全部已采纳** | **18 处留痕**（0002×6/0003×3/0004×4/0005×4/0006×1） | **papers 批次 33 篇全部已核**（25 篇经 @dev 四项核验 PASS + 8 篇首批机器终检与索引核验；全库索引终态 92/92 见 §5；原「57/44」口径三头对不上已撤，@dev finding、@user 授权处置） |
 
 **§12.2 群组增量线**（W1–W5 挂靠子题）：W1 决策 5、W2 决策 6 已定稿；W3 assigned_role opt-in demo 实证 + §6 补检五方向（文献级留 W8）；W4 七条落点含实证/未验证分标；W5 追加演练一条。逐行状态见 brief-plan §12.2 表。
 

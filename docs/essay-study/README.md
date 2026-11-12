@@ -10,6 +10,8 @@
 
 | 笔记 | 日期 | 类型与范围 |
 |---|---|---|
+| [tick-stock-panel-2026.md](tick-stock-panel-2026.md) | 2026-11-12 | shy3130/tick-stock-panel（TSP · A股智能量化工作台）源码静态走读（README/docs 全文 + 799 模块 AST 地图 + 6 机制行级细读；未安装未运行，外部数字 claimed_unverified，映射 9 条均标候选参考/未改 brief-plan） |
+| [rd-agent-2026.md](rd-agent-2026.md) | 2026-11-12 | microsoft/RD-Agent 源码静态走读（README/docs 全文 + 571 模块 AST + RDLoop/bandit/Co-STEER/feedback/持久化六机制行级细读；未安装未运行；含 §12.1 W7 二手结论 3 一致 3 出入核对） |
 | [harness2-2026.md](harness2-2026.md) | 2026-11-10 | google-research/harness2（Harness²）源码静态走读（README/docs 全文 + 11 模块 AST 地图 + 关键机制行级细读；未安装未运行，数字均为论文/README 自报） |
 | [anthropic-agent-memory-2026.md](anthropic-agent-memory-2026.md) | 2026-11-10 | Anthropic 记忆博客精读 + cookbook/quickstarts 源码静态走读（未编译未运行，无凭据） |
 | [rakazo-2026.md](rakazo-2026.md) | 2026-11-03 | Rakazo 源码走读（静态，未编译未运行） |

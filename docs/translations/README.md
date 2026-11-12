@@ -45,7 +45,7 @@
 
 ## 5. 索引
 
-`papers/` 33 篇（既有 8 篇 + 2026-11-10 W3/W4 批次 12 篇 + 2026-11-11 W5 批次 8 篇 + 2026-11-12 W3 补检批次 5 篇，均全文）：
+`papers/` 34 篇（既有 8 篇 + 2026-11-10 W3/W4 批次 12 篇 + 2026-11-11 W5 批次 8 篇 + 2026-11-12 W3 补检批次 5 篇 + 2026-11-12 FactorMiner 1 篇，均全文）：
 
 | [papers/arXiv-2608.03836.md](papers/arXiv-2608.03836.md) | Resume Means Resume：工作流持久化层中 Checkpoint、Interrupt 与 Resume 语义的机器校验一致性契约 | 全文 |
 | [papers/arXiv-2608.14380.md](papers/arXiv-2608.14380.md) | AgentRewind：面向长时程 LLM Agent 的可恢复执行 | 全文 |
@@ -80,6 +80,7 @@
 | [papers/arXiv-2610.17143.md](papers/arXiv-2610.17143.md) | OpenDGO：面向多样应用领域的多智能体组织基准测试 | 全文 |
 | [papers/arXiv-2604.02770.md](papers/arXiv-2604.02770.md) | 通过量化角色清晰度提升多智能体协作中的角色一致性 | 全文 |
 | [papers/arXiv-2505.13516.md](papers/arXiv-2505.13516.md) | HALO：面向多智能体 LLM 系统的分层自主逻辑导向编排 | 全文 |
+| [papers/arXiv-2602.14670.md](papers/arXiv-2602.14670.md) | FactorMiner：面向金融 Alpha 发现的、具备技能与经验记忆的自进化智能体 | 全文 |
 
 `literature/` 30 篇（23 篇 arXiv + 7 篇非 arXiv 短名文件），全部摘要级：
 

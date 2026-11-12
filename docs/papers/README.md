@@ -49,3 +49,4 @@
 | arXiv-2610.26662.pdf | AllPath: Layered Verification for a Deployed, Self-Revising LLM Trading Agent under Human-Gated and Autonomous Regimes | https://arxiv.org/abs/2610.26662 | docs/literature/W5-real-eval-fault-style.md |
 | arXiv-2610.05077.pdf | How Execution Assumptions Change Short-Horizon Sharpe Rankings: Evidence from a Synthetic Trading Benchmark | https://arxiv.org/abs/2610.05077 | docs/literature/W5-real-eval-fault-style.md |
 | arXiv-2610.26438.pdf | Fake News, Real Crashes: Information Injection Attacks on LLM Financial Trading Agents | https://arxiv.org/abs/2610.26438 | docs/literature/W5-real-eval-fault-style.md |
+| arXiv-2602.14670.pdf | FactorMiner: A Self-Evolving Agent with Skills and Experience Memory for Financial Alpha Discovery | https://arxiv.org/abs/2602.14670 | docs/literature/W2-context-memory-distillation.md |

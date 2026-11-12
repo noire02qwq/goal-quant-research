@@ -16,6 +16,7 @@ Phase 1 **W1–W5 研究线全闭环**（@user 2026-11-12 指令「完成 W1–W
 - **[research] 闭环审计** → [w1-w5-closure-audit-2026-11-12.md](w1-w5-closure-audit-2026-11-12.md)：§1 需求原文六条+汇报场景覆盖矩阵（研究闭环三件套齐，开发交付列属平台仓不声称）、§12.0 五周自查表（demo 68/68 现跑 + @dev 独立复跑同数、决策 0001–0006 全已采纳、留痕 18 处）、文档层级对账（11 层逐目录，本轮修缮 4 处：literature README W3 行、essay README +2、RD-Agent 改名、translations +5）、观察项（测试布局跨周不一致等 6 条）。
 - **[research] 自有创新点** → [innovation-points-w1-w5.md](innovation-points-w1-w5.md)：**IN1–IN7**（构造性前视防护三层 / 宣称-证据同档报告协议 / 双 oracle 恢复 / 记忆 scope 字段化 / 审批 use-time+人批强口径 / 故障分类学→七步剧本 / 群组 opt-in assigned_role），逐条带来源链、与文献差异、验证状态、诚实边界（不声称发明文献原始概念），**@dev 回源核验 2026-11-12 PASS**（含 5 处此前未回抽文献数字独立命中，附注入审计 §7）。
 - **对账数字终态**：translations 92/92、papers 33/33、literature 5/5、decisions 6/6（全已采纳）、essay-study 9/9、research-demos 5/5、oss-repos 10 仓、测试 68/68。
+- **[user] 追加指令（2026-11-12）**：[2602.14670v2#A2](https://arxiv.org/html/2602.14670v2#A2) 加入研究和翻译 → **FactorMiner 补检完成**：id_list 回核 + PDF 过闸归档（1,431,239B/12 页，KDD'26）→ 五节精读（@dev 预检三闸全绿）+ 全文中译（62,622B，终检 **34 OK / ALL PASS**，可读性 180 段 max 342）→ 关键数字**独立回抽 12/12 命中**（τ_IC=0.04/θ=0.5、替换判据、60%/20% yield、8.25/0.77、0.203、6min/70min、55.2/43.8、0.0365、0.82）→ [W2 笔记 §6 补检节](literature/W2-context-memory-distillation.md)（7 条采纳文献级未落决策 + 5 条不采纳 + **#A2 解析=Appendix B 端到端信号冗余检查**，W7 交叉引用不占主条目）→ brief-plan §12.1 W2 行回填（管道数 6 校验，插入文本误含 `|` 当轮修复——坑1 实际踩中一次）→ 索引 papers 34/34、translations **93/93**。**待 @dev 四项核验**（A2 段落重点回源）。
 
 ### 2026-11-11（W5 文献+demo+0006 闭环 + W5 批次 8 篇中译）
 

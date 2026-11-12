@@ -14,6 +14,8 @@
 | [docs/brief-plan.md](docs/brief-plan.md) | 总体设计：调研借鉴、领域模型、执行协议、测评闭环、里程碑与文献主题 |
 | [docs/CONVENTIONS.md](docs/CONVENTIONS.md) | 仓库规范：目录用途、文档/提交/命名规则、demo 与敏感信息约定 |
 | [docs/PROGRESS.md](docs/PROGRESS.md) | 进度记录：阶段状态、每日进展日志、阻塞与待办 |
+| [docs/w1-w5-closure-audit-2026-11-12.md](docs/w1-w5-closure-audit-2026-11-12.md) | W1–W5 闭环审计：§1 需求覆盖矩阵、五周自查、文档层级对账（过程散档） |
+| [docs/innovation-points-w1-w5.md](docs/innovation-points-w1-w5.md) | 研究创新点 IN1–IN7：W1–W5 文献+实测提炼的自有增量 |
 
 ## 目录结构
 

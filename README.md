@@ -16,6 +16,7 @@
 | [docs/PROGRESS.md](docs/PROGRESS.md) | 进度记录：阶段状态、每日进展日志、阻塞与待办 |
 | [docs/w1-w5-closure-audit-2026-11-12.md](docs/w1-w5-closure-audit-2026-11-12.md) | W1–W5 闭环审计：§1 需求覆盖矩阵、五周自查、文档层级对账（过程散档） |
 | [docs/innovation-points-w1-w5.md](docs/innovation-points-w1-w5.md) | 研究创新点 IN1–IN7：W1–W5 文献+实测提炼的自有增量 |
+| [docs/report-script-w5.md](docs/report-script-w5.md) | 第一次汇报逐句排练稿：四档口径红线 + 演前检查 + 场景 A–E + Q&A 预案 |
 
 ## 目录结构
 

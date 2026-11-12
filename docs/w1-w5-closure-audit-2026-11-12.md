@@ -24,11 +24,11 @@
 | 周 | 文献笔记（方向结论） | 独立 demo（本机实测 2026-11-12） | 决策记录 | brief-plan 定点修订 | 中译 |
 |---|---|---|---|---|---|
 | W1 | [W1 笔记](../literature/W1-durable-scheduling-recovery.md)（4 精读） | w1-recovery-demo **9/9 OK**（@dev 独立复跑同数） | [0002](../decisions/0002-w1-recovery-semantics.md) 已采纳 | 留痕 6 处（§5.2/§5.3/§12.1/§12.2…） | 4 篇已译已核 |
-| W2 | [W2 笔记](../literature/W2-context-memory-distillation.md)（3 精读+1 摘要级） | w2-memory-distillation-demo **12/12 OK** | [0003](../decisions/0003-w2-memory-distillation.md) 已采纳 | 留痕 3 处（§5.4/§12.1/§12.2） | 4 篇已译已核 |
-| W3 | [W3 笔记](../literature/W3-backtest-reliability.md)（7+1 精读 + §6 补检 5 篇） | w3-lookahead-proof-demo **12/12 OK** | [0004](../decisions/0004-w3-backtest-reliability-and-lookahead-guard.md) 已采纳 | 留痕 4 处（§5.6/§6.1/§8 A2/§12.1+§12.2 W3） | 8 篇已译已核 + 5 篇补检 **2026-11-12 入库待核** |
+| W2 | [W2 笔记](../literature/W2-context-memory-distillation.md)（3 精读+1 摘要级） | w2-memory-distillation-demo **12/12 OK** | [0003](../decisions/0003-w2-memory-distillation.md) 已采纳 | 留痕 3 处（§4.4/§5.4/§12.2） | 4 篇已译已核 |
+| W3 | [W3 笔记](../literature/W3-backtest-reliability.md)（7+1 精读 + §6 补检 5 篇） | w3-lookahead-proof-demo **12/12 OK** | [0004](../decisions/0004-w3-backtest-reliability-and-lookahead-guard.md) 已采纳 | 留痕 4 处（§5.6/§6.1/§8 A2/§12.1；§12.2 W3 为纯文本引用不计入） | 8 篇已译已核 + 5 篇补检 **2026-11-12 入库已核（@dev PASS）** |
 | W4 | [W4 笔记](../literature/W4-hitl-approval-authorization.md)（4 精读） | w4-approval-gate-demo **16/16 OK** | [0005](../decisions/0005-w4-approval-binding-and-authorization-governance.md) 已采纳 | 留痕 4 处（§5.5/§4.4/§12.1/§12.2 W4） | 4 篇已译已核 |
-| W5 | [W5 笔记](../literature/W5-real-eval-fault-style.md)（8 精读，A–D 判定+新增⑤⑥⑦） | w5-fault-drill-demo **19/19 OK**（含 τ_b 第 7 步） | [0006](../decisions/0006-reporting-and-metrics-taub.md) 已采纳 | 留痕 1 处（§6.1 两块修订） | 8 篇 **2026-11-11 入库待核** |
-| 合计 | **5/5 笔记**（模板四段齐） | **68/68 OK**（9+12+12+16+19；@dev 独立复跑逐数一致） | **0001–0006 全部已采纳** | **18 处留痕**（0002×6/0003×3/0004×4/0005×4/0006×1） | 44 篇已核 + 13 篇待核（W5 8 + W3 补检 5） |
+| W5 | [W5 笔记](../literature/W5-real-eval-fault-style.md)（8 精读，A–D 判定+新增⑤⑥⑦） | w5-fault-drill-demo **19/19 OK**（含 τ_b 第 7 步） | [0006](../decisions/0006-reporting-and-metrics-taub.md) 已采纳 | 留痕 1 处（§6.1 两块修订） | 8 篇 **入库已核（@dev PASS 2026-11-12）** |
+| 合计 | **5/5 笔记**（模板四段齐） | **68/68 OK**（9+12+12+16+19；@dev 独立复跑逐数一致） | **0001–0006 全部已采纳** | **18 处留痕**（0002×6/0003×3/0004×4/0005×4/0006×1） | **57 篇全部已核**（44 既有 + 13 本两批，@dev 2026-11-12 双 PASS） |
 
 **§12.2 群组增量线**（W1–W5 挂靠子题）：W1 决策 5、W2 决策 6 已定稿；W3 assigned_role opt-in demo 实证 + §6 补检五方向（文献级留 W8）；W4 七条落点含实证/未验证分标；W5 追加演练一条。逐行状态见 brief-plan §12.2 表。
 
@@ -67,7 +67,7 @@
 
 1. **测试布局跨周不一致**（@dev 素材）：w1/w2 测试在仓根（`test_recovery.py`/`test_w2.py`）、w3–w5 在 `tests/`——README 均有实测命令、实质合规；本轮不统一（w1 已定稿不追溯），留 W6 前随复盘 P 系列一并拍板。
 2. **复盘 P3–P7 仍全部未决**（[process-review-2026-11-10.md](process-review-2026-11-10.md)）：直推 vs PR 口径、提交署名 3 人、spike 模板、§12.0 scratch 表述、可读性修复——不属本审计范围，待 @user 拍板。
-3. **13 篇中译待 @dev 四项核验**：W5 批次 8 篇（`23f4d87`，7 篇+AllPath 归 `d4ef01c`）+ W3 补检批次 5 篇（本笔）。核验通过前索引行已就位、状态按「待核」表述。
+3. ~~13 篇中译待 @dev 四项核验~~（**已清 2026-11-12**：W5 批次 8 篇 `23f4d87` + W3 补检批次 5 篇 `37efd5a` 双双 **PASS**，见 §7 附注——六字段头/围栏/单段≤500 零违例、抽样数字 PDF↔译文命中、两笔提交零夹带）。
 4. **harness 平台实现搁置**：§1「开发交付」与 §12.0 各周开发列全部属平台仓，按历次指令搁置；本审计只闭研究线。
 5. **W6–10 不在本次范围**（用户指令为「W5 前所有原始需求」）。
 6. **本轮流程留痕**：W3 补检 5 篇中译由 5 个并行子代理完成（2026-11-12）；HALO 篇文件头曾按我方提示词字面写成「# 中文译题（…）」占位形态，与全库 32 篇「中文译题（English）」形态不一致，已当轮修正为规范译题行——提示词占位符歧义为我方责任，记此防再发。

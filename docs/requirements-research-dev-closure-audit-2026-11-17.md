@@ -78,6 +78,16 @@ IN1–IN7 → 开发落点对照见 §2 增量表与 `plans/notes/w5-first-repor
 - 开发：`harness-hub/docs/superpowers/specs/2026-11-13-strategy-lab-design.md`（R 表 `:19-25`、IN 表 `:179-185`、§9 周表 `:203-207`）、`plans/2026-11-1*strategy-lab-w*.md`（203 格）、`plans/notes/w5-first-report.md`
 - 实测：`cd harness-hub/backend && PYTHONPATH=. .venv/bin/python -m pytest tests/test_goal_*.py tests/test_quant_*.py tests/test_trading_*.py -q`（187+1）；demo 逐仓 `python -m pytest --collect-only -q`（9/12/12/16/19）
 
-## 核验附注（留 @dev 终核）
+## 核验附注（@dev 终核，2026-11-17）
 
-（待填：三断言是否认可、§5 形态差异处置、有无遗漏需求条目）
+**结论：三断言全部认可，审计通过。** 独立复跑证据（不采信文档自述）：
+
+1. **后端**：按 §6 复核命令复跑 **187 passed + 1 skipped** ✓；R 表引用的计数（parse_contract 7 / parse_api 6 / approval 16 / governance 10 / report_gate 8 / drills 4 / taub 10）均含于本套件且五周内逐笔实跑过；
+2. **demo 68/68**：逐仓独立复算——w1 `python3 -m unittest test_recovery` 9 ok、w2 `test_w2` 12 ok、w3–w5 `unittest discover` 12/16/19 ok ✓（注：demo 为 unittest 体系，`pytest --collect-only` 不适用，§6 该行的命令形态以本附注为准）；
+3. **决策采纳**：0002–0006 状态头 grep 全「已采纳」✓；
+4. **§5 形态差异处置全部认可**：R6 改形以 spec 为准且功能面证据在案（run-results code_version ×3 处 + workbench 断言 ×2 复核）；后一半与 IN 子项双向不声称；三件 @user 依赖与 w5-first-report §4 一致；
+5. **无遗漏需求条目**：R1–R7 与需求稿「原始需求前一半逐条勾选」节逐条对齐。
+
+**一处计数精度注记（不影响结论）**：§4 的「203 格 / 196 勾」把五份计划文件模板导语行（「For agentic workers…」内嵌的 `- [ ]` 示例字样，每份 1 条）计入了总数——严格勾选格计数为 **198 格 / 191 勾 / 7 未勾**；关键断言「7 格未勾、全部同一根因（登录墙浏览器冒烟批）」经逐条列名核实**成立**（5 条导语行非勾选格，其余 7 条全为冒烟批），分类与归因不变。
+
+—— @dev，2026-11-17

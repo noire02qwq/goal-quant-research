@@ -4,9 +4,14 @@
 
 ## 当前阶段
 
-Phase 1 **W1–W5 研究线全闭环**（@user 2026-11-12 指令「完成 W1–W5 剩余论文/文献/开源项目研究，确保满足 W5 前所有原始需求、产出自有创新点、前五周功能闭环、各层级文档对规范」）：五周文献笔记 **5/5** + 独立 demo 实测 **68/68**（9+12+12+16+19，2026-11-12 现跑，@dev 独立复跑同数）+ 决策 **0001–0006 全部已采纳** + brief-plan 定点留痕 **18 处**（0002×6/0003×3/0004×4/0005×4/0006×1）+ 中译 **92/92**（机器终检 papers 分区 33 OK / ALL PASS）。闭环证据与 §1 需求覆盖矩阵见 [w1-w5-closure-audit-2026-11-12.md](w1-w5-closure-audit-2026-11-12.md)；自有创新点 IN1–IN7（构造性前视防护 / 宣称-证据同档报告协议 / 双 oracle 恢复 / 记忆 scope 字段化 / 审批人批强口径 / 故障七步剧本 / 群组 opt-in）见 [innovation-points-w1-w5.md](innovation-points-w1-w5.md)，均待 @dev 回源核验。oss-repos 增补 tick-stock-panel 与 RD-Agent 两仓走读（essay-study **9/9**，`244fa1e`；本地目录 `rd-agent→RD-Agent` 按 CONVENTIONS §2 改名）。历史链：W1–W4 闭环（0002–0005 + 九处修订）→ W5 文献/demo/0006（`37d0bf2`）→ W5 批次 8 篇中译（`23f4d87`）→ 本日 W3 补检 5 篇中译 + 闭环审计。**@dev 核验 2026-11-12 全 PASS**（W5 8 篇 + W3 补检 5 篇四项核验 + 闭环全链终核含 IN1–IN7 回源，附注入审计 §7 `22f2bfc`；两处标签级 finding 已当轮修正）；**④ 汇报剧本+报告模板 2026-11-12 交付**（@user 授权 @research 直接处理：[report-script-w5.md](report-script-w5.md) + [templates/report-template.md](templates/report-template.md)，Jaccard 评估=条件纳入）——**待 @dev 复核该两件，研究侧即全清**。复盘 **P3–P7 均未决**；harness 平台实现维持搁置（§1 开发交付列属平台仓，不声称完成）——当前无阻塞，待办见文末。
+Phase 1 **W1–W5 研究线全闭环**（@user 2026-11-12 指令「完成 W1–W5 剩余论文/文献/开源项目研究，确保满足 W5 前所有原始需求、产出自有创新点、前五周功能闭环、各层级文档对规范」）：五周文献笔记 **5/5** + 独立 demo 实测 **68/68**（9+12+12+16+19，2026-11-12 现跑，@dev 独立复跑同数）+ 决策 **0001–0006 全部已采纳** + brief-plan 定点留痕 **18 处**（0002×6/0003×3/0004×4/0005×4/0006×1）+ 中译 **92/92**（机器终检 papers 分区 33 OK / ALL PASS）。闭环证据与 §1 需求覆盖矩阵见 [w1-w5-closure-audit-2026-11-12.md](w1-w5-closure-audit-2026-11-12.md)；自有创新点 IN1–IN7（构造性前视防护 / 宣称-证据同档报告协议 / 双 oracle 恢复 / 记忆 scope 字段化 / 审批人批强口径 / 故障七步剧本 / 群组 opt-in）见 [innovation-points-w1-w5.md](innovation-points-w1-w5.md)，均待 @dev 回源核验。oss-repos 增补 tick-stock-panel 与 RD-Agent 两仓走读（essay-study **9/9**，`244fa1e`；本地目录 `rd-agent→RD-Agent` 按 CONVENTIONS §2 改名）。历史链：W1–W4 闭环（0002–0005 + 九处修订）→ W5 文献/demo/0006（`37d0bf2`）→ W5 批次 8 篇中译（`23f4d87`）→ 本日 W3 补检 5 篇中译 + 闭环审计。**@dev 核验 2026-11-12 全 PASS**（W5 8 篇 + W3 补检 5 篇四项核验 + 闭环全链终核含 IN1–IN7 回源，附注入审计 §7 `22f2bfc`；两处标签级 finding 已当轮修正）；**④ 汇报剧本+报告模板 2026-11-12 交付**（@user 授权 @research 直接处理：[report-script-w5.md](report-script-w5.md) + [templates/report-template.md](templates/report-template.md)，Jaccard 评估=条件纳入）——**待 @dev 复核该两件，研究侧即全清**。复盘 **P3–P7 均未决**；**harness-hub Strategy Lab 开发已全线收口（W1–W5，2026-11-17）**——五周计划 203 格 196 勾（7 未勾全为登录墙冒烟批）、后端全套 187+1、demo 实收 68/68、首报入库；三头对照（原始需求×学习研究×开发）三断言全成立，见 [requirements-research-dev-closure-audit-2026-11-17.md](requirements-research-dev-closure-audit-2026-11-17.md)。当前无阻塞；三件 @user 依赖（登录冒烟/DSH 凭据/MR 口径）见该审计 §5-4，待办见文末。
 
 ## 进度日志（倒序）
+
+### 2026-11-17（三头对照闭环审计：原始需求 × 学习研究 × harness-hub 开发）
+
+- **[user] 指令**：对照 W1–W5 原始需求、学习研究结果与 harness-hub 开发结果——研究须为需求超集（满足全部+创新点）、开发完全涵盖需求且采纳研究新内容。
+- **[research] 三头对照审计** → [requirements-research-dev-closure-audit-2026-11-17.md](requirements-research-dev-closure-audit-2026-11-17.md)：**三断言全成立**——① 研究 ⊇ 需求（7/7 承接；IN1–IN7 + W5 文献修订四件为真超集，逐条带来源链）；② 开发 ⊇ 需求（R1–R7 逐条 spec→计划→测试三件套；203 格 196 勾，7 未勾全为登录墙冒烟）；③ 开发采纳研究新内容（0002–0006 逐条实现+测试、IN1–IN7 全落点、4 子项「随平台/留后续」双向一致不声称）。**取代 11-12 审计「开发搁置不声称」前提**（@user 后续令已启动开发并收口）；R6 四区形态差异等 4 条观察项入 §5，文末留 @dev 核验附注。证据（2026-11-17 独立实跑）：全套 187+1、demo 实收 9+12+12+16+19=68/68、单头 0184、前端 34/34。
 
 ### 2026-11-12（W1–W5 闭环收口：oss 增补 + 13 篇中译 + 闭环审计 + 创新点）
 
@@ -148,9 +153,9 @@ Phase 1 **W1–W5 研究线全闭环**（@user 2026-11-12 指令「完成 W1–W
 
 - ~~境外通道恢复~~（**已解除 2026-11-03**：三探针 200 + `gh auth` 有效）→ §3.1 四项目走读已于同日完成（笔记 4/4、§3 回填），@dev 第二轮独立核验**已通过**，§3.1 判据闭环——**无阻塞**。~~待 @user 拍板是否解除 W3 暂停令~~ → **@user 2026-11-03 拍板：W3 先不开，暂停令维持**（无 W3 产物启动）。
 
-- harness-hub 平台侧开发（插件脚手架、goal_* schema 落地、状态机全转换表实现侧）：**本地副本已就位 2026-11-03**（`harness-hub/`，gitignored，分支 `zdf-dev-goal-quant` ← `origin/fix-20261019203013` `ee50ae7d3`），但 @user 指示 **harness 部分先不开发**——源码引用可读，开发待后续下令。
+- ~~harness-hub 平台侧开发待令~~ → **已解除并完成 2026-11-17**：@user 后续令启动 Strategy Lab，W1–W5 全线收口（[三头对照审计](requirements-research-dev-closure-audit-2026-11-17.md) §0）；副本 `harness-hub/`（gitignored）分支 `zdf-dev-goal-quant`。
 - ~~@dev：走 PR 修订 brief-plan §5.1/§5.4/§12.2~~（**已完成 2026-11-01，PR #8 合入**：§4.4 字段 + §5.1 组装四步 + §5.4 SEPM+CALM 主线 + §12.2 W2 行，coverage 实例化说明与 safety gate 平台侧待补均注明，落点清单见 [decisions/0003](decisions/0003-w2-memory-distillation.md) 修订落点段）；0002 的 §4.4/§5.2/§12.2 W1 修订已随 PR #4 完成。
 - AWM workflow 归纳迁移性 spike：等真实 T1 回测轨迹数据（W3+，依赖回测链路）。
 - ~~@research：W3 文献检索式启动（已暂停）~~ → **@user 2026-11-10 指令恢复：W3/W4 文献线当日完成**（[W3 笔记](literature/W3-backtest-reliability.md)、[W4 笔记](literature/W4-hitl-approval-authorization.md)，原暂停令就研究线解除）。~~剩余待补：§12.2 W3 群组子题~~（**补检完成 2026-11-11**：5 篇全文入 [W3 笔记 §6](literature/W3-backtest-reliability.md)，`4e2d2dd`）。
 - ~~8 篇 W5 中译 + 决策 0006~~（**均已完成 2026-11-11**：中译 `23f4d87`、0006 已采纳 `37d0bf2`）。~~①②③ 三项核验~~（**2026-11-12 全 PASS**：W5 8 篇 `23f4d87`、W3 补检 5 篇 `37efd5a`、闭环全链终核含 IN1–IN7 回源——附注入[闭环审计](w1-w5-closure-audit-2026-11-12.md) §7，`22f2bfc`；两处标签级 finding 已当轮修）。~~④ 汇报剧本+报告模板~~（**2026-11-12 交付**，@user「你来决定处理好」授权 @research 直接做：[report-script-w5.md](report-script-w5.md) 逐句排练稿 + [templates/report-template.md](templates/report-template.md) 三件套强制 + Jaccard 评估=条件纳入，0006 待办已勾）——**待 @dev 复核这两件即研究侧全清**。
-- @research：**无阻塞在途**（W1–W5 研究线 2026-11-12 全闭环收口，见 [闭环审计](w1-w5-closure-audit-2026-11-12.md)）。
+- @research：**无阻塞在途**（研究线 11-12 闭环 + 三头对照审计 11-17 入库）；三件 @user 依赖待触发：①「再存一次」清五组冒烟批 ② 修 DSH `refs` 跑 `w5-dsh-retry.sh` ③ 最终 MR 早期 7 笔无 trailer 处理待批。

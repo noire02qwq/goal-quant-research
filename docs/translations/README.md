@@ -81,6 +81,7 @@
 | [papers/arXiv-2604.02770.md](papers/arXiv-2604.02770.md) | 通过量化角色清晰度提升多智能体协作中的角色一致性 | 全文 |
 | [papers/arXiv-2505.13516.md](papers/arXiv-2505.13516.md) | HALO：面向多智能体 LLM 系统的分层自主逻辑导向编排 | 全文 |
 | [papers/arXiv-2602.14670.md](papers/arXiv-2602.14670.md) | FactorMiner：面向金融 Alpha 发现的、具备技能与经验记忆的自进化智能体 | 全文 |
+| [papers/arXiv-2507.21046.md](papers/arXiv-2507.21046.md) | 自演化智能体综述：在通往人工超级智能之路上，什么、何时、如何、何处演化 | 全文 |
 | [papers/arXiv-2607.07663.md](papers/arXiv-2607.07663.md) | AI 中的递归自我改进：从有界自我精炼到自主研究循环 | 全文 |
 | [papers/arXiv-2611.18856.md](papers/arXiv-2611.18856.md) | 自改进记忆让持续递归自我改进成为可能 | 全文 |
 | [papers/arXiv-2611.23068.md](papers/arXiv-2611.23068.md) | 分辨率假设：智能体进化的关键是识别改进 | 全文 |

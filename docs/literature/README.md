@@ -20,5 +20,6 @@
 - [W3-backtest-reliability.md](W3-backtest-reliability.md)（2026-11-10 初版，2026-11-11 增补 §6 群组补检：7 篇精读 + 1 篇仅摘要级 + 补检 5 篇全文——2605.17937 / 2610.03080 / 2610.26101 / 2611.06607 / 2601.13770 / 2608.27734 / 2611.11588 / 2605.23959 ＋ 2605.06320 / 2610.07860 / 2610.17143 / 2604.02770 / 2505.13516）
 - [W4-hitl-approval-authorization.md](W4-hitl-approval-authorization.md)（2026-11-10，4 篇精读：2610.35835 / 2609.21081 / 2610.22987 / 2611.04086）
 - [W5-real-eval-fault-style.md](W5-real-eval-fault-style.md)（2026-11-11，8 篇精读：2511.03628 / 2510.11695 / 2605.06024 / 2609.34510 / 2605.16895 / 2610.26662 / 2610.05077 / 2610.26438）
+- [W6-self-evolution-rsi.md](W6-self-evolution-rsi.md)（2026-11-18 @user 点名专题，2 篇核心章精读 + 4 篇详摘 + 5 篇仅摘要级：2607.07663 / 2611.23068 ｜ 2507.21046 / 2611.03219 / 2611.18856 / 2611.22299 ｜ 2611.21056 / 2611.06328 / 2611.07595 / 2611.07624 + Diving survey L0–L4）
 
 相关：[../essay-study/deepseek-super-agent-2026.md](../essay-study/deepseek-super-agent-2026.md)（DeepSeek Super-agent 官方文章+原型精读，非检索式产出）。

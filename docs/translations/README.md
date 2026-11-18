@@ -81,6 +81,11 @@
 | [papers/arXiv-2604.02770.md](papers/arXiv-2604.02770.md) | 通过量化角色清晰度提升多智能体协作中的角色一致性 | 全文 |
 | [papers/arXiv-2505.13516.md](papers/arXiv-2505.13516.md) | HALO：面向多智能体 LLM 系统的分层自主逻辑导向编排 | 全文 |
 | [papers/arXiv-2602.14670.md](papers/arXiv-2602.14670.md) | FactorMiner：面向金融 Alpha 发现的、具备技能与经验记忆的自进化智能体 | 全文 |
+| [papers/arXiv-2607.07663.md](papers/arXiv-2607.07663.md) | AI 中的递归自我改进：从有界自我精炼到自主研究循环 | 全文 |
+| [papers/arXiv-2611.18856.md](papers/arXiv-2611.18856.md) | 自改进记忆让持续递归自我改进成为可能 | 全文 |
+| [papers/arXiv-2611.23068.md](papers/arXiv-2611.23068.md) | 分辨率假设：智能体进化的关键是识别改进 | 全文 |
+| [papers/arXiv-2611.22299.md](papers/arXiv-2611.22299.md) | 自我改进的智能体 Harness：一个统一的自我改进型智能体 Harness 框架 | 全文 |
+| [papers/arXiv-2611.03219.md](papers/arXiv-2611.03219.md) | 编码智能体能否在不遗忘的前提下维持持续演化？ | 全文 |
 
 `literature/` 30 篇（23 篇 arXiv + 7 篇非 arXiv 短名文件），全部摘要级：
 

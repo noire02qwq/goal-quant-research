@@ -50,3 +50,9 @@
 | arXiv-2610.05077.pdf | How Execution Assumptions Change Short-Horizon Sharpe Rankings: Evidence from a Synthetic Trading Benchmark | https://arxiv.org/abs/2610.05077 | docs/literature/W5-real-eval-fault-style.md |
 | arXiv-2610.26438.pdf | Fake News, Real Crashes: Information Injection Attacks on LLM Financial Trading Agents | https://arxiv.org/abs/2610.26438 | docs/literature/W5-real-eval-fault-style.md |
 | arXiv-2602.14670.pdf | FactorMiner: A Self-Evolving Agent with Skills and Experience Memory for Financial Alpha Discovery | https://arxiv.org/abs/2602.14670 | docs/literature/W2-context-memory-distillation.md |
+| arXiv-2507.21046.pdf | A Survey of Self-Evolving Agents: What, When, How, and Where to Evolve | https://arxiv.org/abs/2507.21046 | docs/literature/W6-self-evolution-rsi.md |
+| arXiv-2607.07663.pdf | Recursive Self-Improvement in AI: From Bounded Self-Refinement to Autonomous Research Loops | https://arxiv.org/abs/2607.07663 | docs/literature/W6-self-evolution-rsi.md |
+| arXiv-2611.23068.pdf | The Resolution Hypothesis: Agent Evolution's Key Is Identifying Improvements | https://arxiv.org/abs/2611.23068 | docs/literature/W6-self-evolution-rsi.md |
+| arXiv-2611.03219.pdf | Can Coding Agents Sustain Continual Evolution without Forgetting? | https://arxiv.org/abs/2611.03219 | docs/literature/W6-self-evolution-rsi.md |
+| arXiv-2611.18856.pdf | Self-Improvement Memory Enables Continual Recursive Self-Improvement | https://arxiv.org/abs/2611.18856 | docs/literature/W6-self-evolution-rsi.md |
+| arXiv-2611.22299.pdf | Harnesses That Improve Themselves: A Unifying Framework for Self-Improving Agent Harnesses | https://arxiv.org/abs/2611.22299 | docs/literature/W6-self-evolution-rsi.md |

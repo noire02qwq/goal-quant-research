@@ -22,3 +22,4 @@
 | [0004](0004-w3-backtest-reliability-and-lookahead-guard.md) | W3 回测可靠性：前视构造性防护三层定稿 + 验收口径拆分（因果合规✓/语义等价留W6）+ 账本三仪器留测评线，逐条标注验证状态 | 已采纳 |
 | [0005](0005-w4-approval-binding-and-authorization-governance.md) | W4 审批/授权边界：use-time digest 绑定+原子消费（Loopjacking 证伪弱绑定）、审批通道隔离最小验证、矩阵 immutable ceiling ✓/提议来源约束未验证、monitor 唯一防线（采纳④四子项覆盖 1.5） | 已采纳 |
 | [0006](0006-reporting-and-metrics-taub.md) | 汇报与测评口径：metrics 增排名稳定性 τ_b+exec_tier 披露、宣称强度四档收口（禁 3/4 档措辞）、成本必报（凡报收益必同报回撤与成本）、报告三件套（固定窗口/执行档/敏感性 τ_b）；demo 两档 τ_b=+1.0 实测 | 已采纳 |
+| [0007](0007-self-evolution-l2-positioning.md) | 自进化第一版 L2 脚手架级定位与 L3+ 边界：L0–L4 分级框架背书 + 94→32 遗忘实证 + 验证层级双出口同构不改 + 单轮保守口径维持 + US7 分辨率提示入 v1.1 | 提议 |

@@ -168,6 +168,10 @@ Phase 1 **W1–W5 研究线全闭环**（@user 2026-11-12 指令「完成 W1–W
 
 - **[user] 指令：今天先不做 W3**。@research 手头无在途 W3 工作（W3 检索式尚未启动，无草稿产出），确认即停；W2 闭环（`867526d` → `42164cb` → `3426729`）为当前停点。恢复时间等 @user 下令。
 
+### 2026-11-20（ReMe 可采取部分研究）
+
+- **[user] 指令：研究 ReMe 项目对自进化的可采取部分** → 一手材料（repo README/auto_dream/memory_as_file/framework 实取 + arXiv 2512.10696v2 摘要，ACL'26 Findings）落 [literature/ReMe-adoptables-self-evolution.md](literature/ReMe-adoptables-self-evolution.md)：**采取项 A–G**（A 记忆效用账本 / B 失败教训「成功才入库」+反思上限3 / C 三面蒸馏 schema 闭 G2 / D auto_dream 四步参数[变更窗2天·单轮≤5·逐unit独立agent四动词] / E recall-before-act 召回环补 G3 / F Memory as File 单向导出视图 / G 边界声明先例）+ 四条不采取（含「不整体换装记忆后端」的触发条件）+ 0003/0007/G1–G8/IN4 映射速查。**待 @user 拍板**；建议序 A+C → B+D → E，全部零迁移可走事件流/字段扩展。
+
 ## 阻塞 / 待办
 
 - ~~境外通道恢复~~（**已解除 2026-11-03**：三探针 200 + `gh auth` 有效）→ §3.1 四项目走读已于同日完成（笔记 4/4、§3 回填），@dev 第二轮独立核验**已通过**，§3.1 判据闭环——**无阻塞**。~~待 @user 拍板是否解除 W3 暂停令~~ → **@user 2026-11-03 拍板：W3 先不开，暂停令维持**（无 W3 产物启动）。

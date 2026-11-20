@@ -50,4 +50,8 @@ W5 文献线（8 篇全文精读）对既有四条结论的判定中，三条直
 
 - [ ] @dev 双轮核验：τ_b 数字 `python3.14 demo.py taub` 逐位复算 + 决策 1–4 对 W5 笔记 §3.1 判定回源（@dev，本轮）
 - [ ] 转已采纳后 brief-plan §6.1 定点修订留痕（@dev）
+## 评估器只读隔离实态（G4 补记，2026-11-20）
+
+评分链全程**服务端纯程序、智能体零写入口**：`report.py::build_report` 四校验（固定窗口/执行档位/τ_b 数值/**τ_b 与排序表 kendall 重算一致性** `taub.py`）+ 指标计算（`strategy_base.py::report`）均为后端函数，智能体只能**提交 payload 被门校验**，改不了判分逻辑与阈值。**决策：维持只读**——评估器任何改动（含阈值、噪声下限）必须走本决策记录留痕，禁止以「进化优化评估」名义绕门（2611.22299 评估器篡改实证）。复盘缺口 G4 自此关单。
+
 - [x] 汇报剧本按第 1–2 档措辞定稿、报告模板带三件套并评估 top-3 Jaccard 扩展位（~~@dev，第一次汇报前~~ **@research 2026-11-12 交付**（@user「你来决定处理好」授权改派）：[report-script-w5.md](../report-script-w5.md) + [templates/report-template.md](../templates/report-template.md)；Jaccard 评估结论=**条件纳入、当前不报**（N≥10 且展示 top-k 名单时启用，Phase 1 N=3~4 时退化），详见模板 §8，待 @dev 复核）
